@@ -19,6 +19,15 @@ DCS = "\x90"  # or `f"{ESC}P"`, Device Control String
 OSC = "\x9D"  # or `f"{ESC}]"`, Operating System Command
 
 
+def csi(code: str | int):
+    """
+    Return an ANSI escape sequence for the given code.
+
+    Idea taken from [here](https://realpython.com/lessons/ansi-escape-sequences/).
+    """
+    return f"{CSI}{code}m"
+
+
 # General ASCII Codes
 BEL = "\x07"  # Terminal bell
 BS = "\x08"  # Backspace
@@ -31,13 +40,7 @@ CR = "\x0D"  # Carriage return
 DEL = "\x7F"  # Delete
 
 
-def csi(code: str | int):
-    """
-    Return an ANSI escape sequence for the given code.
 
-    Idea taken from [here](https://realpython.com/lessons/ansi-escape-sequences/).
-    """
-    return f"{CSI}{code}m"
 
 
 if __name__ == "__main__":
