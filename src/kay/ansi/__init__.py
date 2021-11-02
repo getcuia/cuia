@@ -1,7 +1,12 @@
 """Simple utilities for working with ANSI escape sequences."""
 
 
-def esc(code: str):
+
+
+from __future__ import annotations
+
+
+def esc(code: str | int):
     """
     Return an ANSI escape sequence for the given code.
 

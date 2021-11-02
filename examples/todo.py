@@ -1,9 +1,11 @@
 """A simple usage example."""
 
 
+from __future__ import annotations
+
 import sys
 from dataclasses import dataclass, field
-from typing import List, Optional, Set
+from typing import Optional
 
 import kay
 
@@ -12,11 +14,11 @@ import kay
 class Model(kay.Model):
     """A simple todo model."""
 
-    choices: List[str] = field(
+    choices: list[str] = field(
         default_factory=lambda: ["Buy carrots", "Buy celery", "Buy kohlrabi"]
     )
     cursor: int = 0
-    selected: Set[str] = field(default_factory=set)
+    selected: set[str] = field(default_factory=set)
 
     def init(self) -> Optional[kay.Command]:
         """Do nothing during initialization, please."""
