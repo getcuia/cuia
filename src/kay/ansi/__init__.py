@@ -40,6 +40,7 @@ def csi(code: str | int):
 
 
 if __name__ == "__main__":
-    print("this is ", esc("31"), "really", esc(0), " important", sep="")
-    print("this is ", esc("31;1"), "really", esc(0), " important", sep="")
-    print("this is ", esc("31;1;4"), "really", esc(0), " important", sep="")
+    print("this is ", csi(31), "really", csi(0), " important", sep="")
+    print("this is ", csi("31;1"), "really", csi(0), " important", sep="")
+    print("this is ", csi("31;1;4"), "really", csi(0), " important", sep="")
+    print("this is a bell ", csi(BEL), sep="")
