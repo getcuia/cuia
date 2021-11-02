@@ -1,6 +1,7 @@
 """
-Simple utilities for working with ANSI escape sequences.
+ANSI Escape Sequences.
 
+Some simple utilities for working with ANSI escape sequences.
 Good resources about ANSI escape sequences:
 - [fnky/ANSI.md][fnky-ansi-md].
 
