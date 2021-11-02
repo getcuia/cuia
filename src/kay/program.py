@@ -20,4 +20,5 @@ class Program:
 
     def start(self):
         """Start program."""
-        pass
+        if (init_cmd := self.model.init()) is not None:
+            self.events.put(init_cmd)

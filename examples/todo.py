@@ -18,6 +18,10 @@ class Model(kay.Model):
     cursor: int = 0
     selected: Set[str] = field(default_factory=set)
 
+    def init(self) -> Optional[kay.Command]:
+        """Do nothing during initialization, please."""
+        return None
+
     def update(self, event: kay.Event) -> Optional[kay.Command]:
         """Update the model."""
         if isinstance(event, kay.KeyEvent):

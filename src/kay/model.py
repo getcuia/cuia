@@ -12,6 +12,11 @@ class Model(Protocol):
     """Model protocol."""
 
     @abstractmethod
+    def init(self) -> Optional[Command]:
+        """Return a command to initialize the model."""
+        raise NotImplementedError()
+
+    @abstractmethod
     def update(self, event: Event) -> Optional[Command]:
         """Update the model with a message."""
         raise NotImplementedError()
