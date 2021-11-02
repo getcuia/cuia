@@ -18,7 +18,19 @@ DCS = "\x90"  # or `f"{ESC}P"`, Device Control String
 OSC = "\x9D"  # or `f"{ESC}]"`, Operating System Command
 
 
-def esc(code: str | int):
+# General ASCII Codes
+BEL = "\x07"  # Terminal bell
+BS = "\x08"  # Backspace
+HT = "\x09"  # Horizontal tab
+LF = NL = "\x0A"  # Line feed (new line)
+VT = "\x0B"  # Vertical tab
+FF = NP = "\x0C"  # Form feed (new page)
+CR = "\x0D"  # Carriage return
+# ESC = "\x1B"  # ANSI escape character
+DEL = "\x7F"  # Delete
+
+
+def csi(code: str | int):
     """
     Return an ANSI escape sequence for the given code.
 
