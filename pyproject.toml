@@ -13,6 +13,9 @@ pytest = "^5.2"
 black = {version = "^21.10b0", allow-prereleases = true}
 pydocstyle = "^6.1.1"
 mypy = "^0.910"
+isort = "^5.9.3"
+flake8 = "^4.0.1"
+bandit = "^1.7.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
