@@ -11,13 +11,20 @@ Good resources about ANSI escape sequences:
 from __future__ import annotations
 
 
+# Sequences
+ESC = "\x1B"  # ANSI escape character
+CSI = "\x9B"  # or `f"{ESC}["`, Control Sequence Introducer
+DCS = "\x90"  # or `f"{ESC}P"`, Device Control String
+OSC = "\x9D"  # or `f"{ESC}]"`, Operating System Command
+
+
 def esc(code: str | int):
     """
     Return an ANSI escape sequence for the given code.
 
     Idea taken from [here](https://realpython.com/lessons/ansi-escape-sequences/).
     """
-    return f"\033[{code}m"
+    return f"{CSI}{code}m"
 
 
 if __name__ == "__main__":
