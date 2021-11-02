@@ -1,6 +1,11 @@
-"""Simple utilities for working with ANSI escape sequences."""
+"""
+Simple utilities for working with ANSI escape sequences.
 
+Good resources about ANSI escape sequences:
+- [fnky/ANSI.md][fnky-ansi-md].
 
+[fnky-ansi-md]: https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
+"""
 
 
 from __future__ import annotations
