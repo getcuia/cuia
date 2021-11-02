@@ -1,7 +1,7 @@
 """A simple usage example."""
 
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Optional, Set
 import sys
 
@@ -10,16 +10,18 @@ import kay
 
 
 @dataclass
-class Model(kay.Model[kay.Msg]):
+class Model(kay.Model[kay.Event]):
     """A simple todo model."""
 
-    choices: List[str] = ["Buy carrots", "Buy celery", "Buy kohlrabi"]
+    choices: List[str] = field(
+        default_factory=lambda: ["Buy carrots", "Buy celery", "Buy kohlrabi"]
+    )
     cursor: int = 0
-    selected: Set[str] = set()
+    selected: Set[str] = field(default_factory=set)
 
-    def update(self, msg: kay.Msg) -> Optional[kay.Cmd]:
+    def update(self, msg: kay.Event) -> Optional[kay.Command]:
         """Update the model."""
-        if isinstance(msg, kay.KeyMsg):
+        if isinstance(msg, kay.KeyEvent):
             if str(msg) in {"ctrl+c", "q"}:
                 return kay.Quit
             elif str(msg) in {"up", "k"}:
