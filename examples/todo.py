@@ -1,16 +1,15 @@
 """A simple usage example."""
 
 
+import sys
 from dataclasses import dataclass, field
 from typing import List, Optional, Set
-import sys
-
 
 import kay
 
 
 @dataclass
-class Model(kay.Model[kay.Event]):
+class Model(kay.Model):
     """A simple todo model."""
 
     choices: List[str] = field(
@@ -19,16 +18,16 @@ class Model(kay.Model[kay.Event]):
     cursor: int = 0
     selected: Set[str] = field(default_factory=set)
 
-    def update(self, msg: kay.Event) -> Optional[kay.Command]:
+    def update(self, event: kay.Event) -> Optional[kay.Command]:
         """Update the model."""
-        if isinstance(msg, kay.KeyEvent):
-            if str(msg) in {"ctrl+c", "q"}:
-                return kay.Quit
-            elif str(msg) in {"up", "k"}:
+        if isinstance(event, kay.KeyEvent):
+            if str(event) in {"ctrl+c", "q"}:
+                return kay.quit
+            elif str(event) in {"up", "k"}:
                 self.cursor = max(0, self.cursor - 1)
-            elif str(msg) in {"down", "j"}:
+            elif str(event) in {"down", "j"}:
                 self.cursor = min(len(self.choices) - 1, self.cursor + 1)
-            elif str(msg) in {"enter", " "}:
+            elif str(event) in {"enter", " "}:
                 if (choice := self.choices[self.cursor]) in self.selected:
                     self.selected.remove(choice)
                 else:

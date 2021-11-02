@@ -1,7 +1,13 @@
 """Application commands."""
 
 
-class Command:
-    """Base class for commands."""
+from typing import Callable, Optional
 
-    pass
+from kay.event import Event, QuitEvent
+
+Command = Callable[[], Optional[Event]]
+
+
+def quit() -> Optional[Event]:
+    """Signal to quit the application."""
+    return QuitEvent()
