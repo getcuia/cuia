@@ -4,19 +4,19 @@
 from typing import Protocol
 
 
-class Event(Protocol):
+class Message(Protocol):
     """Event protocol."""
 
     pass
 
 
-class QuitEvent(Event):
+class QuitMessage(Message):
     """Quit event."""
 
     pass
 
 
-class KeyEvent(Event):
+class KeyMessage(Message):
     """Key event."""
 
     def __init__(self, key):
