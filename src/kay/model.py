@@ -2,7 +2,7 @@
 
 
 from abc import abstractmethod
-from typing import Optional, Protocol
+from typing import Optional, Protocol, Text
 
 from kay.command import Command
 from kay.message import Message
@@ -22,6 +22,6 @@ class Model(Protocol):
         raise NotImplementedError()
 
     @abstractmethod
-    def view(self) -> str:
-        """Return a string representation of the model."""
+    def view(self) -> Text:
+        """Return a textual representation of the model."""
         raise NotImplementedError()
