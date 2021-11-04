@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import sys
 from dataclasses import dataclass, field
 from typing import Optional, Text
@@ -51,15 +52,15 @@ class Model(kay.Model):
         return s
 
 
-def main() -> None:
+async def main() -> None:
     """Run the application."""
     p = kay.Program(Model())
     try:
-        p.start()
+        await p.start()
     except Exception as err:
         print(f"Alas, there's been an error: {err}")
         sys.exit(1)
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main(), debug=True)
