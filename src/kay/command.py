@@ -3,11 +3,11 @@
 
 from typing import Callable, Optional
 
-from kay.event import Event, QuitEvent
+from kay.message import Message, QuitMessage
 
-Command = Callable[[], Optional[Event]]
+Command = Callable[[], Optional[Message]]
 
 
-def quit() -> Optional[Event]:
+def quit() -> Optional[Message]:
     """Signal to quit the application."""
-    return QuitEvent()
+    return QuitMessage()

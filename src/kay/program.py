@@ -9,7 +9,7 @@ from queue import Queue
 from typing import TextIO
 
 from kay.command import Command
-from kay.event import Event
+from kay.message import Message
 from kay.model import Model
 
 
@@ -18,7 +18,7 @@ class Program:
     """Program class."""
 
     model: Model
-    events: Queue[Event] = Queue()
+    messages: Queue[Message] = Queue()
     output: TextIO = sys.stdout
     input: TextIO = sys.stdin
 

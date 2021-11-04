@@ -24,16 +24,16 @@ class Model(kay.Model):
         """Do nothing during initialization, please."""
         return None
 
-    def update(self, event: kay.Event) -> Optional[kay.Command]:
+    def update(self, message: kay.Message) -> Optional[kay.Command]:
         """Update the model."""
-        if isinstance(event, kay.KeyEvent):
-            if str(event) in {"ctrl+c", "q"}:
+        if isinstance(message, kay.KeyMessage):
+            if str(message) in {"ctrl+c", "q"}:
                 return kay.quit
-            elif str(event) in {"up", "k"}:
+            elif str(message) in {"up", "k"}:
                 self.cursor = max(0, self.cursor - 1)
-            elif str(event) in {"down", "j"}:
+            elif str(message) in {"down", "j"}:
                 self.cursor = min(len(self.choices) - 1, self.cursor + 1)
-            elif str(event) in {"enter", " "}:
+            elif str(message) in {"enter", " "}:
                 if (choice := self.choices[self.cursor]) in self.selected:
                     self.selected.remove(choice)
                 else:

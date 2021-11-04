@@ -2,10 +2,18 @@
 
 
 __version__ = "0.1.0"
-__all__ = ["Command", "quit", "Event", "KeyEvent", "QuitEvent", "Model", "Program"]
+__all__ = [
+    "Command",
+    "quit",
+    "Message",
+    "KeyMessage",
+    "QuitMessage",
+    "Model",
+    "Program",
+]
 
 
 from .command import Command, quit
-from .event import Event, KeyEvent, QuitEvent
+from .message import KeyMessage, Message, QuitMessage
 from .model import Model
 from .program import Program

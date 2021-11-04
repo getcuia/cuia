@@ -5,7 +5,7 @@ from abc import abstractmethod
 from typing import Optional, Protocol
 
 from kay.command import Command
-from kay.event import Event
+from kay.message import Message
 
 
 class Model(Protocol):
@@ -17,7 +17,7 @@ class Model(Protocol):
         raise NotImplementedError()
 
     @abstractmethod
-    def update(self, event: Event) -> Optional[Command]:
+    def update(self, message: Message) -> Optional[Command]:
         """Update the model with a message."""
         raise NotImplementedError()
 
