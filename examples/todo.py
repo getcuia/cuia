@@ -34,7 +34,7 @@ class Model(kay.Model):
                 self.cursor = max(0, self.cursor - 1)
             elif Text(message) in {"down", "j"}:
                 self.cursor = min(len(self.choices) - 1, self.cursor + 1)
-            elif Text(message) in {"enter", " "}:
+            elif Text(message) in {"enter", "space"}:
                 if (choice := self.choices[self.cursor]) in self.selected:
                     self.selected.remove(choice)
                 else:
