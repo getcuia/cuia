@@ -102,8 +102,9 @@ class CursesRenderer(Renderer):
             return KeyMessage("enter")
         elif key == ascii.SP:
             return KeyMessage("space")
-        # TODO: check ctrl
         elif ascii.isalnum(key) or ascii.isspace(key):
             return KeyMessage(chr(key))
+        elif ascii.isctrl(key):
+            return KeyMessage(f"ctrl+{chr(ord('a') - 1 + key)}")
         else:
-            return KeyMessage(f"key {key}")
+            return KeyMessage(f"unknown: {key}")
