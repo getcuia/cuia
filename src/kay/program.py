@@ -28,9 +28,10 @@ class Program:
         # Very similar to curses.wrapper
         try:
             stdscr = curses.initscr()
+            curses.raw()
             curses.noecho()
-            # curses.cbreak()
             stdscr.keypad(True)
+
             stdscr.nodelay(True)
             # try:
             #     curses.start_color()
@@ -42,7 +43,7 @@ class Program:
             if "stdscr" in locals():
                 stdscr.keypad(False)
                 curses.echo()
-                curses.nocbreak()
+                curses.noraw()
                 curses.endwin()
 
     async def _start_impl(self, win: curses._CursesWindow):
