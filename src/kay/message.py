@@ -5,19 +5,13 @@ from __future__ import annotations
 
 import curses
 from curses import ascii
-from typing import Optional, Protocol, Text
+from typing import Protocol, Text
 
 
 class Message(Protocol):
     """Event protocol."""
 
-    @staticmethod
-    def from_curses(win: curses._CursesWindow) -> Optional[Message]:
-        """Return a message of known type from curses window."""
-        if (ch := win.getch()) == curses.ERR:
-            return None
-
-        return KeyMessage(ch)
+    pass
 
 
 class QuitMessage(Message):
