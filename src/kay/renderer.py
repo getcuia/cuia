@@ -6,6 +6,7 @@ import asyncio
 import curses
 from abc import abstractmethod
 from contextlib import contextmanager
+from curses import ascii
 from typing import ContextManager, Iterator, Optional, Protocol, Text
 
 from kay.message import KeyMessage, Message
@@ -84,4 +85,24 @@ class CursesRenderer(Renderer):
         """Get next message."""
         if (key := self._stdscr.getch()) == curses.ERR:
             return None
-        return KeyMessage(key)
+
+        if key == curses.KEY_UP:
+            return KeyMessage("up")
+        elif key == curses.KEY_DOWN:
+            return KeyMessage("down")
+        elif key == curses.KEY_LEFT:
+            return KeyMessage("left")
+        elif key == curses.KEY_RIGHT:
+            return KeyMessage("right")
+        elif key in {curses.KEY_ENTER, ascii.LF, ascii.CR}:
+            # KEY_ENTER is rather unreliable, so we also accept ascii.LF
+            # and ascii.CR.
+            # See <https://stackoverflow.com/a/32255045/4039050>.
+            return KeyMessage("enter")
+        elif key == ascii.SP:
+            return KeyMessage("space")
+        # TODO: check ctrl
+        elif ascii.isalnum(key) or ascii.isspace(key):
+            return KeyMessage(chr(key))
+        else:
+            return KeyMessage(f"key {key}")
