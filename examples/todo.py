@@ -47,7 +47,7 @@ class Model(kay.Model):
         for i, choice in enumerate(self.choices):
             cursor = "〉" if i == self.cursor else "  "
             checked = "×" if choice in self.selected else " "
-            s += f"{cursor}[{checked}]{choice}\n"
+            s += f"{cursor}[{checked}] {choice}\n"
         s += "\nPress q to quit.\n"
         return s
 
