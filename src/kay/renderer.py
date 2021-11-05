@@ -75,14 +75,15 @@ class CursesRenderer(Renderer):
 
     async def render(self, view: Text) -> None:
         """Render model."""
+        await asyncio.sleep(1 / 120)
         self._stdscr.erase()
         self._stdscr.addstr(view)
         self._stdscr.noutrefresh()
         curses.doupdate()
-        await asyncio.sleep(1 / 60)
 
     async def next_message(self) -> Optional[Message]:
         """Get next message."""
+        await asyncio.sleep(1 / 120)
         if (key := self._stdscr.getch()) == curses.ERR:
             return None
 
