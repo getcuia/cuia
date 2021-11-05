@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from kay.command import Command
-from kay.message import Message
+from kay.message import Message, QuitMessage
 from kay.model import Model
 from kay.renderer import CursesRenderer as Renderer
 
@@ -52,3 +52,12 @@ class Program:
             # FIX: repeated from the beginning of the method
             if (cmd := self.model.update(message)) is not None:
                 await commands.put(cmd)
+
+            try:
+                if (cmd := commands.get_nowait()) is not None:
+                    if (message := cmd()) is not None:
+                        if isinstance(message, QuitMessage):
+                            break
+                        await self.messages.put(message)
+            except asyncio.QueueEmpty:
+                continue
