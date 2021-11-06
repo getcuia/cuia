@@ -124,8 +124,5 @@ def issgr(text: Text) -> bool:
 
 
 if __name__ == "__main__":
-    text = "\033[0;31mHello\x1b[m, \x1B[1;32mWorld!\033[0m"
-    pieces = list(parse(text))
-    print(len(pieces))
-    for piece in pieces:
-        print(repr(piece))
+    for x in parse("\033[0;31mHello\x1b[m, \x1B[1;32mWorld!\033[0m"):
+        print(repr(x))
