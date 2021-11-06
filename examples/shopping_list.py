@@ -50,7 +50,8 @@ class Model(kay.Model):
             if Text(message) in {"ctrl+c", "q"}:
                 # Quit the application.
                 return kay.quit
-            elif Text(message) in {"up", "k"}:
+
+            if Text(message) in {"up", "k"}:
                 # Move the cursor up.
                 self.cursor = max(0, self.cursor - 1)
             elif Text(message) in {"down", "j"}:
@@ -71,13 +72,13 @@ class Model(kay.Model):
         It is called when it is time to render our UI. It basically just returns a
         string that will be printed to the screen.
         """
-        s = "What should we buy at the market?\n\n"
+        res = "What should we buy at the market?\n\n"
         for i, choice in enumerate(self.choices):
             cursor = "〉" if i == self.cursor else "  "
             checked = "×" if choice in self.selected else " "
-            s += f"{cursor}[{checked}] {choice}\n"
-        s += "\nPress q to quit.\n"
-        return s
+            res += f"{cursor}[{checked}] {choice}\n"
+        res += "\nPress q to quit.\n"
+        return res
 
 
 async def main() -> None:
@@ -87,11 +88,12 @@ async def main() -> None:
     This creates a new application that receives our initial model and starts the
     event loop.
     """
-    p = kay.Program(Model())
+    program = kay.Program(Model())
     try:
-        await p.start()
+        await program.start()
     except Exception as err:
-        print(f"Alas, there's been an error: {err}")
+        # It is a good idea to narrow down the error type in production code.
+        print(f"Alas, there's been an error: {err}", file=sys.stderr)
         sys.exit(1)
 
 

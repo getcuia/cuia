@@ -40,19 +40,8 @@ class Program:
         while True:
             await renderer.render(self.model.view())
 
-            # FIX: repeated from the beginning of the method
-            if (message := await renderer.next_message()) is not None:
-                await self.messages.put(message)
-
-            try:
-                message = self.messages.get_nowait()
-            except asyncio.QueueEmpty:
-                continue
-
-            # FIX: repeated from the beginning of the method
-            if (cmd := self.model.update(message)) is not None:
-                await commands.put(cmd)
-
+            # Deal with commands first because we might have received a command right
+            # after starting the program
             try:
                 if (cmd := commands.get_nowait()) is not None:
                     if (message := cmd()) is not None:
@@ -60,4 +49,18 @@ class Program:
                             break
                         await self.messages.put(message)
             except asyncio.QueueEmpty:
-                continue
+                pass
+
+            # Then wait for input from the user
+            # FIX: repeated from the beginning of the method
+            if (message := await renderer.next_message()) is not None:
+                await self.messages.put(message)
+
+            try:
+                message = self.messages.get_nowait()
+            except asyncio.QueueEmpty:
+                pass
+
+            # And finally, update the model
+            if (cmd := self.model.update(message)) is not None:
+                await commands.put(cmd)

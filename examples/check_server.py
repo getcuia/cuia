@@ -50,6 +50,7 @@ def check_server() -> Optional[kay.Message]:
     try:
         res = requests.get(URL)
     except Exception as error:
+        # It is a good idea to narrow down the error type in production code.
         return ErrorMessage(error=error)
     return StatusMessage(status=res.status_code, reason=res.reason)
 
@@ -97,10 +98,10 @@ class Model(kay.Model):
         """Look at the current model and build a string accordingly."""
         if self.error:
             return f"\nWe had some trouble: {self.error}\n\n"
-        s = f"Checking {URL} ... "
+        res = f"Checking {URL} ... "
         if self.status is not None:
-            s += f"{self.status} {self.reason}!"
-        return s
+            res += f"{self.status} {self.reason}!"
+        return res
 
 
 async def main() -> None:
@@ -110,11 +111,12 @@ async def main() -> None:
     This creates a new application that receives our initial model and starts the
     event loop.
     """
-    p = kay.Program(Model())
+    program = kay.Program(Model())
     try:
-        await p.start()
+        await program.start()
     except Exception as err:
-        print(f"Uh oh, there was an error: {err}\n")
+        # It is a good idea to narrow down the error type in production code.
+        print(f"Uh oh, there was an error: {err}\n", file=sys.stderr)
         sys.exit(1)
 
 
