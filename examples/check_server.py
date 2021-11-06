@@ -16,6 +16,7 @@ from typing import Optional, Text
 import requests
 
 import kay
+from kay.attribute import CSI
 
 URL = "https://httpstat.us/418"
 
@@ -97,10 +98,10 @@ class Model(kay.Model):
     def view(self) -> Text:
         """Look at the current model and build a string accordingly."""
         if self.error:
-            return f"\033[1mWe had some trouble: {self.error}!\033[m"
-        res = f"\033[2mChecking {URL} ... \033[m"
+            return f"{CSI}1mWe had some trouble: {self.error}!{CSI}m"
+        res = f"{CSI}2mChecking {URL} ... {CSI}m"
         if self.status is not None:
-            res += f"{self.status} \033[1m{self.reason}\033[m"
+            res += f"{self.status} {CSI}1m{self.reason}{CSI}m"
         return res
 
 

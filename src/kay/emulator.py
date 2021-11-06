@@ -8,23 +8,11 @@ the SGR (Select Graphic Rendition) escape sequences.
 from __future__ import annotations
 
 import re
-from enum import Enum
 from typing import Iterable, Text
 
-SGR_FORMAT = re.compile(r"(\033\[[0-9;]*m)")
+from kay.attribute import CSI, Attribute
 
-
-class Attribute(Enum):
-    """ANSI escape sequence attributes."""
-
-    NORMAL = 0
-    BOLD = 1
-    FAINT = 2
-    # ITALIC = 3
-    UNDERLINE = 4
-    BLINK = 5
-    #
-    REVERSE = 7
+SGR_FORMAT = re.compile(rf"({CSI}[0-9;]*m)")
 
 
 def parse(text: Text) -> Iterable[Text | Attribute]:
@@ -45,7 +33,7 @@ def parse(text: Text) -> Iterable[Text | Attribute]:
 
     Examples
     --------
-    >>> for code in parse("\033[0;31mHello\x1b[m, \x1B[1;32mWorld!\033[0m"):
+    >>> for code in parse(f"{CSI}0;31mHello\x1b[m, \x1B[1;32mWorld!{CSI}0m"):
     ...     code
     <Attribute.NORMAL: 0>
     '\x1b[31m'
@@ -80,11 +68,11 @@ def parse_sgr(text: Text) -> Iterable[Text | Attribute]:
 
     Examples
     --------
-    >>> for code in parse_sgr("\033[1;31m"):
+    >>> for code in parse_sgr(f"{CSI}1;31m"):
     ...     code
     <Attribute.BOLD: 1>
     '\x1b[31m'
-    >>> list(parse_sgr("\033[0m")) == list(parse_sgr("\x1B[m"))
+    >>> list(parse_sgr(f"{CSI}0m")) == list(parse_sgr("\x1B[m"))
     True
     """
     text = text[2:-1]
@@ -98,7 +86,7 @@ def parse_sgr(text: Text) -> Iterable[Text | Attribute]:
                 try:
                     yield Attribute(code)
                 except ValueError:
-                    yield f"\033[{code}m"
+                    yield f"{CSI}{code}m"
 
 
 def issgr(text: Text) -> bool:
@@ -113,7 +101,7 @@ def issgr(text: Text) -> bool:
 
     Examples
     --------
-    >>> issgr("\033[1;31m")
+    >>> issgr(f"{CSI}1;31m")
     True
     >>> issgr("\x1B[2J")
     False
@@ -122,9 +110,9 @@ def issgr(text: Text) -> bool:
     >>> issgr("not an escape")
     False
     """
-    return text.startswith("\033[") and text.endswith("m")
+    return text.startswith(f"{CSI}") and text.endswith("m")
 
 
 if __name__ == "__main__":
-    for x in parse("\033[0;31mHello\x1b[m, \x1B[1;32mWorld!\033[0m"):
+    for x in parse(f"{CSI}0;31mHello\x1b[m, \x1B[1;32mWorld!{CSI}0m"):
         print(repr(x))
