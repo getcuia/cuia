@@ -53,7 +53,8 @@ class CursesRenderer(Renderer):
         """Enter context."""
         self._stdscr.nodelay(True)
         self._stdscr.keypad(True)
-        # More: https://github.com/gyscos/cursive/blob/c4c74c02996f3f6e66136b51a4d83d2562af740a/cursive/src/backends/curses/n.rs#L133-L143
+        # More:
+        # https://github.com/gyscos/cursive/blob/c4c74c02996f3f6e66136b51a4d83d2562af740a/cursive/src/backends/curses/n.rs#L133-L143
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
@@ -89,22 +90,21 @@ class CursesRenderer(Renderer):
 
         if key == curses.KEY_UP:
             return KeyMessage("up")
-        elif key == curses.KEY_DOWN:
+        if key == curses.KEY_DOWN:
             return KeyMessage("down")
-        elif key == curses.KEY_LEFT:
+        if key == curses.KEY_LEFT:
             return KeyMessage("left")
-        elif key == curses.KEY_RIGHT:
+        if key == curses.KEY_RIGHT:
             return KeyMessage("right")
-        elif key in {curses.KEY_ENTER, ascii.LF, ascii.CR}:
+        if key in {curses.KEY_ENTER, ascii.LF, ascii.CR}:
             # KEY_ENTER is rather unreliable, so we also accept ascii.LF
             # and ascii.CR.
             # See <https://stackoverflow.com/a/32255045/4039050>.
             return KeyMessage("enter")
-        elif key == ascii.SP:
+        if key == ascii.SP:
             return KeyMessage("space")
-        elif ascii.isalnum(key) or ascii.isspace(key):
+        if ascii.isalnum(key) or ascii.isspace(key):
             return KeyMessage(chr(key))
-        elif ascii.isctrl(key):
+        if ascii.isctrl(key):
             return KeyMessage(f"ctrl+{chr(ord('a') - 1 + key)}")
-        else:
-            return KeyMessage(f"unknown: {key}")
+        return KeyMessage(f"unknown: {key}")

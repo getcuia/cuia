@@ -38,13 +38,15 @@ class Program:
             await commands.put(init_cmd)
 
         while True:
+            # Show stuff on screen as soon as possible
             await renderer.render(self.model.view())
 
             # Deal with commands first because we might have received a command right
             # after starting the program
+            command: Optional[Command]
             try:
-                if (cmd := commands.get_nowait()) is not None:
-                    if (message := cmd()) is not None:
+                if (command := commands.get_nowait()) is not None:
+                    if (message := command()) is not None:
                         if isinstance(message, QuitMessage):
                             break
                         await self.messages.put(message)
@@ -62,5 +64,5 @@ class Program:
                 pass
 
             # And finally, update the model
-            if (cmd := self.model.update(message)) is not None:
-                await commands.put(cmd)
+            if (command := self.model.update(message)) is not None:
+                await commands.put(command)

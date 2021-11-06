@@ -9,13 +9,9 @@ from typing import Protocol, Text
 class Message(Protocol):
     """Event protocol."""
 
-    pass
-
 
 class QuitMessage(Message):
     """Quit event."""
-
-    pass
 
 
 class KeyMessage(Message):
@@ -25,6 +21,7 @@ class KeyMessage(Message):
 
     def __init__(self, key: Text):
         """Initialize a keyboard event."""
+        super().__init__()
         self.key = key
 
     def __repr__(self) -> Text:
