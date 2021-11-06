@@ -9,7 +9,8 @@ from contextlib import contextmanager
 from curses import ascii
 from typing import ContextManager, Iterator, Optional, Protocol, Text
 
-from kay.emulator import Attr, parse
+from kay.attr import Attr
+from kay.emulator import parse
 from kay.message import KeyMessage, Message
 
 

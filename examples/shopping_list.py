@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 from typing import Optional, Text
 
 import kay
-from kay.attribute import Attr
+from kay.attr import Attr
 
 
 @dataclass

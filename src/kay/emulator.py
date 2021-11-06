@@ -10,7 +10,7 @@ from __future__ import annotations
 import re
 from typing import Iterable, Text
 
-from kay.attribute import CSI, Attr, sgr
+from kay.attr import CSI, Attr, sgr
 
 SGR_FORMAT = re.compile(rf"({CSI}[0-9;]*m)")
 
