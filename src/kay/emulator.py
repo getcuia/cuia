@@ -10,7 +10,7 @@ from __future__ import annotations
 import re
 from typing import Iterable, Text
 
-from kay.attribute import CSI, Attr
+from kay.attribute import CSI, Attr, sgr
 
 SGR_FORMAT = re.compile(rf"({CSI}[0-9;]*m)")
 
@@ -35,15 +35,15 @@ def parse(text: Text) -> Iterable[Text | Attr]:
     --------
     >>> for code in parse(f"{CSI}0;31mHello\x1b[m, \x1B[1;32mWorld!{CSI}0m"):
     ...     code
-    <Attribute.NORMAL: 0>
+    <Attr.NORMAL: 0>
     '\x1b[31m'
     'Hello'
-    <Attribute.NORMAL: 0>
+    <Attr.NORMAL: 0>
     ', '
-    <Attribute.BOLD: 1>
+    <Attr.BOLD: 1>
     '\x1b[32m'
     'World!'
-    <Attribute.NORMAL: 0>
+    <Attr.NORMAL: 0>
     """
     for piece in SGR_FORMAT.split(text):
         if piece:
@@ -70,7 +70,7 @@ def parse_sgr(text: Text) -> Iterable[Text | Attr]:
     --------
     >>> for code in parse_sgr(f"{CSI}1;31m"):
     ...     code
-    <Attribute.BOLD: 1>
+    <Attr.BOLD: 1>
     '\x1b[31m'
     >>> list(parse_sgr(f"{CSI}0m")) == list(parse_sgr("\x1B[m"))
     True
@@ -86,7 +86,7 @@ def parse_sgr(text: Text) -> Iterable[Text | Attr]:
                 try:
                     yield Attr(code)
                 except ValueError:
-                    yield f"{CSI}{code}m"
+                    yield sgr(code)
 
 
 def issgr(text: Text) -> bool:

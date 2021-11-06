@@ -2,6 +2,7 @@
 
 
 from enum import Enum
+from typing import Text
 
 ESC = "\033"
 CSI = f"{ESC}["
@@ -13,9 +14,9 @@ class Attr(Enum):
 
     Examples
     --------
-    >>> Attribute.BOLD
-    <Attribute.BOLD: 1>
-    >>> str(Attribute.BOLD)
+    >>> Attr.BOLD
+    <Attr.BOLD: 1>
+    >>> Text(Attr.BOLD)
     '\x1b[1m'
     """
 
@@ -30,4 +31,16 @@ class Attr(Enum):
 
     def __str__(self):
         """Return the ANSI escape sequence for this attribute."""
-        return f"{CSI}{self.value}m"
+        return sgr(self.value)
+
+
+def sgr(code: int) -> Text:
+    r"""
+    Convert an SGR code to an ANSI escape sequence.
+
+    Examples
+    --------
+    >>> sgr(1)
+    '\x1b[1m'
+    """
+    return f"{CSI}{code}m"
