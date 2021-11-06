@@ -20,8 +20,10 @@ class Attribute(Enum):
     NORMAL = 0
     BOLD = 1
     FAINT = 2
+    # ITALIC = 3
     UNDERLINE = 4
     BLINK = 5
+    #
     REVERSE = 7
 
 
