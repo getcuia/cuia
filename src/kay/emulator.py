@@ -8,12 +8,24 @@ the SGR (Select Graphic Rendition) escape sequences.
 from __future__ import annotations
 
 import re
+from enum import Enum
 from typing import Iterable, Text
 
-SGR_FORMAT = re.compile(r"(\x1B\[[0-9;]*m)")
+SGR_FORMAT = re.compile(r"(\033\[[0-9;]*m)")
 
 
-def parse(text: Text) -> Iterable[Text | int]:
+class Attribute(Enum):
+    """ANSI escape sequence attributes."""
+
+    NORMAL = 0
+    BOLD = 1
+    FAINT = 2
+    UNDERLINE = 4
+    BLINK = 5
+    REVERSE = 7
+
+
+def parse(text: Text) -> Iterable[Text | Attribute]:
     r"""
     Parse ANSI escape sequences from a string.
 
@@ -33,15 +45,15 @@ def parse(text: Text) -> Iterable[Text | int]:
     --------
     >>> for code in parse("\033[0;31mHello\x1b[m, \x1B[1;32mWorld!\033[0m"):
     ...     code
-    0
-    31
+    <Attribute.NORMAL: 0>
+    '\x1b[31m'
     'Hello'
-    0
+    <Attribute.NORMAL: 0>
     ', '
-    1
-    32
+    <Attribute.BOLD: 1>
+    '\x1b[32m'
     'World!'
-    0
+    <Attribute.NORMAL: 0>
     """
     for piece in SGR_FORMAT.split(text):
         if piece:
@@ -51,7 +63,7 @@ def parse(text: Text) -> Iterable[Text | int]:
                 yield from parse_sgr(piece)
 
 
-def parse_sgr(text: Text) -> Iterable[int]:
+def parse_sgr(text: Text) -> Iterable[Text | Attribute]:
     r"""
     Parse a Select Graphic Rendition (SGR) escape sequence.
 
@@ -68,18 +80,23 @@ def parse_sgr(text: Text) -> Iterable[int]:
     --------
     >>> for code in parse_sgr("\033[1;31m"):
     ...     code
-    1
-    31
+    <Attribute.BOLD: 1>
+    '\x1b[31m'
     >>> list(parse_sgr("\033[0m")) == list(parse_sgr("\x1B[m"))
     True
     """
     text = text[2:-1]
     if not text:
-        yield 0
+        yield Attribute.NORMAL
     else:
+        code: Text | int
         for code in text.split(";"):
             if code:
-                yield int(code)
+                code = int(code)
+                try:
+                    yield Attribute(code)
+                except ValueError:
+                    yield f"\033[{code}m"
 
 
 def issgr(text: Text) -> bool:
@@ -103,7 +120,7 @@ def issgr(text: Text) -> bool:
     >>> issgr("not an escape")
     False
     """
-    return text.startswith("\x1B[") and text.endswith("m")
+    return text.startswith("\033[") and text.endswith("m")
 
 
 if __name__ == "__main__":
@@ -111,6 +128,4 @@ if __name__ == "__main__":
     pieces = list(parse(text))
     print(len(pieces))
     for piece in pieces:
-        # print(type(piece))
         print(repr(piece))
-        # print(piece)
