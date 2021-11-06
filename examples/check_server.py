@@ -97,10 +97,10 @@ class Model(kay.Model):
     def view(self) -> Text:
         """Look at the current model and build a string accordingly."""
         if self.error:
-            return f"\nWe had some trouble: {self.error}\n\n"
-        res = f"Checking {URL} ... "
+            return f"\033[1mWe had some trouble: {self.error}!\033[m"
+        res = f"\033[2mChecking {URL} ... \033[m"
         if self.status is not None:
-            res += f"{self.status} {self.reason}!"
+            res += f"{self.status} \033[1m{self.reason}\033[m"
         return res
 
 
