@@ -1,13 +1,13 @@
 """Application commands."""
 
 
-from typing import Callable, Optional
+from typing import Awaitable, Callable, Optional
 
 from kay.message import Message, QuitMessage
 
-Command = Callable[[], Optional[Message]]
+Command = Callable[[], Awaitable[Optional[Message]]]
 
 
-def quit() -> Optional[Message]:
+async def quit() -> Optional[Message]:
     """Signal to quit the application."""
     return QuitMessage()

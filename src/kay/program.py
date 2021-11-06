@@ -46,7 +46,7 @@ class Program:
             command: Optional[Command]
             try:
                 if (command := commands.get_nowait()) is not None:
-                    if (message := command()) is not None:
+                    if (message := await command()) is not None:
                         if isinstance(message, QuitMessage):
                             break
                         await self.messages.put(message)

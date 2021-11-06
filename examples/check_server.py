@@ -35,11 +35,11 @@ class ErrorMessage(kay.Message, Exception):
     error: Exception
 
 
-def check_server() -> Optional[kay.Message]:
+async def check_server() -> Optional[kay.Message]:
     """
     Make a request to the server and report the status code.
 
-    This function is a command that can be executed by kay. A command is any function
+    This coroutine is a command that can be executed by kay. A command is any coroutine
     that performs some action and returns an optional message about its result.
     Returning `None` is also OK and means that the command has silently finished
     (useful when notifying back is not necessary).
