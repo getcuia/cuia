@@ -3,16 +3,18 @@
 
 __version__ = "0.1.0"
 __all__ = [
+    "Attr",
     "Command",
-    "quit",
-    "Message",
     "KeyMessage",
-    "QuitMessage",
+    "Message",
     "Model",
     "Program",
+    "quit",
+    "QuitMessage",
 ]
 
 
+from .attr import Attr
 from .command import Command, quit
 from .message import KeyMessage, Message, QuitMessage
 from .model import Model

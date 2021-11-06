@@ -16,7 +16,7 @@ from typing import Optional, Text
 import requests
 
 import kay
-from kay.attr import Attr
+from kay import Attr
 
 URL = "https://httpstat.us/418"
 

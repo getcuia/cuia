@@ -9,8 +9,8 @@ from contextlib import contextmanager
 from curses import ascii
 from typing import ContextManager, Iterator, Optional, Protocol, Text
 
+from kay import ansi
 from kay.attr import Attr
-from kay.emulator import parse
 from kay.message import KeyMessage, Message
 
 
@@ -100,7 +100,7 @@ class CursesRenderer(Renderer):
         """Render model."""
         await asyncio.sleep(1 / 120)
         self._stdscr.erase()
-        for piece in parse(view):
+        for piece in ansi.parse(view):
             if isinstance(piece, Text):
                 self._stdscr.addstr(piece)
             else:
