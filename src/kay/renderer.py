@@ -50,19 +50,19 @@ class CursesRenderer(Renderer):
     def __init__(self) -> None:
         """Initialize."""
         self._stdscr = curses.initscr()
+        curses.start_color()
+        curses.use_default_colors()
 
     def __enter__(self) -> CursesRenderer:
         """Enter context."""
-        self._stdscr.nodelay(True)
         self._stdscr.keypad(True)
-        # More:
-        # https://github.com/gyscos/cursive/blob/c4c74c02996f3f6e66136b51a4d83d2562af740a/cursive/src/backends/curses/n.rs#L133-L143
+        self._stdscr.nodelay(True)
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         """Exit context."""
-        self._stdscr.keypad(False)
         self._stdscr.nodelay(False)
+        self._stdscr.keypad(False)
         curses.endwin()
 
     @contextmanager
