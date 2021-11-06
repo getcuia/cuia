@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 from typing import Optional, Text
 
 import kay
-from kay.attribute import CSI
+from kay.attribute import CSI, Attr
 
 
 @dataclass
@@ -73,15 +73,15 @@ class Model(kay.Model):
         It is called when it is time to render our UI. It basically just returns a
         string that will be printed to the screen.
         """
-        res = f"{CSI}1;7mWhat should we buy at the market?{CSI}m\n\n"
+        res = f"{CSI}1;7mWhat should we buy at the market?{Attr.NORMAL}\n\n"
         for i, choice in enumerate(self.choices):
             cursor = "〉" if i == self.cursor else "  "
             checked = "×" if choice in self.selected else " "
             res += f"{cursor}[{checked}] "
             res += (
-                f"{CSI}1m{choice}{CSI}m"
+                f"{Attr.BOLD}{choice}{Attr.NORMAL}"
                 if i == self.cursor
-                else f"{CSI}2m{choice}{CSI}m"
+                else f"{Attr.FAINT}{choice}{Attr.NORMAL}"
             )
             res += "\n"
         res += "\nPress q to quit.\n"

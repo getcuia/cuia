@@ -7,7 +7,7 @@ ESC = "\033"
 CSI = f"{ESC}["
 
 
-class Attribute(Enum):
+class Attr(Enum):
     r"""
     ANSI escape sequence attributes.
 

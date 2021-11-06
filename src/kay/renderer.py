@@ -9,7 +9,7 @@ from contextlib import contextmanager
 from curses import ascii
 from typing import ContextManager, Iterator, Optional, Protocol, Text
 
-from kay.emulator import Attribute, parse
+from kay.emulator import Attr, parse
 from kay.message import KeyMessage, Message
 
 
@@ -76,22 +76,22 @@ class CursesRenderer(Renderer):
             curses.echo()
 
     @staticmethod
-    def _translate_attribute(attr: Attribute) -> int:
+    def _translate_attribute(attr: Attr) -> int:
         """
         Translate attribute.
 
         This **does not check for `Attribute.NORMAL`**, you have to do
         that yourself.
         """
-        if attr == Attribute.BOLD:
+        if attr == Attr.BOLD:
             return curses.A_BOLD
-        if attr == Attribute.FAINT:
+        if attr == Attr.FAINT:
             return curses.A_DIM
-        if attr == Attribute.UNDERLINE:
+        if attr == Attr.UNDERLINE:
             return curses.A_UNDERLINE
-        if attr == Attribute.BLINK:
+        if attr == Attr.BLINK:
             return curses.A_BLINK
-        if attr == Attribute.REVERSE:
+        if attr == Attr.REVERSE:
             return curses.A_REVERSE
         raise ValueError(f"unknown attribute: {attr}")
 
@@ -103,7 +103,7 @@ class CursesRenderer(Renderer):
             if isinstance(piece, Text):
                 self._stdscr.addstr(piece)
             else:
-                if piece == Attribute.NORMAL:
+                if piece == Attr.NORMAL:
                     self._stdscr.attrset(curses.A_NORMAL)
                 else:
                     curses_attr = CursesRenderer._translate_attribute(piece)

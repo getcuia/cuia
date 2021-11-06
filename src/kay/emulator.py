@@ -10,12 +10,12 @@ from __future__ import annotations
 import re
 from typing import Iterable, Text
 
-from kay.attribute import CSI, Attribute
+from kay.attribute import CSI, Attr
 
 SGR_FORMAT = re.compile(rf"({CSI}[0-9;]*m)")
 
 
-def parse(text: Text) -> Iterable[Text | Attribute]:
+def parse(text: Text) -> Iterable[Text | Attr]:
     r"""
     Parse ANSI escape sequences from a string.
 
@@ -53,7 +53,7 @@ def parse(text: Text) -> Iterable[Text | Attribute]:
                 yield from parse_sgr(piece)
 
 
-def parse_sgr(text: Text) -> Iterable[Text | Attribute]:
+def parse_sgr(text: Text) -> Iterable[Text | Attr]:
     r"""
     Parse a Select Graphic Rendition (SGR) escape sequence.
 
@@ -77,14 +77,14 @@ def parse_sgr(text: Text) -> Iterable[Text | Attribute]:
     """
     text = text[2:-1]
     if not text:
-        yield Attribute.NORMAL
+        yield Attr.NORMAL
     else:
         code: Text | int
         for code in text.split(";"):
             if code:
                 code = int(code)
                 try:
-                    yield Attribute(code)
+                    yield Attr(code)
                 except ValueError:
                     yield f"{CSI}{code}m"
 
