@@ -62,6 +62,36 @@ class Color(NamedTuple):
         """
         return (0.299 * self.red + 0.587 * self.green + 0.114 * self.blue) / 255
 
+    def is_light(self) -> bool:
+        """
+        Return True if this color is light.
+
+        A color is considered light if its brightness is greater than 0.5.
+
+        Examples
+        --------
+        >>> BLACK.is_light()
+        False
+        >>> WHITE.is_light()
+        True
+        """
+        return self.brightness() > 0.5
+
+    def is_dark(self) -> bool:
+        """
+        Return True if this color is dark.
+
+        A color is considered dark if it is not light.
+
+        Examples
+        --------
+        >>> BLACK.is_dark()
+        True
+        >>> WHITE.is_dark()
+        False
+        """
+        return not self.is_light()
+
 
 # The following colors were taken as the average of the colors found in
 # <https://en.wikipedia.org/wiki/ANSI_escape_code#3-bit_and_4-bit>.
