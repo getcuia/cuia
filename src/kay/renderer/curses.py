@@ -94,17 +94,17 @@ class CursesRenderer(Renderer):
             return curses.A_REVERSE
         raise ValueError(f"unknown attribute: {attr}")
 
-    def _translate_color(self, color: Foreground | Background) -> int:
+    def _translate_color(self, hue: Foreground | Background) -> int:
         """
         Translate color.
 
         This returns the appropriate curses color pair based on the new color and the
         kept state.
         """
-        if isinstance(color, Foreground):
-            self.foreground = color.color
-        elif isinstance(color, Background):
-            self.background = color.color
+        if isinstance(hue, Foreground):
+            self.foreground = hue.color
+        elif isinstance(hue, Background):
+            self.background = hue.color
 
         self._init_color(self.foreground)
         self._init_color(self.background)
@@ -112,26 +112,26 @@ class CursesRenderer(Renderer):
         self._init_pair(self.foreground, self.background)
         return curses.color_pair(self.color_pairs[(self.foreground, self.background)])
 
-    def _init_color(self, color: Optional[Color], n: Optional[int] = None) -> None:
+    def _init_color(self, hue: Optional[Color], id: Optional[int] = None) -> None:
         """
         Initialize color.
 
         This initializes the color if it is not yet initialized.
         """
-        if color not in self.colors:
-            self.colors[color] = n or len(self.colors) - 1
-            if color is not None:
-                r, g, b = color
-                r = r * 1000 // 255
-                g = g * 1000 // 255
-                b = b * 1000 // 255
-                curses.init_color(self.colors[color], r, g, b)
+        if hue not in self.colors:
+            self.colors[hue] = id or len(self.colors) - 1
+            if hue is not None:
+                red, green, blue = hue
+                red = red * 1000 // 255
+                green = green * 1000 // 255
+                blue = blue * 1000 // 255
+                curses.init_color(self.colors[hue], red, green, blue)
 
     def _init_pair(
         self,
         foreground: Optional[Color],
         background: Optional[Color],
-        n: Optional[int] = None,
+        id: Optional[int] = None,
     ) -> None:
         """
         Initialize color pair.
@@ -139,7 +139,7 @@ class CursesRenderer(Renderer):
         This initializes the color pair if it is not yet initialized.
         """
         if (foreground, background) not in self.color_pairs:
-            self.color_pairs[(foreground, background)] = n or len(self.color_pairs) - 1
+            self.color_pairs[(foreground, background)] = id or len(self.color_pairs) - 1
             if (foreground, background) != (None, None):
                 curses.init_pair(
                     self.color_pairs[(foreground, background)],
