@@ -60,7 +60,12 @@ class Model(kay.Model):
         It is called when it is time to render our UI. It basically just returns a
         string that will be printed to the screen.
         """
-        res = f"{Attr.BOLD}{Attr.REVERSE}What should we buy at the market?{Attr.NORMAL}\n\n"
+        res = (
+            f"{Attr.BOLD}{Attr.REVERSE}"
+            "What should we buy at the market?"
+            f"{Attr.NORMAL}"
+            "\n\n"
+        )
         for i, choice in enumerate(self.choices):
             cursor = "〉" if i == self.cursor else "  "
             checked = "×" if choice in self.selected else " "
