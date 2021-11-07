@@ -7,7 +7,11 @@ from kay.attr import sgr
 
 
 class Color(NamedTuple):
-    """An RGB color."""
+    """
+    An RGB color.
+
+    Each color is represented by three integers in the range 0-255.
+    """
 
     red: int
     green: int
@@ -15,13 +19,13 @@ class Color(NamedTuple):
 
 
 BLACK = Color(0, 0, 0)
-RED = Color(255, 0, 0)
-GREEN = Color(0, 255, 0)
-YELLOW = Color(255, 255, 0)
-BLUE = Color(0, 0, 255)
-MAGENTA = Color(255, 0, 255)
-CYAN = Color(0, 255, 255)
-WHITE = Color(255, 255, 255)
+RED = Color(173, 0, 0)
+GREEN = Color(0, 173, 0)
+YELLOW = Color(173, 173, 0)
+BLUE = Color(0, 0, 173)
+MAGENTA = Color(173, 0, 173)
+CYAN = Color(0, 173, 173)
+WHITE = Color(173, 173, 173)
 
 
 @dataclass(frozen=True)
