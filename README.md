@@ -7,7 +7,7 @@ that is easy to use, fast and has a very small memory footprint.
 
 ## How does it work
 
-kay is inspired by [bubbletea](https://github.com/charmbracelet/bubbletea)
+kay is inspired by [Bubble Tea](https://github.com/charmbracelet/bubbletea)
 (written in [Go](https://golang.org/)) and, on the surface, looks very much like
 it. In particular, kay employs
 [the Elm architecture](https://guide.elm-lang.org/architecture/) (TEA, named
@@ -19,7 +19,7 @@ at each step. It might look as a serious memory overhead but, in fact, it will
 never use more than 100kb to hold those string representations, even on very
 large screens[^how-big].
 
-But, contrary to bubbletea, kay is built on top of
+But, contrary to Bubble Tea, kay is built on top of
 [curses](https://docs.python.org/3/library/curses.html). curses is a standard
 Python library (written in
 [C](<https://en.wikipedia.org/wiki/C_(programming_language)>)) that wraps the
