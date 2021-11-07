@@ -19,6 +19,7 @@ bandit = "^1.7.0"
 requests = "^2.26.0"
 types-requests = "^2.25.11"
 pylint = "^2.11.1"
+snakeviz = "^2.1.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
