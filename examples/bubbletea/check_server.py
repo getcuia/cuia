@@ -16,21 +16,6 @@ from kay import Attr
 URL = "https://httpstat.us/418"
 
 
-@dataclass(frozen=True)
-class StatusMessage(kay.Message):
-    """A message that indicates the status of the server."""
-
-    status: int
-    reason: Text
-
-
-@dataclass(frozen=True)
-class ErrorMessage(kay.Message, Exception):
-    """A message that indicates an error."""
-
-    error: Exception
-
-
 async def check_server() -> Optional[kay.Message]:
     """
     Make a request to the server and report the status code.
@@ -50,6 +35,21 @@ async def check_server() -> Optional[kay.Message]:
         # It is a good idea to narrow down the error type in production code.
         return ErrorMessage(error=error)
     return StatusMessage(status=res.status_code, reason=res.reason)
+
+
+@dataclass(frozen=True)
+class StatusMessage(kay.Message):
+    """A message that indicates the status of the server."""
+
+    status: int
+    reason: Text
+
+
+@dataclass(frozen=True)
+class ErrorMessage(kay.Message, Exception):
+    """A message that indicates an error."""
+
+    error: Exception
 
 
 @dataclass
@@ -85,7 +85,6 @@ class Model(kay.Model):
             self.reason = message.reason
         elif isinstance(message, ErrorMessage):
             self.error = message.error
-            # return kay.quit
         elif isinstance(message, kay.KeyMessage):
             if Text(message) in {"ctrl+c", "q"}:
                 return kay.quit
