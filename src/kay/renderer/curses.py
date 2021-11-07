@@ -1,47 +1,18 @@
-"""Rendering facilities."""
+"""An implementation of the renderer protocol using curses."""
 
 from __future__ import annotations
 
 import asyncio
 import curses
-from abc import abstractmethod
 from contextlib import contextmanager
 from curses import ascii
-from typing import ContextManager, Iterator, Optional, Protocol, Text, runtime_checkable
+from typing import Iterator, Optional, Text
 
 from kay import ansi, color
 from kay.attr import Attr
 from kay.color import Background, Color, Foreground
 from kay.message import KeyMessage, Message
-
-
-@runtime_checkable
-class Renderer(ContextManager, Protocol):
-    """Renderer protocol."""
-
-    def __enter__(self) -> Renderer:
-        """Enter context."""
-        raise NotImplementedError
-
-    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
-        """Exit context."""
-        raise NotImplementedError
-
-    @abstractmethod
-    @contextmanager
-    def into_raw_mode(self) -> Iterator[Renderer]:
-        """Enter raw mode."""
-        raise NotImplementedError
-
-    @abstractmethod
-    async def render(self, view: Text) -> None:
-        """Render model."""
-        raise NotImplementedError
-
-    @abstractmethod
-    async def next_message(self) -> Optional[Message]:
-        """Get next message."""
-        raise NotImplementedError
+from kay.renderer import Renderer
 
 
 class CursesRenderer(Renderer):
@@ -196,6 +167,7 @@ class CursesRenderer(Renderer):
         self._stdscr.noutrefresh()
         curses.doupdate()
 
+    # TODO: this does not seem to need to be a coroutine
     async def next_message(self) -> Optional[Message]:
         """Get next message."""
         await asyncio.sleep(1 / 120)

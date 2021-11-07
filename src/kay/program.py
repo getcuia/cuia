@@ -11,7 +11,7 @@ from typing import Optional
 from kay.command import Command
 from kay.message import Message, QuitMessage
 from kay.model import Model
-from kay.renderer import CursesRenderer as Renderer
+from kay.renderer.curses import CursesRenderer as Renderer
 
 
 @dataclass

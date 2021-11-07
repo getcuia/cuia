@@ -1,7 +1,7 @@
 """Tests for the CursesRenderer class."""
 
 from kay import color
-from kay.renderer import CursesRenderer
+from kay.renderer.curses import CursesRenderer
 
 
 def test_initial_colors():
