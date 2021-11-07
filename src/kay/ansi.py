@@ -13,7 +13,7 @@ from typing import Iterable, Text
 from kay.attr import CSI, Attr, sgr
 from kay.color import Background, Color, Foreground
 
-SGR_FORMAT = re.compile(rf"({CSI}[0-9;]*m)")
+SGR_FORMAT = re.compile(rf"({CSI}[\d;]*m)")
 
 
 def parse(text: Text) -> Iterable[Text | Attr | Foreground | Background]:
