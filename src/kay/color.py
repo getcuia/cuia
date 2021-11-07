@@ -1,5 +1,7 @@
 """Facilities for working with colors."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass
 from typing import NamedTuple, Text
 
@@ -16,6 +18,32 @@ class Color(NamedTuple):
     red: int
     green: int
     blue: int
+
+    @staticmethod
+    def from_int(code: int) -> Color:
+        """
+        Create a color from an integer.
+
+        The integer should be a 3-bit SGR color code.
+        A ValueError is raised otherwise.
+        """
+        if code in {30, 40}:
+            return BLACK
+        if code in {31, 41}:
+            return RED
+        if code in {32, 42}:
+            return GREEN
+        if code in {33, 43}:
+            return YELLOW
+        if code in {34, 44}:
+            return BLUE
+        if code in {35, 45}:
+            return MAGENTA
+        if code in {36, 46}:
+            return CYAN
+        if code in {37, 47}:
+            return WHITE
+        raise ValueError(f"Invalid color code: {code}")
 
 
 # The following colors were taken as the average of the colors found in
