@@ -45,6 +45,23 @@ class Color(NamedTuple):
             return WHITE
         raise ValueError(f"Invalid color code: {code}")
 
+    def brightness(self) -> float:
+        """
+        Return the brightness of this color.
+
+        The brightness is a value between 0.0 and 1.0.
+
+        Source: [Web Content Accessibility Guidelines (Version 1.0)](https://www.w3.org/TR/AERT/#color-contrast).
+
+        Examples
+        --------
+        >>> Color(0, 0, 0).brightness()
+        0.0
+        >>> Color(255, 255, 255).brightness()
+        1.0
+        """
+        return (0.299 * self.red + 0.587 * self.green + 0.114 * self.blue) / 255
+
 
 # The following colors were taken as the average of the colors found in
 # <https://en.wikipedia.org/wiki/ANSI_escape_code#3-bit_and_4-bit>.
