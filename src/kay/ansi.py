@@ -144,7 +144,7 @@ def issgr(text: Text) -> bool:
     >>> issgr("not an escape")
     False
     """
-    return text.startswith(f"{CSI}") and text.endswith("m")
+    return text.startswith(CSI) and text.endswith("m")
 
 
 if __name__ == "__main__":

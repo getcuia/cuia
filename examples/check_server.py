@@ -21,7 +21,7 @@ from kay import Attr
 URL = "https://httpstat.us/418"
 
 
-@dataclass
+@dataclass(frozen=True)
 class StatusMessage(kay.Message):
     """A message that indicates the status of the server."""
 
@@ -29,7 +29,7 @@ class StatusMessage(kay.Message):
     reason: Text
 
 
-@dataclass
+@dataclass(frozen=True)
 class ErrorMessage(kay.Message, Exception):
     """A message that indicates an error."""
 

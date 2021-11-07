@@ -3,9 +3,10 @@
 
 from __future__ import annotations
 
-from typing import Protocol, Text
+from typing import Protocol, Text, runtime_checkable
 
 
+@runtime_checkable
 class Message(Protocol):
     """Event protocol."""
 

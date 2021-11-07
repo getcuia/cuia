@@ -54,7 +54,6 @@ class Program:
                 pass
 
             # Then wait for input from the user
-            # FIX: repeated from the beginning of the method
             if (message := await renderer.next_message()) is not None:
                 await self.messages.put(message)
 

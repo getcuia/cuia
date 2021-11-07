@@ -7,7 +7,7 @@ import curses
 from abc import abstractmethod
 from contextlib import contextmanager
 from curses import ascii
-from typing import ContextManager, Iterator, Optional, Protocol, Text
+from typing import ContextManager, Iterator, Optional, Protocol, Text, runtime_checkable
 
 from kay import ansi, color
 from kay.attr import Attr
@@ -15,6 +15,7 @@ from kay.color import Background, Color, Foreground
 from kay.message import KeyMessage, Message
 
 
+@runtime_checkable
 class Renderer(ContextManager, Protocol):
     """Renderer protocol."""
 

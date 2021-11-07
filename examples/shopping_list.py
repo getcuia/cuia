@@ -31,14 +31,6 @@ class Model(kay.Model):
     cursor: int = 0
     selected: set[Text] = field(default_factory=set)
 
-    def init(self) -> Optional[kay.Command]:
-        """
-        Do nothing during initialization, please.
-
-        This actually means "no I/O right now, please."
-        """
-        return None
-
     def update(self, message: kay.Message) -> Optional[kay.Command]:
         """
         Update the model.

@@ -1,5 +1,6 @@
 """Facilities for working with attributes."""
 
+from __future__ import annotations
 
 from enum import Enum
 from typing import Text
@@ -34,7 +35,7 @@ class Attr(Enum):
         return sgr(self.value)
 
 
-def sgr(code: int) -> Text:
+def sgr(code: Text | int) -> Text:
     r"""
     Convert an SGR code to an ANSI escape sequence.
 
