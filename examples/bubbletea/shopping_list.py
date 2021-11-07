@@ -1,9 +1,4 @@
-"""
-A simple usage example.
-
-This example is based on the
-[first bubbletea tutorial](https://github.com/charmbracelet/bubbletea/tree/master/tutorials/basics).
-"""
+"""A simple a shopping list."""
 
 
 from __future__ import annotations

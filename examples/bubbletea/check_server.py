@@ -1,9 +1,4 @@
-"""
-A tutorial on the use of commands.
-
-This example is based on the
-[second bubbletea tutorial](https://github.com/charmbracelet/bubbletea/tree/master/tutorials/commands).
-"""
+"""A tutorial on the use of commands."""
 
 
 from __future__ import annotations
