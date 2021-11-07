@@ -50,27 +50,30 @@ class CursesRenderer(Renderer):
     _stdscr: curses._CursesWindow
     foreground: Optional[Color] = None
     background: Optional[Color] = None
-    colors: dict[Optional[Color], int] = {
-        None: -1,
-        color.BLACK: 0,
-        color.RED: 1,
-        color.GREEN: 2,
-        color.YELLOW: 3,
-        color.BLUE: 4,
-        color.MAGENTA: 5,
-        color.CYAN: 6,
-        color.WHITE: 7,
-    }
-    pairs: dict[tuple[Optional[Color], Optional[Color]], int] = {
-        (None, None): -1,
-        (color.WHITE, color.BLACK): 0,
-    }
+    colors: dict[Optional[Color], int] = {}
+    color_pairs: dict[tuple[Optional[Color], Optional[Color]], int] = {}
 
     def __init__(self) -> None:
         """Initialize."""
         self._stdscr = curses.initscr()
         curses.start_color()
         curses.use_default_colors()
+        # More:
+        # https://github.com/gyscos/cursive/blob/c4c74c02996f3f6e66136b51a4d83d2562af740a/cursive/src/backends/curses/n.rs#L133-L143
+        for hue in (
+            None,
+            color.BLACK,
+            color.RED,
+            color.GREEN,
+            color.YELLOW,
+            color.BLUE,
+            color.MAGENTA,
+            color.CYAN,
+            color.WHITE,
+        ):
+            self._init_color(hue)
+        for foreground, background in ((None, None), (color.WHITE, color.BLACK)):
+            self._init_pair(foreground, background)
 
     def __enter__(self) -> CursesRenderer:
         """Enter context."""
@@ -136,7 +139,7 @@ class CursesRenderer(Renderer):
         self._init_color(self.background)
 
         self._init_pair(self.foreground, self.background)
-        return curses.color_pair(self.pairs[(self.foreground, self.background)])
+        return curses.color_pair(self.color_pairs[(self.foreground, self.background)])
 
     def _init_color(self, color: Optional[Color], n: Optional[int] = None) -> None:
         """
@@ -147,7 +150,11 @@ class CursesRenderer(Renderer):
         if color not in self.colors:
             self.colors[color] = n or len(self.colors) - 1
             if color is not None:
-                curses.init_color(self.colors[color], *color)
+                r, g, b = color
+                r = r * 1000 // 255
+                g = g * 1000 // 255
+                b = b * 1000 // 255
+                curses.init_color(self.colors[color], r, g, b)
 
     def _init_pair(
         self,
@@ -160,13 +167,14 @@ class CursesRenderer(Renderer):
 
         This initializes the color pair if it is not yet initialized.
         """
-        if (self.foreground, self.background) not in self.pairs:
-            self.pairs[(self.foreground, self.background)] = n or len(self.pairs) - 1
-            curses.init_pair(
-                self.pairs[(self.foreground, self.background)],
-                self.colors[self.foreground],
-                self.colors[self.background],
-            )
+        if (foreground, background) not in self.color_pairs:
+            self.color_pairs[(foreground, background)] = n or len(self.color_pairs) - 1
+            if (foreground, background) != (None, None):
+                curses.init_pair(
+                    self.color_pairs[(foreground, background)],
+                    self.colors[foreground],
+                    self.colors[background],
+                )
 
     # TODO: this does not seem to need to be a coroutine
     async def render(self, view: Text) -> None:
