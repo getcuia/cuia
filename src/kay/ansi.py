@@ -37,12 +37,12 @@ def parse(text: Text) -> Iterable[Text | Attr | Foreground | Background]:
     >>> for code in parse(f"{CSI}0;31mHello\x1b[m, \x1B[1;32mWorld!{CSI}0m"):
     ...     code
     <Attr.NORMAL: 0>
-    Color(red=179, green=16, blue=14)
+    Foreground(color=Color(red=179, green=16, blue=14))
     'Hello'
     <Attr.NORMAL: 0>
     ', '
     <Attr.BOLD: 1>
-    Color(red=11, green=172, blue=22)
+    Foreground(color=Color(red=11, green=172, blue=22))
     'World!'
     <Attr.NORMAL: 0>
     >>> for code in parse("\x1B[38;2;0;255;0mHello, green!\x1b[m"):
@@ -77,7 +77,7 @@ def parse_sgr(text: Text) -> Iterable[Text | Attr | Foreground | Background]:
     >>> for code in parse_sgr(f"{CSI}1;31m"):
     ...     code
     <Attr.BOLD: 1>
-    Color(red=179, green=16, blue=14)
+    Foreground(color=Color(red=179, green=16, blue=14))
     >>> for code in parse_sgr(f"{CSI}48;2;100;10;255m"):
     ...     code
     Background(color=Color(red=100, green=10, blue=255))
