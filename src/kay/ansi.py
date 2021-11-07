@@ -10,10 +10,9 @@ from __future__ import annotations
 import re
 from typing import Iterable, Text
 
-from kay.attr import CSI, Attr, sgr
+from kay.attr import Attr, sgr
 from kay.color import Background, Color, Foreground
 
-SGR_FORMAT = re.compile(rf"({CSI}[\d;]*m)")
 
 
 def parse(text: Text) -> Iterable[Text | Attr | Foreground | Background]:
@@ -34,7 +33,7 @@ def parse(text: Text) -> Iterable[Text | Attr | Foreground | Background]:
 
     Examples
     --------
-    >>> for code in parse(f"{CSI}0;31mHello\x1b[m, \x1B[1;32mWorld!{CSI}0m"):
+    >>> for code in parse(f"\N{ESC}[0;31mHello\x1b[m, \x1B[1;32mWorld!\N{ESC}[0m"):
     ...     code
     <Attr.NORMAL: 0>
     Foreground(color=Color(red=179, green=16, blue=14))
@@ -74,14 +73,14 @@ def parse_sgr(text: Text) -> Iterable[Text | Attr | Foreground | Background]:
 
     Examples
     --------
-    >>> for code in parse_sgr(f"{CSI}1;31m"):
+    >>> for code in parse_sgr(f"\N{ESC}[1;31m"):
     ...     code
     <Attr.BOLD: 1>
     Foreground(color=Color(red=179, green=16, blue=14))
-    >>> for code in parse_sgr(f"{CSI}48;2;100;10;255m"):
+    >>> for code in parse_sgr(f"\N{ESC}[48;2;100;10;255m"):
     ...     code
     Background(color=Color(red=100, green=10, blue=255))
-    >>> list(parse_sgr(f"{CSI}0m")) == list(parse_sgr("\x1B[m"))
+    >>> list(parse_sgr(f"\N{ESC}[0m")) == list(parse_sgr("\x1B[m"))
     True
     """
     text = text[2:-1]
@@ -142,7 +141,7 @@ def issgr(text: Text) -> bool:
 
     Examples
     --------
-    >>> issgr(f"{CSI}1;31m")
+    >>> issgr(f"\N{ESC}[1;31m")
     True
     >>> issgr("\x1B[2J")
     False
@@ -151,9 +150,9 @@ def issgr(text: Text) -> bool:
     >>> issgr("not an escape")
     False
     """
-    return text.startswith(CSI) and text.endswith("m")
+    return text.startswith("\N{ESC}[") and text.endswith("m")
 
 
 if __name__ == "__main__":
-    for x in parse(f"{CSI}0;31mHello\x1b[m, \x1B[1;32mWorld!{CSI}0m"):
+    for x in parse("\N{ESC}[0;31mHello\x1b[m, \x1B[1;32mWorld!\N{ESC}[0m"):
         print(repr(x))

@@ -6,8 +6,6 @@ from enum import Enum
 from typing import Text
 
 
-CSI = "\N{ESC}["
-
 class Attr(Enum):
     r"""
     ANSI escape sequence attributes.
@@ -43,4 +41,4 @@ def sgr(code: Text | int) -> Text:
     >>> sgr(1)
     '\x1b[1m'
     """
-    return f"{CSI}{code}m"
+    return f"\N{ESC}[{code}m"
