@@ -51,17 +51,17 @@ sequences) is supported:
 
 **Attributes**:
 
--   `BOLD` (Extra bright/bold): `\x1b[1m` (ECMA-48, VT100, xterm, linux)
--   `FAINT` (Half bright/dim): `\x1b[2m` (ECMA-48, xterm, linux)
--   `UNDERLINE` (Underlined): `\x1b[4m` (ECMA-48, VT100, xterm, linux)
--   `BLINK` (Blinking): `\x1b[5m` (ECMA-48, VT100, xterm, linux)
--   `REVERSE` (Reverse video): `\x1b[7m` (ECMA-48, VT100, xterm, linux)
+-   `BOLD` (Extra bright/bold): `\033[1m` (ECMA-48, VT100, Xterm, linux)
+-   `FAINT` (Half bright/dim): `\033[2m` (ECMA-48, Xterm, linux)
+-   `UNDERLINE` (Underlined): `\033[4m` (ECMA-48, VT100, Xterm, linux)
+-   `BLINK` (Blinking): `\033[5m` (ECMA-48, VT100, Xterm, linux)
+-   `REVERSE` (Reverse video): `\033[7m` (ECMA-48, VT100, Xterm, linux)
 
 _Note 0:_ references available:
 
 -   [ECMA-48](https://www.ecma-international.org/publications-and-standards/standards/ecma-48/)
 -   [VT100](https://vt100.net/docs/vt100-ug/chapter3.html#SGR)
--   [xterm](https://invisible-island.net/xterm/ctlseqs/ctlseqs.html)
+-   [Xterm](https://invisible-island.net/Xterm/ctlseqs/ctlseqs.html)
 -   [linux](https://man7.org/linux/man-pages/man4/console_codes.4.html) (the
     linux console, that is)
 
@@ -70,10 +70,20 @@ mode available"), as it seems not to be mapped to a single escape sequence. On
 Gnome Terminal, `A_STANDOUT` seems to be the same as `A_REVERSE`. If you're
 interested in having this, open an issue and let's talk about it.
 
-_Note 2:_ I plan on supporting italics (`\x1b[3m`, available in ECMA-48 and
-xterm) in the future. If you're interested in having this, open an issue and
+_Note 2:_ I plan on supporting italics (`\033[3m`, available in ECMA-48 and
+Xterm) in the future. If you're interested in having this, open an issue and
 let's talk about it.
 
-_Note 2:_ I plan to add support for italics (`\x1b[3m`, available in ECMA-48 and
-xterm) in the future. If you're interested, open an issue and let's talk about
-it.
+**Colors**:
+
+kay understands the 24-bit format of RGB colors as per ISO-8613-6 (marked in
+ECMA-48 as "reserved for future standardization"). This format is also supported
+by Xterm and linux (although only approximately).
+
+-   Foreground: `\033[38;2;<r>;<g>;<b>m` (ISO-8613-6, Xterm, linux)
+-   Background: `\033[48;2;<r>;<g>;<b>m` (ISO-8613-6, Xterm, linux)
+
+In short, the above should work fine in Xterm, KDE's Konsole, GNOME Terminal (in
+fact all libvte-based terminals), iTerm and probably many others. Since ncurses
+requires setting colors beforehand, kay will keep track of the already set
+colors and manage them accordingly.
