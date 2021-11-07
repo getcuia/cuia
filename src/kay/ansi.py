@@ -6,6 +6,7 @@ the SGR (Select Graphic Rendition) escape sequences.
 """
 
 from __future__ import annotations
+from dataclasses import dataclass, field
 
 import re
 from typing import Iterable, Text
@@ -13,6 +14,65 @@ from typing import Iterable, Text
 from kay.attr import Attr, sgr
 from kay.color import Background, Color, Foreground
 
+PATTERN = re.compile(r"(\N{ESC}\[[\d;]*[a-zA-Z])")
+
+
+@dataclass(frozen=True)
+class Token:
+    """A token is a single ANSI escape sequence."""
+
+    marker: Text
+    param: int = 0
+
+    @staticmethod
+    def fromstring(text: Text) -> Iterable[Text | Token]:
+        r"""
+        Create tokens from a string or return it.
+
+        Examples
+        --------
+        >>> list(Token.fromstring("\033[m"))
+        [Token(marker='m', param=0)]
+        >>> list(Token.fromstring("\x1b[1;31m"))
+        [Token(marker='m', param=1), Token(marker='m', param=31)]
+        >>> list(Token.fromstring("\x1b[38;2;30;60;90m"))  # doctest: +NORMALIZE_WHITESPACE
+        [Token(marker='m', param=38),
+         Token(marker='m', param=2),
+         Token(marker='m', param=30),
+         Token(marker='m', param=60),
+         Token(marker='m', param=90)]
+        """
+        if not text.startswith("\N{ESC}["):
+            yield text
+        else:
+            marker, params = text[-1], text[2:-1].split(";")
+            for param in params:
+                if param:
+                    yield Token(marker=marker, param=int(param))
+                else:
+                    yield Token(marker=marker)
+
+
+def tokenize(text: Text) -> Iterable[Text | Token]:
+    r"""
+    Tokenize ANSI escape sequences from a string.
+
+    This yields strings and escape sequences in order they appear in the input.
+
+    Examples
+    --------
+    >>> list(tokenize("\x1b[38;2;0;255;0mHello, green!\x1b[m"))  # doctest: +NORMALIZE_WHITESPACE
+    [Token(marker='m', param=38),
+     Token(marker='m', param=2),
+     Token(marker='m', param=0),
+     Token(marker='m', param=255),
+     Token(marker='m', param=0),
+     'Hello, green!',
+     Token(marker='m', param=0)]
+    """
+    for piece in PATTERN.split(text):
+        if piece:
+            yield from Token.fromstring(piece)
 
 
 def parse(text: Text) -> Iterable[Text | Attr | Foreground | Background]:
