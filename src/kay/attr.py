@@ -5,9 +5,8 @@ from __future__ import annotations
 from enum import Enum
 from typing import Text
 
-ESC = "\033"
-CSI = f"{ESC}["
 
+CSI = "\N{ESC}["
 
 class Attr(Enum):
     r"""
