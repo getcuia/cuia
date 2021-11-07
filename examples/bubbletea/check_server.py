@@ -27,6 +27,15 @@ async def check_server() -> Optional[kay.Message]:
 
     We return a message representing the error instead of raising it, because this way
     we ensure that the error is reported to the user through our UI.
+
+    **Note**: what if you need to pass some data to a command? Use a factory function:
+
+    >>> def cmd_with_arg(id: int) -> Command:
+    ...     async def cmd() -> Optional[kay.Message]:
+    ...         return SomeMessage(id)
+    ...     return cmd
+
+    Then you can call this factory function when you need to get a command.
     """
     try:
         res = requests.get(URL)
