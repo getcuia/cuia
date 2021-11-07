@@ -102,7 +102,12 @@ def parse_sgr(text: Text) -> Iterable[Text | Attr | Foreground | Background]:
                     yield Attr(code)
                 except ValueError:
                     try:
-                        yield Color.from_int(code)
+                        if 30 <= code <= 37:
+                            yield Foreground(Color.from_int(code))
+                        elif 40 <= code <= 47:
+                            yield Background(Color.from_int(code))
+                        else:
+                            yield sgr(code)
                     except ValueError:
                         yield sgr(code)
 
