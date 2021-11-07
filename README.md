@@ -61,7 +61,7 @@ _Note 0:_ references available:
 
 -   [ECMA-48](https://www.ecma-international.org/publications-and-standards/standards/ecma-48/)
 -   [VT100](https://vt100.net/docs/vt100-ug/chapter3.html#SGR)
--   [Xterm](https://invisible-island.net/Xterm/ctlseqs/ctlseqs.html)
+-   [Xterm](https://invisible-island.net/xterm/ctlseqs/ctlseqs.html)
 -   [linux](https://man7.org/linux/man-pages/man4/console_codes.4.html) (the
     linux console, that is)
 
@@ -87,3 +87,19 @@ In short, the above should work fine in Xterm, KDE's Konsole, GNOME Terminal (in
 fact all libvte-based terminals), iTerm and probably many others. Since ncurses
 requires setting colors beforehand, kay will keep track of the already set
 colors and manage them accordingly.
+
+Furthermore, the following are mapped to default colors:
+
+-   `BLACK` (Black): `\033[30m` (ECMA-48, Xterm, linux)
+-   `RED` (Red): `\033[31m` (ECMA-48, Xterm, linux)
+-   `GREEN` (Green): `\033[32m` (ECMA-48, Xterm, linux)
+-   `YELLOW` (Yellow): `\033[33m` (ECMA-48, Xterm, linux)
+-   `BLUE` (Blue): `\033[34m` (ECMA-48, Xterm, linux)
+-   `MAGENTA` (Magenta): `\033[35m` (ECMA-48, Xterm, linux)
+-   `CYAN` (Cyan): `\033[36m` (ECMA-48, Xterm, linux)
+-   `WHITE` (White): `\033[37m` (ECMA-48, Xterm, linux)
+
+(Plus their background counterparts `\033[40m`-`\033[47m`.)
+
+256-bit colors are presently not supported. Open an issue if you want to have
+them.

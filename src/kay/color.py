@@ -66,6 +66,22 @@ class Foreground:
 
     def __str__(self) -> Text:
         """Return a string representation of this foreground color."""
+        if self.color == BLACK:
+            return sgr("30")
+        if self.color == RED:
+            return sgr("31")
+        if self.color == GREEN:
+            return sgr("32")
+        if self.color == YELLOW:
+            return sgr("33")
+        if self.color == BLUE:
+            return sgr("34")
+        if self.color == MAGENTA:
+            return sgr("35")
+        if self.color == CYAN:
+            return sgr("36")
+        if self.color == WHITE:
+            return sgr("37")
         return sgr(f"38;2;{self.color.red};{self.color.green};{self.color.blue}")
 
 
@@ -77,4 +93,20 @@ class Background:
 
     def __str__(self) -> Text:
         """Return a string representation of this background color."""
+        if self.color == BLACK:
+            return sgr("40")
+        if self.color == RED:
+            return sgr("41")
+        if self.color == GREEN:
+            return sgr("42")
+        if self.color == YELLOW:
+            return sgr("43")
+        if self.color == BLUE:
+            return sgr("44")
+        if self.color == MAGENTA:
+            return sgr("45")
+        if self.color == CYAN:
+            return sgr("46")
+        if self.color == WHITE:
+            return sgr("47")
         return sgr(f"48;2;{self.color.red};{self.color.green};{self.color.blue}")
