@@ -50,6 +50,7 @@ async def check_server() -> Optional[kay.Message]:
     """
     try:
         res = requests.get(URL)
+        # raise ValueError("This should not happen")
     except Exception as error:
         # It is a good idea to narrow down the error type in production code.
         return ErrorMessage(error=error)
@@ -89,7 +90,7 @@ class Model(kay.Model):
             self.reason = message.reason
         elif isinstance(message, ErrorMessage):
             self.error = message.error
-            return kay.quit
+            # return kay.quit
         elif isinstance(message, kay.KeyMessage):
             if Text(message) in {"ctrl+c", "q"}:
                 return kay.quit
