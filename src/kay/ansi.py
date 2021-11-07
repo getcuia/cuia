@@ -11,11 +11,12 @@ import re
 from typing import Iterable, Text
 
 from kay.attr import CSI, Attr, sgr
+from kay.color import Background, Color, Foreground
 
 SGR_FORMAT = re.compile(rf"({CSI}[0-9;]*m)")
 
 
-def parse(text: Text) -> Iterable[Text | Attr]:
+def parse(text: Text) -> Iterable[Text | Attr | Foreground | Background]:
     r"""
     Parse ANSI escape sequences from a string.
 
@@ -44,6 +45,11 @@ def parse(text: Text) -> Iterable[Text | Attr]:
     '\x1b[32m'
     'World!'
     <Attr.NORMAL: 0>
+    >>> for code in parse("\x1B[38;2;0;255;0mHello, green!\x1b[m"):
+    ...     code
+    Foreground(color=Color(red=0, green=255, blue=0))
+    'Hello, green!'
+    <Attr.NORMAL: 0>
     """
     for piece in SGR_FORMAT.split(text):
         if piece:
@@ -53,7 +59,7 @@ def parse(text: Text) -> Iterable[Text | Attr]:
                 yield from parse_sgr(piece)
 
 
-def parse_sgr(text: Text) -> Iterable[Text | Attr]:
+def parse_sgr(text: Text) -> Iterable[Text | Attr | Foreground | Background]:
     r"""
     Parse a Select Graphic Rendition (SGR) escape sequence.
 
@@ -72,6 +78,9 @@ def parse_sgr(text: Text) -> Iterable[Text | Attr]:
     ...     code
     <Attr.BOLD: 1>
     '\x1b[31m'
+    >>> for code in parse_sgr(f"{CSI}48;2;100;10;255m"):
+    ...     code
+    Background(color=Color(red=100, green=10, blue=255))
     >>> list(parse_sgr(f"{CSI}0m")) == list(parse_sgr("\x1B[m"))
     True
     """
@@ -79,14 +88,39 @@ def parse_sgr(text: Text) -> Iterable[Text | Attr]:
     if not text:
         yield Attr.NORMAL
     else:
-        code: Text | int
-        for code in text.split(";"):
-            if code:
-                code = int(code)
-                try:
-                    yield Attr(code)
-                except ValueError:
-                    yield sgr(code)
+        if text.startswith("38"):
+            text = text[3:]
+            yield Foreground(parse_rgb(text))
+        elif text.startswith("48"):
+            text = text[3:]
+            yield Background(parse_rgb(text))
+        else:
+            code: Text | int
+            for code in text.split(";"):
+                if code:
+                    code = int(code)
+                    try:
+                        yield Attr(code)
+                    except ValueError:
+                        yield sgr(code)
+
+
+def parse_rgb(text: Text) -> Color:
+    r"""
+    Parse only the relevant part of a 24-bit RGB color escape sequence (examples below).
+
+    This raises an exception if the input does not start with "2;", as 256-color escape
+    sequences are not supported at the moment.
+
+    Examples
+    --------
+    >>> parse_rgb(f"2;255;100;0")
+    Color(red=255, green=100, blue=0)
+    """
+    if not text.startswith("2;"):
+        raise ValueError(f"{text} is not a 24-bit RGB color escape sequence")
+    text = text[2:]
+    return Color(*map(int, text.split(";")))
 
 
 def issgr(text: Text) -> bool:
