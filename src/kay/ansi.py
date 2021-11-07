@@ -87,22 +87,21 @@ def parse_sgr(text: Text) -> Iterable[Text | Attr | Foreground | Background]:
     text = text[2:-1]
     if not text:
         yield Attr.NORMAL
+    elif text.startswith("38"):
+        text = text[3:]
+        yield Foreground(parse_rgb(text))
+    elif text.startswith("48"):
+        text = text[3:]
+        yield Background(parse_rgb(text))
     else:
-        if text.startswith("38"):
-            text = text[3:]
-            yield Foreground(parse_rgb(text))
-        elif text.startswith("48"):
-            text = text[3:]
-            yield Background(parse_rgb(text))
-        else:
-            code: Text | int
-            for code in text.split(";"):
-                if code:
-                    code = int(code)
-                    try:
-                        yield Attr(code)
-                    except ValueError:
-                        yield sgr(code)
+        code: Text | int
+        for code in text.split(";"):
+            if code:
+                code = int(code)
+                try:
+                    yield Attr(code)
+                except ValueError:
+                    yield sgr(code)
 
 
 def parse_rgb(text: Text) -> Color:

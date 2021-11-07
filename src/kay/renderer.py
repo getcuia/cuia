@@ -129,24 +129,44 @@ class CursesRenderer(Renderer):
         """
         if isinstance(color, Foreground):
             self.foreground = color.color
-        if isinstance(color, Background):
+        elif isinstance(color, Background):
             self.background = color.color
-        if self.foreground not in self.colors:
-            self.colors[self.foreground] = len(self.colors) - 1
-            assert self.foreground is not None
-            curses.init_color(self.colors[self.foreground], *self.foreground)
-        if self.background not in self.colors:
-            self.colors[self.background] = len(self.colors) - 1
-            assert self.background is not None
-            curses.init_color(self.colors[self.background], *self.background)
+
+        self._init_color(self.foreground)
+        self._init_color(self.background)
+
+        self._init_pair(self.foreground, self.background)
+        return curses.color_pair(self.pairs[(self.foreground, self.background)])
+
+    def _init_color(self, color: Optional[Color], n: Optional[int] = None) -> None:
+        """
+        Initialize color.
+
+        This initializes the color if it is not yet initialized.
+        """
+        if color not in self.colors:
+            self.colors[color] = n or len(self.colors) - 1
+            if color is not None:
+                curses.init_color(self.colors[color], *color)
+
+    def _init_pair(
+        self,
+        foreground: Optional[Color],
+        background: Optional[Color],
+        n: Optional[int] = None,
+    ) -> None:
+        """
+        Initialize color pair.
+
+        This initializes the color pair if it is not yet initialized.
+        """
         if (self.foreground, self.background) not in self.pairs:
-            self.pairs[(self.foreground, self.background)] = len(self.pairs) - 1
+            self.pairs[(self.foreground, self.background)] = n or len(self.pairs) - 1
             curses.init_pair(
                 self.pairs[(self.foreground, self.background)],
                 self.colors[self.foreground],
                 self.colors[self.background],
             )
-        return curses.color_pair(self.pairs[(self.foreground, self.background)])
 
     # TODO: this does not seem to need to be a coroutine
     async def render(self, view: Text) -> None:
@@ -157,15 +177,14 @@ class CursesRenderer(Renderer):
         for piece in ansi.parse(view):
             if isinstance(piece, Text):
                 self._stdscr.addstr(piece)
+            elif piece == Attr.NORMAL:
+                self._reset_attributes()
+            elif isinstance(piece, Attr):
+                curses_attr = self._translate_attribute(piece)
+                self._stdscr.attron(curses_attr)
             else:
-                if piece == Attr.NORMAL:
-                    self._reset_attributes()
-                elif isinstance(piece, Attr):
-                    curses_attr = self._translate_attribute(piece)
-                    self._stdscr.attron(curses_attr)
-                else:
-                    curses_attr = self._translate_color(piece)
-                    self._stdscr.attron(curses_attr)
+                curses_attr = self._translate_color(piece)
+                self._stdscr.attron(curses_attr)
         self._stdscr.noutrefresh()
         curses.doupdate()
 
