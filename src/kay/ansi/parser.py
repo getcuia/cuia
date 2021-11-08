@@ -144,7 +144,8 @@ class Parser:
 
                 yield cls(Color.frombytes(red.param, green.param, blue.param))
             else:
-                # Send them back, we don't support 256-color mode yet.
+                # Send them back, we don't support 256-color mode yet (and we might
+                # never do).
                 yield token
                 yield bits
 
@@ -156,7 +157,6 @@ class Parser:
             yield from _rgb(Foreground)
         elif token.param == 48:
             yield from _rgb(Background)
-        # FIXME: support bright colors
         else:
             yield token
 

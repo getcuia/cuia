@@ -31,7 +31,7 @@ class CursesRenderer(Renderer):
         curses.start_color()
         curses.use_default_colors()
         # More:
-        # https://github.com/gyscos/cursive/blob/c4c74c02996f3f6e66136b51a4d83d2562af740a/cursive/src/backends/curses/n.rs#L133-L143
+        # https://github.com/gyscos/cursive/blob/c4c74c02996f3f6e66136b51a4d83d2562af740a/cursive/src/backends/curses/n.rs#L137-L143
         for hue in (
             None,
             color.BLACK,
