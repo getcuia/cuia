@@ -11,6 +11,8 @@ from kay.ansi.token import Token
 
 def xyz_to_uv(x: float, y: float, z: float) -> tuple[float, float]:
     """Convert XYZ to chromaticity coordinates u'v'."""
+    if x == y == 0:
+        return 0, 0
     d = x + 15 * y + 3 * z
     return 4 * x / d, 9 * y / d
 
@@ -176,7 +178,7 @@ class Color(NamedTuple):
     @staticmethod
     def fromlch(ell: float, c: float, h: float) -> Color:
         """
-        Create a Color from CIE L*C*h* coordinates.
+        Create a Color from CIE LCh coordinates.
 
         The input refers to a D65/2° standard illuminant.
         The returned angle h is in radians.
@@ -270,30 +272,29 @@ class Color(NamedTuple):
             yield Token(marker="m", param=green)
             yield Token(marker="m", param=blue)
 
-    def brightness(self) -> float:
+    @property
+    def lightness(self) -> float:
         """
-        Return the brightness of this color.
+        Return the lightness of this color as per the CIE L*u*v*/LCh color models.
 
-        The brightness is a value between 0.0 and 1.0.
-
-        Source: [Web Content Accessibility Guidelines (Version 1.0)](https://www.w3.org/TR/AERT/#color-contrast).
+        The lightness is a value between 0.0 and 1.0.
 
         Examples
         --------
-        >>> Color(0, 0, 0).brightness()
+        >>> Color(0, 0, 0).lightness
         0.0
-        >>> Color.frombytes(23, 23, 23).brightness()  # doctest: +NUMBER
-        0.0902
-        >>> Color.frombytes(255, 255, 255).brightness()  # doctest: +NUMBER
+        >>> Color.frombytes(23, 23, 23).lightness  # doctest: +NUMBER
+        0.077396
+        >>> Color.frombytes(255, 255, 255).lightness  # doctest: +NUMBER
         1.0
         """
-        return 0.299 * self.red + 0.587 * self.green + 0.114 * self.blue
+        return self.toluv()[0]
 
     def islight(self) -> bool:
         """
         Return True if this color is light.
 
-        A color is considered light if its brightness is greater than 0.5.
+        A color is considered light if its lightness is greater than 0.5.
 
         Examples
         --------
@@ -302,7 +303,7 @@ class Color(NamedTuple):
         >>> WHITE.islight()
         True
         """
-        return self.brightness() > 0.5
+        return self.lightness > 0.5
 
     def isdark(self) -> bool:
         """
