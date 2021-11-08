@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterable, NamedTuple, Text
+from typing import Iterable, Iterator, NamedTuple, Text
 
 from kay.ansi.token import Token
 
@@ -58,6 +58,46 @@ class Color(NamedTuple):
         if code in {37, 47}:
             return WHITE
         raise ValueError(f"Invalid color code: {code}")
+
+    def _tokens(self) -> Iterator[Token]:
+        """
+        Yield **dummy** ANSI tokens for this color.
+
+        The tokens yielded are not actually valid ANSI tokens because the
+        first token always starts at zero (when it should have been between
+        30-38, 40-48, etc.)
+
+        This is for internal use only.
+
+        Examples
+        --------
+        >>> list(BLACK._tokens())
+        [Token(marker='m', param=0)]
+        >>> list(WHITE._tokens())
+        [Token(marker='m', param=7)]
+        """
+        if self == BLACK:
+            yield Token(marker="m", param=0)
+        elif self == RED:
+            yield Token(marker="m", param=1)
+        elif self == GREEN:
+            yield Token(marker="m", param=2)
+        elif self == YELLOW:
+            yield Token(marker="m", param=3)
+        elif self == BLUE:
+            yield Token(marker="m", param=4)
+        elif self == MAGENTA:
+            yield Token(marker="m", param=5)
+        elif self == CYAN:
+            yield Token(marker="m", param=6)
+        elif self == WHITE:
+            yield Token(marker="m", param=7)
+        else:
+            yield Token(marker="m", param=8)
+            yield Token(marker="m", param=2)
+            yield Token(marker="m", param=int(255 * self.red))
+            yield Token(marker="m", param=int(255 * self.green))
+            yield Token(marker="m", param=int(255 * self.blue))
 
     def brightness(self) -> float:
         """
@@ -163,29 +203,10 @@ class Foreground:
 
     def tokens(self) -> Iterable[Token]:
         """Yield the tokens to set the foreground color."""
-        # TODO: most of this logic should be in the Color class
-        if self.color == BLACK:
-            yield Token(marker="m", param=30)
-        if self.color == RED:
-            yield Token(marker="m", param=31)
-        if self.color == GREEN:
-            yield Token(marker="m", param=32)
-        if self.color == YELLOW:
-            yield Token(marker="m", param=33)
-        if self.color == BLUE:
-            yield Token(marker="m", param=34)
-        if self.color == MAGENTA:
-            yield Token(marker="m", param=35)
-        if self.color == CYAN:
-            yield Token(marker="m", param=36)
-        if self.color == WHITE:
-            yield Token(marker="m", param=37)
-        else:
-            yield Token(marker="m", param=38)
-            yield Token(marker="m", param=2)
-            yield Token(marker="m", param=int(255 * self.color.red))
-            yield Token(marker="m", param=int(255 * self.color.green))
-            yield Token(marker="m", param=int(255 * self.color.blue))
+        _tokens = self.color._tokens()
+        head = next(_tokens)
+        yield Token(marker=head.marker, param=head.param + 30)
+        yield from _tokens
 
     def __str__(self) -> Text:
         """Return a string representation of this foreground color."""
@@ -200,29 +221,10 @@ class Background:
 
     def tokens(self) -> Iterable[Token]:
         """Yield the tokens to set the background color."""
-        # TODO: most of this logic should be in the Color class
-        if self.color == BLACK:
-            yield Token(marker="m", param=40)
-        if self.color == RED:
-            yield Token(marker="m", param=41)
-        if self.color == GREEN:
-            yield Token(marker="m", param=42)
-        if self.color == YELLOW:
-            yield Token(marker="m", param=43)
-        if self.color == BLUE:
-            yield Token(marker="m", param=44)
-        if self.color == MAGENTA:
-            yield Token(marker="m", param=45)
-        if self.color == CYAN:
-            yield Token(marker="m", param=46)
-        if self.color == WHITE:
-            yield Token(marker="m", param=47)
-        else:
-            yield Token(marker="m", param=48)
-            yield Token(marker="m", param=2)
-            yield Token(marker="m", param=int(255 * self.color.red))
-            yield Token(marker="m", param=int(255 * self.color.green))
-            yield Token(marker="m", param=int(255 * self.color.blue))
+        _tokens = self.color._tokens()
+        head = next(_tokens)
+        yield Token(marker=head.marker, param=head.param + 40)
+        yield from _tokens
 
     def __str__(self) -> Text:
         """Return a string representation of this background color."""
