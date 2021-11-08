@@ -131,7 +131,7 @@ class Color(NamedTuple):
         """
         return 0.299 * self.red + 0.587 * self.green + 0.114 * self.blue
 
-    def is_light(self) -> bool:
+    def islight(self) -> bool:
         """
         Return True if this color is light.
 
@@ -139,14 +139,14 @@ class Color(NamedTuple):
 
         Examples
         --------
-        >>> BLACK.is_light()
+        >>> BLACK.islight()
         False
-        >>> WHITE.is_light()
+        >>> WHITE.islight()
         True
         """
         return self.brightness() > 0.5
 
-    def is_dark(self) -> bool:
+    def isdark(self) -> bool:
         """
         Return True if this color is dark.
 
@@ -154,12 +154,12 @@ class Color(NamedTuple):
 
         Examples
         --------
-        >>> BLACK.is_dark()
+        >>> BLACK.isdark()
         True
-        >>> WHITE.is_dark()
+        >>> WHITE.isdark()
         False
         """
-        return not self.is_light()
+        return not self.islight()
 
     def luminance(self) -> float:
         """
