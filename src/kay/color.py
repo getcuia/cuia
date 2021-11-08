@@ -8,6 +8,42 @@ from typing import Iterable, Iterator, NamedTuple, Text
 from kay.ansi.token import Token
 
 
+def xyz_to_luv(x: float, y: float, z: float) -> tuple[float, float, float]:
+    """
+    Convert CIE XYZ to CIE LUV.
+
+    The input refers to a D65/2° standard illuminant.
+
+    Source: https://en.wikipedia.org/wiki/CIELUV#The_forward_transformation.
+
+    Examples:
+    >>> xyz_to_luv(0.95047, 1.0, 1.08883)
+    (1.0, 0.0, 0.0)
+    >>> xyz_to_luv(0.5, 0.5, 0.5)  # doctest: +NUMBER
+    (0.760693, 0.125457, 0.052885)
+    """
+
+    def xyz_to_uv(x: float, y: float, z: float) -> tuple[float, float]:
+        d = x + 15 * y + 3 * z
+        return 4 * x / d, 9 * y / d
+
+    u, v = xyz_to_uv(x, y, z)
+
+    # Reference values refer to a D65/2° standard illuminant.
+    ref_x, ref_y, ref_z = 0.95047, 1.00000, 1.08883
+    ref_u, ref_v = xyz_to_uv(ref_x, ref_y, ref_z)
+
+    epsilon = 0.008856451679035631
+    if y > epsilon:
+        ell = 116 * y ** (1 / 3) - 16
+    else:
+        kappa = 903.2962962962961
+        ell = kappa * y
+    u, v = 13 * ell * (u - ref_u), 13 * ell * (v - ref_v)
+
+    return ell / 100, u / 100, v / 100
+
+
 class Color(NamedTuple):
     """
     An RGB color.
