@@ -21,6 +21,7 @@ class Program:
     model: Model
     messages: Optional[Queue[Message]] = None
     commands: Optional[Queue[Command]] = None
+    should_render: bool = True
     should_quit: bool = False
     # output: TextIO = sys.stdout
     # input: TextIO = sys.stdin
@@ -74,6 +75,9 @@ class Program:
             command = self.model.update(message)
             await self.enqueue_command(command)
 
+            # Remember to render the next time
+            self.should_render = True
+
     async def handle_command(self, command: Optional[Command]) -> None:
         """Handle a command if it is not None."""
         if command:
@@ -92,8 +96,10 @@ class Program:
 
         while not self.should_quit:
             # It is important to show something on the screen as soon as possible
-            view = self.model.view()
-            await renderer.render(view)
+            if self.should_render:
+                view = self.model.view()
+                await renderer.render(view)
+                self.should_render = False
 
             # Handle commands first because we might already have one at the beginning
             command = self.dequeue_command()
