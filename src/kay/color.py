@@ -20,7 +20,21 @@ class Color(NamedTuple):
     blue: int
 
     @staticmethod
-    def from_int(code: int) -> Color:
+    def frombytes(red: int, green: int, blue: int) -> Color:
+        """
+        Create a Color from bytes.
+
+        Examples
+        --------
+        >>> Color.frombytes(0, 0, 0)
+        Color(red=0, green=0, blue=0)
+        >>> Color.frombytes(255, 255, 255)
+        Color(red=255, green=255, blue=255)
+        """
+        return Color(red, green, blue)
+
+    @staticmethod
+    def fromint(code: int) -> Color:
         """
         Create a color from an integer.
 
