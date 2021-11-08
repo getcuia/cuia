@@ -62,9 +62,11 @@ class Color(NamedTuple):
         >>> Color.fromxyz(0.203446104, 0.214041140, 0.233090801)  # doctest: +NUMBER
         Color(red=0.5, green=0.5, blue=0.5)
         """
-        red = 3.2406 * x + -1.5372 * y + -0.4986 * z
-        green = -0.9689 * x + 1.8758 * y + 0.0415 * z
-        blue = 0.0557 * x + -0.2040 * y + 1.0570 * z
+        # We're using a higher precision matrix here see
+        # <https://en.wikipedia.org/wiki/SRGB#sYCC_extended-gamut_transformation>
+        red = 3.2406254 * x - 1.537208 * y - 0.4986286 * z
+        green = -0.9689307 * x + 1.8757561 * y + 0.0415175 * z
+        blue = 0.0557101 * x - 0.2040211 * y + 1.0569959 * z
 
         if red > 0.0031308:
             red = 1.055 * (red ** (1 / 2.4)) - 0.055
