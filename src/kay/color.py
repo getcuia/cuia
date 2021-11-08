@@ -8,6 +8,19 @@ from typing import Iterable, Iterator, NamedTuple, Text
 from kay.ansi.token import Token
 
 
+def xyz_to_uv(x: float, y: float, z: float) -> tuple[float, float]:
+    """Convert XYZ to chromaticity coordinates u'v'."""
+    d = x + 15 * y + 3 * z
+    return 4 * x / d, 9 * y / d
+
+
+# CIE XYZ reference values to a D65/2° standard illuminant.
+REF_XYZ_D65_2 = 0.95047, 1.00000, 1.08883
+REF_UV_D65_2 = xyz_to_uv(*REF_XYZ_D65_2)
+
+KAPPA = 903.2962962962961
+
+
 def xyz_to_luv(x: float, y: float, z: float) -> tuple[float, float, float]:
     """
     Convert CIE XYZ to CIE LUV.
@@ -17,31 +30,54 @@ def xyz_to_luv(x: float, y: float, z: float) -> tuple[float, float, float]:
     Source: https://en.wikipedia.org/wiki/CIELUV#The_forward_transformation.
 
     Examples:
-    >>> xyz_to_luv(0.95047, 1.0, 1.08883)
+    >>> xyz_to_luv(*REF_XYZ_D65_2)
     (1.0, 0.0, 0.0)
     >>> xyz_to_luv(0.5, 0.5, 0.5)  # doctest: +NUMBER
     (0.760693, 0.125457, 0.052885)
     """
-
-    def xyz_to_uv(x: float, y: float, z: float) -> tuple[float, float]:
-        d = x + 15 * y + 3 * z
-        return 4 * x / d, 9 * y / d
-
+    ref_u, ref_v = REF_UV_D65_2
     u, v = xyz_to_uv(x, y, z)
-
-    # Reference values refer to a D65/2° standard illuminant.
-    ref_x, ref_y, ref_z = 0.95047, 1.00000, 1.08883
-    ref_u, ref_v = xyz_to_uv(ref_x, ref_y, ref_z)
 
     epsilon = 0.008856451679035631
     if y > epsilon:
         ell = 116 * y ** (1 / 3) - 16
     else:
-        kappa = 903.2962962962961
-        ell = kappa * y
+        ell = KAPPA * y
     u, v = 13 * ell * (u - ref_u), 13 * ell * (v - ref_v)
 
     return ell / 100, u / 100, v / 100
+
+
+def luv_to_xyz(ell: float, u: float, v: float) -> tuple[float, float, float]:
+    """
+    Convert CIE LUV to CIE XYZ.
+
+    The output refers to a D65/2° standard illuminant.
+
+    Source: https://en.wikipedia.org/wiki/CIELUV#The_reverse_transformation.
+
+    Examples:
+    >>> luv_to_xyz(0.5, 0.5, 0.5)  # doctest: +NUMBER
+    (0.208831, 0.184187, 0.022845)
+    """
+
+    def luv_to_uv(ell: float, u: float, v: float) -> tuple[float, float]:
+        d = 13 * ell
+        return u / d + ref_u, v / d + ref_v
+
+    ell, u, v = 100 * ell, 100 * u, 100 * v
+
+    ref_u, ref_v = REF_UV_D65_2
+    u, v = luv_to_uv(ell, u, v)
+
+    four_v = 4 * v
+    if ell > 8:
+        y = ((ell + 16) / 116) ** 3
+    else:
+        y = ell / KAPPA
+    x, z = 9 * y * u / four_v, y * (12 - 3 * u - 20 * v) / four_v
+
+    return x, y, z
 
 
 class Color(NamedTuple):
