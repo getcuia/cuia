@@ -5,6 +5,8 @@ from __future__ import annotations
 from enum import Enum
 from typing import Text
 
+from kay.ansi.token import Token
+
 
 class Attr(Enum):
     r"""
@@ -27,18 +29,10 @@ class Attr(Enum):
     #
     REVERSE = 7
 
-    def __str__(self):
+    def token(self) -> Token:
+        """Return a Token with this attribute."""
+        return Token(marker="m", param=self.value)
+
+    def __str__(self) -> Text:
         """Return the ANSI escape sequence for this attribute."""
-        return sgr(self.value)
-
-
-def sgr(code: Text | int) -> Text:
-    r"""
-    Convert an SGR code to an ANSI escape sequence.
-
-    Examples
-    --------
-    >>> sgr(1)
-    '\x1b[1m'
-    """
-    return f"\N{ESC}[{code}m"
+        return Text(self.token())

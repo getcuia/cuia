@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import NamedTuple, Text
+from typing import Iterable, NamedTuple, Text
 
-from kay.attr import sgr
+from kay.ansi.token import Token
 
 
 class Color(NamedTuple):
@@ -161,25 +161,35 @@ class Foreground:
 
     color: Color
 
+    def tokens(self) -> Iterable[Token]:
+        """Yield the tokens to set the foreground color."""
+        # TODO: most of this logic should be in the Color class
+        if self.color == BLACK:
+            yield Token(marker="m", param=30)
+        if self.color == RED:
+            yield Token(marker="m", param=31)
+        if self.color == GREEN:
+            yield Token(marker="m", param=32)
+        if self.color == YELLOW:
+            yield Token(marker="m", param=33)
+        if self.color == BLUE:
+            yield Token(marker="m", param=34)
+        if self.color == MAGENTA:
+            yield Token(marker="m", param=35)
+        if self.color == CYAN:
+            yield Token(marker="m", param=36)
+        if self.color == WHITE:
+            yield Token(marker="m", param=37)
+        else:
+            yield Token(marker="m", param=38)
+            yield Token(marker="m", param=2)
+            yield Token(marker="m", param=int(255 * self.color.red))
+            yield Token(marker="m", param=int(255 * self.color.green))
+            yield Token(marker="m", param=int(255 * self.color.blue))
+
     def __str__(self) -> Text:
         """Return a string representation of this foreground color."""
-        if self.color == BLACK:
-            return sgr("30")
-        if self.color == RED:
-            return sgr("31")
-        if self.color == GREEN:
-            return sgr("32")
-        if self.color == YELLOW:
-            return sgr("33")
-        if self.color == BLUE:
-            return sgr("34")
-        if self.color == MAGENTA:
-            return sgr("35")
-        if self.color == CYAN:
-            return sgr("36")
-        if self.color == WHITE:
-            return sgr("37")
-        return sgr(f"38;2;{self.color.red};{self.color.green};{self.color.blue}")
+        return Text(*self.tokens())
 
 
 @dataclass(frozen=True)
@@ -188,22 +198,32 @@ class Background:
 
     color: Color
 
+    def tokens(self) -> Iterable[Token]:
+        """Yield the tokens to set the background color."""
+        # TODO: most of this logic should be in the Color class
+        if self.color == BLACK:
+            yield Token(marker="m", param=40)
+        if self.color == RED:
+            yield Token(marker="m", param=41)
+        if self.color == GREEN:
+            yield Token(marker="m", param=42)
+        if self.color == YELLOW:
+            yield Token(marker="m", param=43)
+        if self.color == BLUE:
+            yield Token(marker="m", param=44)
+        if self.color == MAGENTA:
+            yield Token(marker="m", param=45)
+        if self.color == CYAN:
+            yield Token(marker="m", param=46)
+        if self.color == WHITE:
+            yield Token(marker="m", param=47)
+        else:
+            yield Token(marker="m", param=48)
+            yield Token(marker="m", param=2)
+            yield Token(marker="m", param=int(255 * self.color.red))
+            yield Token(marker="m", param=int(255 * self.color.green))
+            yield Token(marker="m", param=int(255 * self.color.blue))
+
     def __str__(self) -> Text:
         """Return a string representation of this background color."""
-        if self.color == BLACK:
-            return sgr("40")
-        if self.color == RED:
-            return sgr("41")
-        if self.color == GREEN:
-            return sgr("42")
-        if self.color == YELLOW:
-            return sgr("43")
-        if self.color == BLUE:
-            return sgr("44")
-        if self.color == MAGENTA:
-            return sgr("45")
-        if self.color == CYAN:
-            return sgr("46")
-        if self.color == WHITE:
-            return sgr("47")
-        return sgr(f"48;2;{self.color.red};{self.color.green};{self.color.blue}")
+        return Text(*self.tokens())
