@@ -44,6 +44,43 @@ class Color(NamedTuple):
         """
         return (int(255 * self.red), int(255 * self.green), int(255 * self.blue))
 
+    @staticmethod
+    def fromxyz(x: float, y: float, z: float) -> Color:
+        """
+        Create a Color from XYZ coordinates.
+
+        The input refers to a D65/2° standard illuminant.
+
+        Source: https://en.wikipedia.org/wiki/SRGB#The_forward_transformation_(CIE_XYZ_to_sRGB).
+
+        Examples
+        --------
+        >>> Color.fromxyz(0, 0, 0)
+        Color(red=0.0, green=0.0, blue=0.0)
+        >>> Color.fromxyz(0.9505, 1.0000, 1.0890)  # doctest: +NUMBER
+        Color(red=1.0, green=1.0, blue=1.0)
+        >>> Color.fromxyz(0.203446104, 0.214041140, 0.233090801)  # doctest: +NUMBER
+        Color(red=0.5, green=0.5, blue=0.5)
+        """
+        red = 3.2406 * x + -1.5372 * y + -0.4986 * z
+        green = -0.9689 * x + 1.8758 * y + 0.0415 * z
+        blue = 0.0557 * x + -0.2040 * y + 1.0570 * z
+
+        if red > 0.0031308:
+            red = 1.055 * (red ** (1 / 2.4)) - 0.055
+        else:
+            red = 12.92 * red
+        if green > 0.0031308:
+            green = 1.055 * (green ** (1 / 2.4)) - 0.055
+        else:
+            green = 12.92 * green
+        if blue > 0.0031308:
+            blue = 1.055 * (blue ** (1 / 2.4)) - 0.055
+        else:
+            blue = 12.92 * blue
+
+        return Color(red, green, blue)
+
     def toxyz(self) -> tuple[float, float, float]:
         """
         Return the XYZ color for this color.
