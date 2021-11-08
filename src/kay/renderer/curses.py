@@ -8,7 +8,8 @@ from contextlib import contextmanager
 from curses import ascii
 from typing import Iterator, Optional, Text
 
-from kay import ansi, color
+from kay import color
+from kay.ansi.parser import Parser
 from kay.attr import Attr
 from kay.color import Background, Color, Foreground
 from kay.message import KeyMessage, Message
@@ -153,7 +154,9 @@ class CursesRenderer(Renderer):
         await asyncio.sleep(1 / 120)
         self._stdscr.erase()
         self._reset_attributes()
-        for piece in ansi.parse(view):
+        parser = Parser()
+        parser.tokenize(view)
+        for piece in parser.parse():
             if isinstance(piece, Text):
                 self._stdscr.addstr(piece)
             elif piece == Attr.NORMAL:
@@ -161,9 +164,10 @@ class CursesRenderer(Renderer):
             elif isinstance(piece, Attr):
                 curses_attr = self._translate_attribute(piece)
                 self._stdscr.attron(curses_attr)
-            else:
+            elif isinstance(piece, (Foreground, Background)):
                 curses_attr = self._translate_color(piece)
                 self._stdscr.attron(curses_attr)
+            # Silently ignore other pieces because they are probably unparsed Tokens.
         self._stdscr.noutrefresh()
         curses.doupdate()
 
