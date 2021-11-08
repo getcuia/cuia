@@ -123,9 +123,9 @@ class CursesRenderer(Renderer):
             self.colors[hue] = id or len(self.colors) - 1
             if hue is not None:
                 red, green, blue = hue
-                red = red * 1000 // 255
-                green = green * 1000 // 255
-                blue = blue * 1000 // 255
+                red = int(red * 1000)
+                green = int(green * 1000)
+                blue = int(blue * 1000)
                 curses.init_color(self.colors[hue], red, green, blue)
 
     def _init_pair(

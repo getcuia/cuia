@@ -52,14 +52,18 @@ class Parser:
         >>> p = Parser()
         >>> p.tokenize(f"\N{ESC}[0;31mHello\x1b[m, \x1B[1;32mWorld!\N{ESC}[0m")
         >>> for code in p.parse():
-        ...     code
+        ...     code  # doctest: +NORMALIZE_WHITESPACE
         <Attr.NORMAL: 0>
-        Foreground(color=Color(red=179, green=16, blue=14))
+        Foreground(color=Color(red=0.7019607843137254,
+                green=0.06274509803921569,
+                blue=0.054901960784313725))
         'Hello'
         <Attr.NORMAL: 0>
         ', '
         <Attr.BOLD: 1>
-        Foreground(color=Color(red=11, green=172, blue=22))
+        Foreground(color=Color(red=0.043137254901960784,
+                green=0.6745098039215687,
+                blue=0.08627450980392157))
         'World!'
         <Attr.NORMAL: 0>
 
@@ -68,7 +72,7 @@ class Parser:
         >>> p.tokenize("\x1B[38;2;0;255;0mHello, green!\x1b[m")
         >>> for code in p.parse():
         ...     code
-        Foreground(color=Color(red=0, green=255, blue=0))
+        Foreground(color=Color(red=0.0, green=1.0, blue=0.0))
         'Hello, green!'
         <Attr.NORMAL: 0>
         """

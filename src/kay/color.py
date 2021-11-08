@@ -12,12 +12,12 @@ class Color(NamedTuple):
     """
     An RGB color.
 
-    Each color is represented by three integers in the range 0-255.
+    Each color is represented by three floats between 0.0 and 1.0.
     """
 
-    red: int
-    green: int
-    blue: int
+    red: float
+    green: float
+    blue: float
 
     @staticmethod
     def frombytes(red: int, green: int, blue: int) -> Color:
@@ -27,11 +27,11 @@ class Color(NamedTuple):
         Examples
         --------
         >>> Color.frombytes(0, 0, 0)
-        Color(red=0, green=0, blue=0)
+        Color(red=0.0, green=0.0, blue=0.0)
         >>> Color.frombytes(255, 255, 255)
-        Color(red=255, green=255, blue=255)
+        Color(red=1.0, green=1.0, blue=1.0)
         """
-        return Color(red, green, blue)
+        return Color(red / 255, green / 255, blue / 255)
 
     @staticmethod
     def fromint(code: int) -> Color:
@@ -71,10 +71,10 @@ class Color(NamedTuple):
         --------
         >>> Color(0, 0, 0).brightness()
         0.0
-        >>> Color(255, 255, 255).brightness()
+        >>> Color.frombytes(255, 255, 255).brightness()  # doctest: +NUMBER
         1.0
         """
-        return (0.299 * self.red + 0.587 * self.green + 0.114 * self.blue) / 255
+        return 0.299 * self.red + 0.587 * self.green + 0.114 * self.blue
 
     def is_light(self) -> bool:
         """
@@ -109,14 +109,14 @@ class Color(NamedTuple):
 
 # The following colors were taken as the average of the colors found in
 # <https://en.wikipedia.org/wiki/ANSI_escape_code#3-bit_and_4-bit>.
-BLACK = Color(1, 1, 1)  # Color(0, 0, 0)
-RED = Color(179, 16, 14)  # Color(173, 0, 0)
-GREEN = Color(11, 172, 22)  # Color(0, 173, 0)
-YELLOW = Color(203, 176, 27)  # Color(173, 173, 0)
-BLUE = Color(10, 30, 186)  # Color(0, 0, 173)
-MAGENTA = Color(155, 20, 164)  # Color(173, 0, 173)
-CYAN = Color(34, 150, 184)  # Color(0, 173, 173)
-WHITE = Color(204, 205, 205)  # Color(173, 173, 173)
+BLACK = Color.frombytes(1, 1, 1)  # Color.frombytes(0, 0, 0)
+RED = Color.frombytes(179, 16, 14)  # Color.frombytes(173, 0, 0)
+GREEN = Color.frombytes(11, 172, 22)  # Color.frombytes(0, 173, 0)
+YELLOW = Color.frombytes(203, 176, 27)  # Color.frombytes(173, 173, 0)
+BLUE = Color.frombytes(10, 30, 186)  # Color.frombytes(0, 0, 173)
+MAGENTA = Color.frombytes(155, 20, 164)  # Color.frombytes(173, 0, 173)
+CYAN = Color.frombytes(34, 150, 184)  # Color.frombytes(0, 173, 173)
+WHITE = Color.frombytes(204, 205, 205)  # Color.frombytes(173, 173, 173)
 
 
 @dataclass(frozen=True)
