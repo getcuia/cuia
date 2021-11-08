@@ -121,7 +121,7 @@ class Parser:
 
         def _rgb(cls: Type[Foreground | Background]):
             """Parse an RGB color."""
-            assert self.tokens is not None
+            assert self.tokens is not None, "Parser has no tokens"
 
             bits = next(self.tokens)
             if isinstance(bits, Token) and bits.param == 2:
@@ -149,9 +149,9 @@ class Parser:
                 yield token
                 yield bits
 
-        if 30 <= token.param <= 37:
+        if 30 <= token.param < 38:
             yield Foreground(Color.fromint(token.param))
-        elif 40 <= token.param <= 47:
+        elif 40 <= token.param < 48:
             yield Background(Color.fromint(token.param))
         elif token.param == 38:
             yield from _rgb(Foreground)
