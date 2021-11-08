@@ -36,7 +36,7 @@ class Color(NamedTuple):
     """
     An RGB color.
 
-    Each color is represented by three floats between 0.0 and 1.0.
+    Each color is represented by three floats between 0 and 1.
     """
 
     red: float
@@ -81,7 +81,7 @@ class Color(NamedTuple):
         --------
         >>> Color.fromxyz(0, 0, 0)
         Color(red=0.0, green=0.0, blue=0.0)
-        >>> Color.fromxyz(0.9505, 1.0000, 1.0890)  # doctest: +NUMBER
+        >>> Color.fromxyz(0.9505, 1, 1.0890)  # doctest: +NUMBER
         Color(red=1.0, green=1.0, blue=1.0)
         >>> Color.fromxyz(0.203446104, 0.214041140, 0.233090801)  # doctest: +NUMBER
         Color(red=0.5, green=0.5, blue=0.5)
@@ -155,7 +155,7 @@ class Color(NamedTuple):
 
         Examples
         --------
-        >>> Color.fromluv(0.533890, 0.0, 0.0)  # doctest: +NUMBER
+        >>> Color.fromluv(0.533890, 0, 0)  # doctest: +NUMBER
         Color(red=0.5, green=0.5, blue=0.5)
         """
         return Color.fromxyz(*luv_to_xyz(ell, u, v))
@@ -185,7 +185,7 @@ class Color(NamedTuple):
 
         Examples
         --------
-        >>> Color.fromlch(0.533890, 0.0, 0.0)  # doctest: +NUMBER
+        >>> Color.fromlch(0.533890, 0, 0)  # doctest: +NUMBER
         Color(red=0.5, green=0.5, blue=0.5)
         """
         return Color.fromluv(*lch_to_luv(ell, c, h))
@@ -275,9 +275,9 @@ class Color(NamedTuple):
     @property
     def lightness(self) -> float:
         """
-        Return the lightness of this color as per the CIE L*u*v*/LCh color models.
+        Return the lightness of this color as per the CIE L*u*v*/LCh color spaces.
 
-        The lightness is a value between 0.0 and 1.0.
+        The lightness is a value between 0 and 1.
 
         Examples
         --------
@@ -289,6 +289,42 @@ class Color(NamedTuple):
         1.0
         """
         return self.toluv()[0]
+
+    @property
+    def chroma(self) -> float:
+        """
+        Return the chroma of this color as per the CIE LCh color space.
+
+        The chroma is a value between 0 and 1.
+
+        Examples
+        --------
+        >>> Color(0, 0, 0).chroma
+        0.0
+        >>> Color.frombytes(30, 60, 90).chroma  # doctest: +NUMBER
+        0.3
+        >>> Color.frombytes(255, 255, 255).chroma  # doctest: +NUMBER
+        0.0
+        """
+        return self.tolch()[1]
+
+    @property
+    def hue(self) -> float:
+        """
+        Return the hue of this color as per the CIE LCh color space.
+
+        The hue is a value between 0 and 2π.
+
+        Examples
+        --------
+        >>> Color(0, 0, 0).hue
+        3.141592653589793
+        >>> Color.frombytes(30, 60, 90).hue  # doctest: +NUMBER
+        4.2
+        >>> Color.frombytes(0, 255, 0).hue  # doctest: +NUMBER
+        2.3
+        """
+        return self.tolch()[2]
 
     def islight(self) -> bool:
         """
