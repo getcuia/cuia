@@ -192,6 +192,21 @@ class Color(NamedTuple):
         z = 0.0193 * red + 0.1192 * green + 0.9505 * blue
         return x, y, z
 
+    def toluv(self) -> tuple[float, float, float]:
+        """
+        Return the Luv color for this color.
+
+        The output refers to a D65/2° standard illuminant.
+
+        Source: https://en.wikipedia.org/wiki/CIELUV#The_reverse_transformation.
+
+        Examples
+        --------
+        >>> Color(0.5, 0.5, 0.5).toluv()  # doctest: +NUMBER
+        (0.533890, 0.0, 0.0)
+        """
+        return xyz_to_luv(*self.toxyz())
+
     @staticmethod
     def fromint(code: int) -> Color:
         """
