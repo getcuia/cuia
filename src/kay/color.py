@@ -83,20 +83,39 @@ def luv_to_xyz(ell: float, u: float, v: float) -> tuple[float, float, float]:
 
 def luv_to_lch(ell: float, u: float, v: float) -> tuple[float, float, float]:
     """
-    Convert CIE Luv to CIE LCH.
+    Convert CIE Luv to CIE LCh.
 
     The input refers to a D65/2° standard illuminant.
+    The angle returned is in radians.
 
-    Source: https://en.wikipedia.org/wiki/CIELUV#The_reverse_transformation.
+    Source: https://en.wikipedia.org/wiki/CIELUV#Cylindrical_representation_(CIELCh).
 
     Examples:
     >>> luv_to_lch(0.5, 0.5, 0.5)  # doctest: +NUMBER
     (0.5, 0.707107, 0.7853981633974483)
     """
-    h = math.atan2(v, u)
+    h = math.atan2(u, v)
     c = math.hypot(u, v)
     h = h + math.tau if h < 0 else h
     return ell, c, h
+
+
+def lch_to_luv(ell: float, c: float, h: float) -> tuple[float, float, float]:
+    """
+    Convert CIE LCh to CIE Luv.
+
+    The output refers to a D65/2° standard illuminant.
+    The angle is in radians.
+
+    Source: https://observablehq.com/@mbostock/luv-and-hcl#cell-219.
+
+    Examples:
+    >>> lch_to_luv(0.5, 0.707107, 0.7853981633974483)  # doctest: +NUMBER
+    (0.5, 0.5, 0.5)
+    """
+    u = c * math.cos(h)
+    v = c * math.sin(h)
+    return ell, u, v
 
 
 class Color(NamedTuple):
