@@ -33,6 +33,17 @@ class Color(NamedTuple):
         """
         return Color(red / 255, green / 255, blue / 255)
 
+    def tobytes(self) -> tuple[int, int, int]:
+        """
+        Return the bytes for this color.
+
+        Examples
+        --------
+        >>> Color.frombytes(10, 20, 30).tobytes() == (10, 20, 30)
+        True
+        """
+        return (int(255 * self.red), int(255 * self.green), int(255 * self.blue))
+
     @staticmethod
     def fromint(code: int) -> Color:
         """
@@ -95,9 +106,11 @@ class Color(NamedTuple):
         else:
             yield Token(marker="m", param=8)
             yield Token(marker="m", param=2)
-            yield Token(marker="m", param=int(255 * self.red))
-            yield Token(marker="m", param=int(255 * self.green))
-            yield Token(marker="m", param=int(255 * self.blue))
+
+            red, green, blue = self.tobytes()
+            yield Token(marker="m", param=red)
+            yield Token(marker="m", param=green)
+            yield Token(marker="m", param=blue)
 
     def brightness(self) -> float:
         """
