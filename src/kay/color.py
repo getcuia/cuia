@@ -71,6 +71,8 @@ class Color(NamedTuple):
         --------
         >>> Color(0, 0, 0).brightness()
         0.0
+        >>> Color.frombytes(23, 23, 23).brightness()  # doctest: +NUMBER
+        0.0902
         >>> Color.frombytes(255, 255, 255).brightness()  # doctest: +NUMBER
         1.0
         """
