@@ -44,6 +44,43 @@ class Color(NamedTuple):
         """
         return (int(255 * self.red), int(255 * self.green), int(255 * self.blue))
 
+    def toxyz(self) -> tuple[float, float, float]:
+        """
+        Return the XYZ color for this color.
+
+        The output refers to a D65/2° standard illuminant.
+
+        Source: https://en.wikipedia.org/wiki/SRGB#The_reverse_transformation_(sRGB_to_CIE_XYZ).
+
+        Examples
+        --------
+        >>> Color(0, 0, 0).toxyz()
+        (0.0, 0.0, 0.0)
+        >>> Color(1, 1, 1).toxyz()  # doctest: +NUMBER
+        (0.9505, 1.0000, 1.0890)
+        >>> Color(0.5, 0.5, 0.5).toxyz()  # doctest: +NUMBER
+        (0.203446104, 0.214041140, 0.233090801)
+        """
+        red, green, blue = self
+
+        if red > 0.04045:
+            red = ((red + 0.055) / 1.055) ** 2.4
+        else:
+            red = red / 12.92
+        if green > 0.04045:
+            green = ((green + 0.055) / 1.055) ** 2.4
+        else:
+            green = green / 12.92
+        if blue > 0.04045:
+            blue = ((blue + 0.055) / 1.055) ** 2.4
+        else:
+            blue = blue / 12.92
+
+        x = 0.4124 * red + 0.3576 * green + 0.1805 * blue
+        y = 0.2126 * red + 0.7152 * green + 0.0722 * blue
+        z = 0.0193 * red + 0.1192 * green + 0.9505 * blue
+        return x, y, z
+
     @staticmethod
     def fromint(code: int) -> Color:
         """
