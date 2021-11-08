@@ -15,16 +15,24 @@ def xyz_to_uv(x: float, y: float, z: float) -> tuple[float, float]:
     return 4 * x / d, 9 * y / d
 
 
+def luv_to_uv(ell: float, u: float, v: float) -> tuple[float, float]:
+    """Convert CIE L*u*v* to chromaticity coordinates u'v'."""
+    d = 13 * ell
+    return u / d + REF_UV_D65_2[0], v / d + REF_UV_D65_2[1]
+
+
 # CIE XYZ reference values to a D65/2° standard illuminant.
 REF_XYZ_D65_2 = 0.95047, 1.00000, 1.08883
 REF_UV_D65_2 = xyz_to_uv(*REF_XYZ_D65_2)
 
+
+# Constant used in the CIE L*u*v* to XYZ conversion.
 KAPPA = 903.2962962962961
 
 
 def xyz_to_luv(x: float, y: float, z: float) -> tuple[float, float, float]:
     """
-    Convert CIE XYZ to CIE Luv.
+    Convert CIE XYZ to CIE L*u*v*.
 
     The input refers to a D65/2° standard illuminant.
 
@@ -36,7 +44,6 @@ def xyz_to_luv(x: float, y: float, z: float) -> tuple[float, float, float]:
     >>> xyz_to_luv(0.5, 0.5, 0.5)  # doctest: +NUMBER
     (0.760693, 0.125457, 0.052885)
     """
-    ref_u, ref_v = REF_UV_D65_2
     u, v = xyz_to_uv(x, y, z)
 
     epsilon = 0.008856451679035631
@@ -44,14 +51,14 @@ def xyz_to_luv(x: float, y: float, z: float) -> tuple[float, float, float]:
         ell = 116 * y ** (1 / 3) - 16
     else:
         ell = KAPPA * y
-    u, v = 13 * ell * (u - ref_u), 13 * ell * (v - ref_v)
+    u, v = 13 * ell * (u - REF_UV_D65_2[0]), 13 * ell * (v - REF_UV_D65_2[1])
 
     return ell / 100, u / 100, v / 100
 
 
 def luv_to_xyz(ell: float, u: float, v: float) -> tuple[float, float, float]:
     """
-    Convert CIE Luv to CIE XYZ.
+    Convert CIE L*u*v* to CIE XYZ.
 
     The output refers to a D65/2° standard illuminant.
 
@@ -61,14 +68,7 @@ def luv_to_xyz(ell: float, u: float, v: float) -> tuple[float, float, float]:
     >>> luv_to_xyz(0.5, 0.5, 0.5)  # doctest: +NUMBER
     (0.208831, 0.184187, 0.022845)
     """
-
-    def luv_to_uv(ell: float, u: float, v: float) -> tuple[float, float]:
-        d = 13 * ell
-        return u / d + ref_u, v / d + ref_v
-
     ell, u, v = 100 * ell, 100 * u, 100 * v
-
-    ref_u, ref_v = REF_UV_D65_2
     u, v = luv_to_uv(ell, u, v)
 
     four_v = 4 * v
@@ -83,29 +83,31 @@ def luv_to_xyz(ell: float, u: float, v: float) -> tuple[float, float, float]:
 
 def luv_to_lch(ell: float, u: float, v: float) -> tuple[float, float, float]:
     """
-    Convert CIE Luv to CIE LCh.
+    Convert CIE L*u*v* to CIE LCh.
 
     The input refers to a D65/2° standard illuminant.
-    The angle returned is in radians.
+    The returned angle h is in radians.
 
     Source: https://en.wikipedia.org/wiki/CIELUV#Cylindrical_representation_(CIELCh).
 
     Examples:
     >>> luv_to_lch(0.5, 0.5, 0.5)  # doctest: +NUMBER
     (0.5, 0.707107, 0.7853981633974483)
+    >>> luv_to_lch(0.616729, -0.302960, -0.726142)  # doctest: +NUMBER
+    (0.616729, 0.786808, 4.317128)
     """
-    h = math.atan2(u, v)
-    c = math.hypot(u, v)
+    h = math.atan2(v, u)
+    c = math.hypot(v, u)
     h = h + math.tau if h < 0 else h
     return ell, c, h
 
 
 def lch_to_luv(ell: float, c: float, h: float) -> tuple[float, float, float]:
     """
-    Convert CIE LCh to CIE Luv.
+    Convert CIE LCh to CIE L*u*v*.
 
     The output refers to a D65/2° standard illuminant.
-    The angle is in radians.
+    The input angle h is in radians.
 
     Source: https://observablehq.com/@mbostock/luv-and-hcl#cell-219.
 
@@ -233,7 +235,7 @@ class Color(NamedTuple):
     @staticmethod
     def fromluv(ell: float, u: float, v: float) -> Color:
         """
-        Create a Color from CIE Luv coordinates.
+        Create a Color from CIE L*u*v* coordinates.
 
         The input refers to a D65/2° standard illuminant.
 
@@ -248,7 +250,7 @@ class Color(NamedTuple):
 
     def toluv(self) -> tuple[float, float, float]:
         """
-        Return the Luv color for this color.
+        Return the CIE L*u*v* color for this color.
 
         The output refers to a D65/2° standard illuminant.
 
@@ -260,6 +262,35 @@ class Color(NamedTuple):
         (0.533890, 0.0, 0.0)
         """
         return xyz_to_luv(*self.toxyz())
+
+    @staticmethod
+    def fromlch(ell: float, c: float, h: float) -> Color:
+        """
+        Create a Color from CIE L*C*h* coordinates.
+
+        The input refers to a D65/2° standard illuminant.
+        The returned angle h is in radians.
+
+        Examples
+        --------
+        >>> Color.fromlch(0.533890, 0.0, 0.0)  # doctest: +NUMBER
+        Color(red=0.5, green=0.5, blue=0.5)
+        """
+        return Color.fromluv(*lch_to_luv(ell, c, h))
+
+    def tolch(self) -> tuple[float, float, float]:
+        """
+        Return the CIE LCh color for this color.
+
+        The output refers to a D65/2° standard illuminant.
+        The returned angle h is in radians.
+
+        Examples
+        --------
+        >>> Color(0.3, 0.6, 0.9).tolch()  # doctest: +NUMBER
+        (0.617, 0.787, 4.317)
+        """
+        return luv_to_lch(*self.toluv())
 
     @staticmethod
     def fromint(code: int) -> Color:
