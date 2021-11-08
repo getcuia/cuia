@@ -20,6 +20,8 @@ class Program:
 
     model: Model
     messages: Optional[Queue[Message]] = None
+    commands: Optional[Queue[Command]] = None
+    should_quit: bool = False
     # output: TextIO = sys.stdout
     # input: TextIO = sys.stdin
 
@@ -29,39 +31,78 @@ class Program:
             with renderer.into_raw_mode() as renderer:
                 await self._start_impl(renderer)
 
+    def init_queues(self) -> None:
+        """Initialize queues."""
+        self.messages = Queue()
+        self.commands = Queue()
+
+    async def enqueue_message(self, message: Optional[Message]) -> None:
+        """Enqueue a message if not None."""
+        if message:
+            assert self.messages is not None, "Messages queue not initialized"
+            await self.messages.put(message)
+
+    async def enqueue_command(self, command: Optional[Command]) -> None:
+        """Enqueue a command if not None."""
+        if command:
+            assert self.commands is not None, "Commands queue not initialized"
+            await self.commands.put(command)
+
+    def dequeue_message(self) -> Optional[Message]:
+        """Get next message or return None."""
+        try:
+            assert self.messages is not None, "Messages queue not initialized"
+            return self.messages.get_nowait()
+        except asyncio.QueueEmpty:
+            return None
+
+    def dequeue_command(self) -> Optional[Command]:
+        """Get next command or return None."""
+        try:
+            assert self.commands is not None, "Commands queue not initialized"
+            return self.commands.get_nowait()
+        except asyncio.QueueEmpty:
+            return None
+
+    async def handle_message(self, message: Message) -> None:
+        """Handle a message if it is not None."""
+        if message:
+            if isinstance(message, QuitMessage):
+                self.should_quit = True
+
+            # Update the model and maybe enqueue a command
+            command = self.model.update(message)
+            await self.enqueue_command(command)
+
+    async def handle_command(self, command: Optional[Command]) -> None:
+        """Handle a command if it is not None."""
+        if command:
+            # Run the command and maybe enqueue a message
+            message = await command()
+            await self.enqueue_message(message)
+
     async def _start_impl(self, renderer: Renderer):
         """Start program implementation."""
         # Queues have to be created inside the coroutine's event loop
-        self.messages = Queue()
-        commands: Queue[Command] = Queue()
-        if (init_cmd := self.model.init()) is not None:
-            await commands.put(init_cmd)
+        self.init_queues()
 
-        while True:
-            # Show stuff on screen as soon as possible
-            await renderer.render(self.model.view())
+        # Get our first command
+        command = self.model.init()
+        await self.enqueue_command(command)
 
-            # Deal with commands first because we might have received a command right
-            # after starting the program
-            command: Optional[Command]
-            try:
-                if (command := commands.get_nowait()) is not None:
-                    if (message := await command()) is not None:
-                        if isinstance(message, QuitMessage):
-                            break
-                        await self.messages.put(message)
-            except asyncio.QueueEmpty:
-                pass
+        while not self.should_quit:
+            # It is important to show something on the screen as soon as possible
+            view = self.model.view()
+            await renderer.render(view)
 
-            # Then wait for input from the user
-            if (message := await renderer.next_message()) is not None:
-                await self.messages.put(message)
+            # Handle commands first because we might already have one at the beginning
+            command = self.dequeue_command()
+            await self.handle_command(command)
 
-            try:
-                message = self.messages.get_nowait()
-            except asyncio.QueueEmpty:
-                pass
+            # Now we expect the user to interact
+            new_message = await renderer.next_message()
+            await self.enqueue_message(new_message)
 
-            # And finally, update the model
-            if (command := self.model.update(message)) is not None:
-                await commands.put(command)
+            # Finally, handle next message
+            message = self.dequeue_message()
+            await self.handle_message(message)
