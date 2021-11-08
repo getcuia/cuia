@@ -23,7 +23,7 @@ KAPPA = 903.2962962962961
 
 def xyz_to_luv(x: float, y: float, z: float) -> tuple[float, float, float]:
     """
-    Convert CIE XYZ to CIE LUV.
+    Convert CIE XYZ to CIE Luv.
 
     The input refers to a D65/2° standard illuminant.
 
@@ -50,7 +50,7 @@ def xyz_to_luv(x: float, y: float, z: float) -> tuple[float, float, float]:
 
 def luv_to_xyz(ell: float, u: float, v: float) -> tuple[float, float, float]:
     """
-    Convert CIE LUV to CIE XYZ.
+    Convert CIE Luv to CIE XYZ.
 
     The output refers to a D65/2° standard illuminant.
 
@@ -191,6 +191,22 @@ class Color(NamedTuple):
         y = 0.2126 * red + 0.7152 * green + 0.0722 * blue
         z = 0.0193 * red + 0.1192 * green + 0.9505 * blue
         return x, y, z
+
+    @staticmethod
+    def fromluv(ell: float, u: float, v: float) -> Color:
+        """
+        Create a Color from CIE Luv coordinates.
+
+        The input refers to a D65/2° standard illuminant.
+
+        Source: https://en.wikipedia.org/wiki/CIELUV#The_reverse_transformation.
+
+        Examples
+        --------
+        >>> Color.fromluv(0.533890, 0.0, 0.0)  # doctest: +NUMBER
+        Color(red=0.5, green=0.5, blue=0.5)
+        """
+        return Color.fromxyz(*luv_to_xyz(ell, u, v))
 
     def toluv(self) -> tuple[float, float, float]:
         """
