@@ -2,8 +2,13 @@
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from typing import Iterable, Text
+
+from kay.ansi import isplit
+
+SEPARATOR = re.compile(r";")
 
 
 @dataclass(frozen=True)
@@ -42,9 +47,9 @@ class Token:
         if not text.startswith("\N{ESC}["):
             yield text
         else:
-            marker, params = text[-1], text[2:-1].split(";")
-            for param in params:
-                if param:
+            marker = text[-1]
+            if params := text[2:-1]:
+                for param in isplit(SEPARATOR, params):
                     yield Token(marker=marker, param=int(param))
-                else:
-                    yield Token(marker=marker)
+            else:
+                yield Token(marker=marker)

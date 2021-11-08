@@ -13,7 +13,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Iterable, Iterator, Optional, Text, Type
 
-from kay.ansi import PATTERN
+from kay.ansi import PATTERN, isplit
 from kay.ansi.token import Token
 from kay.attr import Attr
 from kay.color import Background, Color, Foreground
@@ -180,9 +180,7 @@ class Parser:
         'Hello, green!',
         Token(marker='m', param=0)]
         """
-        # TODO: use finditer instead of split <https://docs.python.org/3/library/re.html#re.Pattern.finditer>
-        # It yields match objects <https://docs.python.org/3/library/re.html#match-objects>
-        for piece in PATTERN.split(text):
+        for piece in isplit(PATTERN, text, include_separators=True):
             if piece:
                 yield from Token.fromstring(piece)
 
