@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from typing import Iterable, Iterator, NamedTuple, Text
 
@@ -78,6 +79,24 @@ def luv_to_xyz(ell: float, u: float, v: float) -> tuple[float, float, float]:
     x, z = 9 * y * u / four_v, y * (12 - 3 * u - 20 * v) / four_v
 
     return x, y, z
+
+
+def luv_to_lch(ell: float, u: float, v: float) -> tuple[float, float, float]:
+    """
+    Convert CIE Luv to CIE LCH.
+
+    The input refers to a D65/2° standard illuminant.
+
+    Source: https://en.wikipedia.org/wiki/CIELUV#The_reverse_transformation.
+
+    Examples:
+    >>> luv_to_lch(0.5, 0.5, 0.5)  # doctest: +NUMBER
+    (0.5, 0.707107, 0.7853981633974483)
+    """
+    h = math.atan2(v, u)
+    c = math.hypot(u, v)
+    h = h + math.tau if h < 0 else h
+    return ell, c, h
 
 
 class Color(NamedTuple):
