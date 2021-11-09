@@ -11,7 +11,7 @@ from typing import Optional
 from kay.command import Command
 from kay.message import Message, QuitMessage
 from kay.model import Model
-from kay.renderer.curses import CursesRenderer as Renderer
+from kay.renderer.curses import Renderer
 
 
 @dataclass
@@ -94,7 +94,7 @@ class Program:
             # It is important to show something on the screen as soon as possible
             if self.should_render:
                 view = self.model.view()
-                await renderer.render(view)
+                renderer.render(view)
                 self.should_render = False
 
             # Handle commands first because we might already have one at the beginning
@@ -102,7 +102,7 @@ class Program:
                 await self.handle_command(command)
 
             # Now we expect the user to interact
-            if new_message := await renderer.next_message():
+            if new_message := renderer.next_message():
                 await self.enqueue_message(new_message)
 
             # Finally, handle next message

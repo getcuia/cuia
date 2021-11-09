@@ -14,26 +14,24 @@ class Renderer(ContextManager, Protocol):
 
     def __enter__(self) -> Renderer:
         """Enter context."""
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         """Exit context."""
-        raise NotImplementedError
+        raise NotImplementedError()
 
     @abstractmethod
     @contextmanager
     def into_raw_mode(self) -> Iterator[Renderer]:
         """Enter raw mode."""
-        raise NotImplementedError
+        raise NotImplementedError()
 
-    # TODO: this does not seem to need to be a coroutine
     @abstractmethod
-    async def render(self, view: Text) -> None:
+    def render(self, view: Text) -> None:
         """Render model."""
-        raise NotImplementedError
+        raise NotImplementedError()
 
-    # TODO: this does not seem to need to be a coroutine
     @abstractmethod
-    async def next_message(self) -> Optional[Message]:
+    def next_message(self) -> Optional[Message]:
         """Get next message."""
-        raise NotImplementedError
+        raise NotImplementedError()

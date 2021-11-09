@@ -2,21 +2,19 @@
 
 from __future__ import annotations
 
-import asyncio
 import curses
 from contextlib import contextmanager
 from curses import ascii
 from typing import Iterator, Optional, Text
 
-from kay import color
+from kay import color, renderer
 from kay.ansi.parser import Parser
 from kay.attr import Attr
 from kay.color import Background, Color, Foreground
 from kay.message import KeyMessage, Message
-from kay.renderer import Renderer
 
 
-class CursesRenderer(Renderer):
+class Renderer(renderer.Renderer):
     """Curses renderer."""
 
     _stdscr: curses._CursesWindow
@@ -47,7 +45,7 @@ class CursesRenderer(Renderer):
         for foreground, background in ((None, None), (color.WHITE, color.BLACK)):
             self._init_pair(foreground, background)
 
-    def __enter__(self) -> CursesRenderer:
+    def __enter__(self) -> Renderer:
         """Enter context."""
         self._stdscr.keypad(True)
         self._stdscr.nodelay(True)
@@ -60,7 +58,7 @@ class CursesRenderer(Renderer):
         curses.endwin()
 
     @contextmanager
-    def into_raw_mode(self) -> Iterator[CursesRenderer]:
+    def into_raw_mode(self) -> Iterator[Renderer]:
         """Enter raw mode."""
         curses.noecho()
         curses.raw()
@@ -148,10 +146,8 @@ class CursesRenderer(Renderer):
                     self.colors[background],
                 )
 
-    # TODO: this does not seem to need to be a coroutine
-    async def render(self, view: Text) -> None:
+    def render(self, view: Text) -> None:
         """Render model."""
-        await asyncio.sleep(1 / 120)
         self._stdscr.erase()
         self._reset_attributes()
         parser = Parser()
@@ -171,10 +167,8 @@ class CursesRenderer(Renderer):
         self._stdscr.noutrefresh()
         curses.doupdate()
 
-    # TODO: this does not seem to need to be a coroutine
-    async def next_message(self) -> Optional[Message]:
+    def next_message(self) -> Optional[Message]:
         """Get next message."""
-        await asyncio.sleep(1 / 120)
         if (key := self._stdscr.getch()) == curses.ERR:
             return None
 

@@ -1,12 +1,12 @@
 """Tests for the CursesRenderer class."""
 
 from kay import color
-from kay.renderer.curses import CursesRenderer
+from kay.renderer.curses import Renderer
 
 
 def test_initial_colors():
     """Test that the curses renderer starts with the correct colors."""
-    renderer = CursesRenderer()
+    renderer = Renderer()
     assert renderer.colors == {
         None: -1,
         color.BLACK: 0,
