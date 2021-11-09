@@ -9,6 +9,11 @@ from typing import Iterable, Iterator, NamedTuple, Text
 from kay.ansi.token import Token
 
 
+def clamp(value: float, min_value: float = 0.0, max_value: float = 1.0) -> float:
+    """Clamp a value to a range."""
+    return max(min_value, min(value, max_value))
+
+
 def xyz_to_uv(x: float, y: float, z: float) -> tuple[float, float]:
     """Convert XYZ to chromaticity coordinates u'v'."""
     if x == y == 0:
@@ -55,7 +60,7 @@ class Color(NamedTuple):
         >>> Color.frombytes(255, 255, 255)
         Color(red=1.0, green=1.0, blue=1.0)
         """
-        return Color(red / 255, green / 255, blue / 255)
+        return Color(clamp(red / 255), clamp(green / 255), clamp(blue / 255))
 
     def tobytes(self) -> tuple[int, int, int]:
         """
@@ -105,7 +110,7 @@ class Color(NamedTuple):
         else:
             blue = 12.92 * blue
 
-        return Color(red, green, blue)
+        return Color(clamp(red), clamp(green), clamp(blue))
 
     def toxyz(self) -> tuple[float, float, float]:
         """
@@ -285,10 +290,25 @@ class Color(NamedTuple):
         0.0
         >>> Color.frombytes(23, 23, 23).lightness  # doctest: +NUMBER
         0.077396
-        >>> Color.frombytes(255, 255, 255).lightness  # doctest: +NUMBER
-        1.0
+        >>> c = Color.frombytes(0, 255, 0)
+        >>> c.lightness  # doctest: +NUMBER
+        0.878
         """
         return self.toluv()[0]
+
+    def with_lightness(self, ell: float) -> Color:
+        """
+        Create a new color with the same chroma and hue but a new lightness.
+
+        The lightness is a value between 0 and 1.
+
+        Examples
+        --------
+        >>> Color.frombytes(0, 255, 0).with_lightness(0.5)  # doctest: +NUMBER
+        Color(red=0.0, green=0.58, blue=0.0)
+        """
+        _, u, v = self.toluv()
+        return self.fromluv(ell, u, v)
 
     @property
     def chroma(self) -> float:
