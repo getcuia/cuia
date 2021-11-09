@@ -360,6 +360,20 @@ class Color(NamedTuple):
         """
         return self.tolch()[2]
 
+    def with_hue(self, h: float) -> Color:
+        """
+        Create a new color with the same chroma and lightness but a new hue.
+
+        The hue is a value between 0 and 2π.
+
+        Examples
+        --------
+        >>> Color.frombytes(0, 255, 0).with_hue(1.5)  # doctest: +NUMBER
+        Color(red=0.9, green=0.9, blue=0.0)
+        """
+        ell, c, _ = self.tolch()
+        return self.fromlch(ell, c, h)
+
     def islight(self) -> bool:
         """
         Return True if this color is light.
