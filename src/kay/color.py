@@ -328,6 +328,20 @@ class Color(NamedTuple):
         """
         return self.tolch()[1]
 
+    def with_chroma(self, c: float) -> Color:
+        """
+        Create a new color with the same hue and lightness but a new chroma.
+
+        The chroma is a value between 0 and 1.
+
+        Examples
+        --------
+        >>> Color.frombytes(0, 255, 0).with_chroma(0.5)  # doctest: +NUMBER
+        Color(red=0.7, green=0.9, blue=0.7)
+        """
+        ell, _, h = self.tolch()
+        return self.fromlch(ell, c, h)
+
     @property
     def hue(self) -> float:
         """
