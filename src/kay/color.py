@@ -539,9 +539,10 @@ def lch_to_luv(ell: float, c: float, h: float) -> tuple[float, float, float]:
 # <https://en.wikipedia.org/wiki/ANSI_escape_code#3-bit_and_4-bit>.
 # They had then their lightness adjusted to be closer to the average of the
 # colors in the table.
-LIGHTNESS = 0.25
+LIGHTNESS = 0.8  # TODO: the not bright colors can have half the lightness
+BLACK_LIGHTNESS = min(LIGHTNESS ** 10, 1 - LIGHTNESS ** 10)
 BLACK = Color.frombytes(1, 1, 1).with_lightness(
-    LIGHTNESS ** 4
+    BLACK_LIGHTNESS
 )  # Color.frombytes(0, 0, 0)
 RED = Color.frombytes(179, 16, 14).with_lightness(
     LIGHTNESS
@@ -562,5 +563,7 @@ CYAN = Color.frombytes(34, 150, 184).with_lightness(
     LIGHTNESS
 )  # Color.frombytes(0, 173, 173)
 WHITE = Color.frombytes(204, 205, 205).with_lightness(
-    1 - LIGHTNESS ** 4
+    1 - BLACK_LIGHTNESS
 )  # Color.frombytes(173, 173, 173)
+
+assert BLACK.lightness < WHITE.lightness
