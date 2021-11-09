@@ -162,6 +162,8 @@ class Color(NamedTuple):
         --------
         >>> Color.fromluv(0.533890, 0, 0)  # doctest: +NUMBER
         Color(red=0.5, green=0.5, blue=0.5)
+        >>> Color.fromluv(0, 0, 0)
+        Color(red=0.0, green=0.0, blue=0.0)
         """
         return Color.fromxyz(*luv_to_xyz(ell, u, v))
 
@@ -481,6 +483,9 @@ def luv_to_xyz(ell: float, u: float, v: float) -> tuple[float, float, float]:
     >>> luv_to_xyz(0.5, 0.5, 0.5)  # doctest: +NUMBER
     (0.208831, 0.184187, 0.022845)
     """
+    if ell == 0:
+        return 0, 0, 0
+
     ell, u, v = 100 * ell, 100 * u, 100 * v
     u, v = luv_to_uv(ell, u, v)
 
