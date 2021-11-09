@@ -31,7 +31,7 @@ class Attr(Enum):
 
     def token(self) -> Token:
         """Return a Token with this attribute."""
-        return Token(marker="m", param=self.value)
+        return Token(group="m", data=self.value)
 
     def __str__(self) -> Text:
         """Return the ANSI escape sequence for this attribute."""

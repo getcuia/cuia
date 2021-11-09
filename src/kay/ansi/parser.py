@@ -18,9 +18,6 @@ from kay.ansi.token import Token
 from kay.attr import Attr
 from kay.color import Background, Color, Foreground
 
-# TODO: take a look at <https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797#colors--graphics-mode>, in particular in the specific reset escape sequences, maybe useful?
-# TODO: plan on supporting this whole list or equivalent: <https://github.com/stayradiated/termio#supported-sgr-codes>
-
 
 @dataclass
 class Parser:
@@ -50,20 +47,16 @@ class Parser:
         Examples
         --------
         >>> p = Parser()
-        >>> p.tokenize(f"\N{ESC}[0;31mHello\x1b[m, \x1B[1;32mWorld!\N{ESC}[0m")
+        >>> p.tokenize(f"\N{ESC}[0;38;2;255;0;0mHello\x1b[m, \x1B[1;38;2;0;255;0mWorld!\N{ESC}[0m")
         >>> for code in p.parse():
         ...     code  # doctest: +NORMALIZE_WHITESPACE
         <Attr.NORMAL: 0>
-        Foreground(color=Color(red=0.7019607843137254,
-                green=0.06274509803921569,
-                blue=0.054901960784313725))
+        Foreground(color=Color(red=1.0, green=0.0, blue=0.0))
         'Hello'
         <Attr.NORMAL: 0>
         ', '
         <Attr.BOLD: 1>
-        Foreground(color=Color(red=0.043137254901960784,
-                green=0.6745098039215687,
-                blue=0.08627450980392157))
+        Foreground(color=Color(red=0.0, green=1.0, blue=0.0))
         'World!'
         <Attr.NORMAL: 0>
 
@@ -100,9 +93,9 @@ class Parser:
         self, token: Token
     ) -> Iterable[Attr | Foreground | Background | Token]:
         """Parse a SGR token."""
-        if token.param < 30 or 50 <= token.param < 76:
+        if token.data < 30 or 50 <= token.data < 76:
             yield from self._parse_token_sgr_attr(token)
-        elif 30 <= token.param < 50 or 90 <= token.param < 108:
+        elif 30 <= token.data < 50 or 90 <= token.data < 108:
             yield from self._parse_token_sgr_color(token)
         else:
             yield token
@@ -110,7 +103,7 @@ class Parser:
     def _parse_token_sgr_attr(self, token: Token) -> Iterable[Attr | Token]:
         """Parse an SGR attribute token."""
         try:
-            yield Attr(token.param)
+            yield Attr(token.data)
         except ValueError:
             yield token
 
@@ -124,7 +117,7 @@ class Parser:
             assert self.tokens is not None, "Parser has no tokens"
 
             bits = next(self.tokens)
-            if isinstance(bits, Token) and bits.param == 2:
+            if isinstance(bits, Token) and bits.data == 2:
                 # 24-bit RGB color
 
                 red, green, blue = (
@@ -139,23 +132,23 @@ class Parser:
                 ):
                     raise ValueError(
                         f"Expected three numbers after {cls.__name__} "
-                        "but got {red}, {green}, {blue}"
+                        f"but got {red}, {green}, {blue}"
                     )
 
-                yield cls(Color.frombytes(red.param, green.param, blue.param))
+                yield cls(Color.frombytes(red.data, green.data, blue.data))
             else:
                 # Send them back, we don't support 256-color mode yet (and we might
                 # never do).
                 yield token
                 yield bits
 
-        if 30 <= token.param < 38:
-            yield Foreground(Color.fromint(token.param))
-        elif 40 <= token.param < 48:
-            yield Background(Color.fromint(token.param))
-        elif token.param == 38:
+        if 30 <= token.data < 38:
+            yield Foreground(Color.fromint(token.data))
+        elif 40 <= token.data < 48:
+            yield Background(Color.fromint(token.data))
+        elif token.data == 38:
             yield from _rgb(Foreground)
-        elif token.param == 48:
+        elif token.data == 48:
             yield from _rgb(Background)
         else:
             yield token
@@ -172,13 +165,13 @@ class Parser:
         >>> list(
         ...     Parser._tokenize("\x1b[38;2;0;255;0mHello, green!\x1b[m")
         ... )  # doctest: +NORMALIZE_WHITESPACE
-        [Token(marker='m', param=38),
-        Token(marker='m', param=2),
-        Token(marker='m', param=0),
-        Token(marker='m', param=255),
-        Token(marker='m', param=0),
+        [Token(group='m', data=38),
+        Token(group='m', data=2),
+        Token(group='m', data=0),
+        Token(group='m', data=255),
+        Token(group='m', data=0),
         'Hello, green!',
-        Token(marker='m', param=0)]
+        Token(group='m', data=0)]
         """
         for piece in isplit(PATTERN, text, include_separators=True):
             if piece:

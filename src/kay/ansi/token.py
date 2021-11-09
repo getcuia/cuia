@@ -15,16 +15,16 @@ SEPARATOR = re.compile(r";")
 class Token:
     """A token is a single ANSI escape sequence."""
 
-    marker: Text
-    param: int = 0
+    group: Text
+    data: int
 
     def issgr(self) -> bool:
         """Return True if this is a SGR escape sequence."""
-        return self.marker == "m"
+        return self.group == "m"
 
     def __str__(self) -> Text:
         """Return a string representation of this token."""
-        return f"\N{ESC}[{self.param}{self.marker}"
+        return f"\N{ESC}[{self.data}{self.group}"
 
     @staticmethod
     def fromstring(text: Text) -> Iterable[Text | Token]:
@@ -34,15 +34,15 @@ class Token:
         Examples
         --------
         >>> list(Token.fromstring("\033[m"))
-        [Token(marker='m', param=0)]
+        [Token(group='m', data=0)]
         >>> list(Token.fromstring("\x1b[1;31m"))
-        [Token(marker='m', param=1), Token(marker='m', param=31)]
+        [Token(group='m', data=1), Token(group='m', data=31)]
         >>> list(Token.fromstring("\x1b[38;2;30;60;90m"))  # doctest: +NORMALIZE_WHITESPACE
-        [Token(marker='m', param=38),
-         Token(marker='m', param=2),
-         Token(marker='m', param=30),
-         Token(marker='m', param=60),
-         Token(marker='m', param=90)]
+        [Token(group='m', data=38),
+         Token(group='m', data=2),
+         Token(group='m', data=30),
+         Token(group='m', data=60),
+         Token(group='m', data=90)]
         """
         if not text.startswith("\N{ESC}["):
             yield text
@@ -50,6 +50,6 @@ class Token:
             marker = text[-1]
             if params := text[2:-1]:
                 for param in isplit(SEPARATOR, params):
-                    yield Token(marker=marker, param=int(param))
+                    yield Token(group=marker, data=int(param))
             else:
-                yield Token(marker=marker)
+                yield Token(group=marker, data=0)

@@ -250,34 +250,34 @@ class Color(NamedTuple):
         Examples
         --------
         >>> list(BLACK._tokens())
-        [Token(marker='m', param=0)]
+        [Token(group='m', data=0)]
         >>> list(WHITE._tokens())
-        [Token(marker='m', param=7)]
+        [Token(group='m', data=7)]
         """
         if self == BLACK:
-            yield Token(marker="m", param=0)
+            yield Token(group="m", data=0)
         elif self == RED:
-            yield Token(marker="m", param=1)
+            yield Token(group="m", data=1)
         elif self == GREEN:
-            yield Token(marker="m", param=2)
+            yield Token(group="m", data=2)
         elif self == YELLOW:
-            yield Token(marker="m", param=3)
+            yield Token(group="m", data=3)
         elif self == BLUE:
-            yield Token(marker="m", param=4)
+            yield Token(group="m", data=4)
         elif self == MAGENTA:
-            yield Token(marker="m", param=5)
+            yield Token(group="m", data=5)
         elif self == CYAN:
-            yield Token(marker="m", param=6)
+            yield Token(group="m", data=6)
         elif self == WHITE:
-            yield Token(marker="m", param=7)
+            yield Token(group="m", data=7)
         else:
-            yield Token(marker="m", param=8)
-            yield Token(marker="m", param=2)
+            yield Token(group="m", data=8)
+            yield Token(group="m", data=2)
 
             red, green, blue = self.tobytes()
-            yield Token(marker="m", param=red)
-            yield Token(marker="m", param=green)
-            yield Token(marker="m", param=blue)
+            yield Token(group="m", data=red)
+            yield Token(group="m", data=green)
+            yield Token(group="m", data=blue)
 
     @property
     def lightness(self) -> float:
@@ -417,7 +417,7 @@ class Foreground:
         """Yield the tokens to set the foreground color."""
         _tokens = self.color._tokens()
         head = next(_tokens)
-        yield Token(marker=head.marker, param=head.param + 30)
+        yield Token(group=head.group, data=head.data + 30)
         yield from _tokens
 
     def __str__(self) -> Text:
@@ -435,7 +435,7 @@ class Background:
         """Yield the tokens to set the background color."""
         _tokens = self.color._tokens()
         head = next(_tokens)
-        yield Token(marker=head.marker, param=head.param + 40)
+        yield Token(group=head.group, data=head.data + 40)
         yield from _tokens
 
     def __str__(self) -> Text:
