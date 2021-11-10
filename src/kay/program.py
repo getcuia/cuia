@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import asyncio
 from asyncio import Queue
+from asyncio.tasks import Task
 from dataclasses import dataclass
 from typing import Optional
 
@@ -26,8 +27,8 @@ class Program:
     """The current state of the program."""
     messages: Optional[Queue[Message]] = None
     """The queue of messages to be handled."""
-    commands: Optional[Queue[Command]] = None
-    """The queue of commands to be handled."""
+    tasks: Optional[Queue[Task[Optional[Message]]]] = None
+    """The queue of running tasks produced from commands."""
     should_render: bool = True
     """An indicator that the program should redraw the screen."""
     should_quit: bool = False
@@ -42,9 +43,9 @@ class Program:
                 await self._start_impl(renderer)
 
     def init_queues(self) -> None:
-        """Initialize message and command queues."""
+        """Initialize message and task queues."""
         self.messages = Queue()
-        self.commands = Queue()
+        self.tasks = Queue()
 
     async def enqueue_message(self, message: Message) -> None:
         """Enqueue a message to be handled later."""
@@ -52,9 +53,11 @@ class Program:
         await self.messages.put(message)
 
     async def enqueue_command(self, command: Command) -> None:
-        """Enqueue a command to be handled later."""
-        assert self.commands is not None, "Commands queue not initialized"
-        await self.commands.put(command)
+        """Enqueue a task, produced from a command, to be handled later."""
+        assert self.tasks is not None, "Tasks queue not initialized"
+        # Spawn a new task from the command
+        task = asyncio.create_task(command())
+        await self.tasks.put(task)
 
     def dequeue_message(self) -> Optional[Message]:
         """Get the next message if available, None otherwise."""
@@ -64,11 +67,11 @@ class Program:
         except asyncio.QueueEmpty:
             return None
 
-    def dequeue_command(self) -> Optional[Command]:
-        """Get the next command if available, None otherwise."""
+    def dequeue_task(self) -> Optional[Task[Optional[Message]]]:
+        """Get the next task if available, None otherwise."""
         try:
-            assert self.commands is not None, "Commands queue not initialized"
-            return self.commands.get_nowait()
+            assert self.tasks is not None, "Tasks queue not initialized"
+            return self.tasks.get_nowait()
         except asyncio.QueueEmpty:
             return None
 
@@ -84,11 +87,20 @@ class Program:
         # Remember to render the next time
         self.should_render = True
 
-    async def handle_command(self, command: Command) -> None:
-        """Handle a command and maybe enqueue an obtained message."""
-        # Run the command and maybe enqueue a message
-        if message := await command():
-            await self.enqueue_message(message)
+    async def handle_task(self, task: Task[Optional[Message]]) -> None:
+        """
+        Handle a task and maybe enqueue an obtained message.
+
+        This method spawns a new task to handle the given task result, if any,
+        so that the event loop can continue.
+        """
+
+        async def handler():
+            # Await the task and maybe enqueue a message
+            if message := await task:
+                await self.enqueue_message(message)
+
+        asyncio.create_task(handler())
 
     async def _start_impl(self, renderer: Renderer):
         """
@@ -110,9 +122,11 @@ class Program:
                 renderer.render(view)
                 self.should_render = False
 
-            # Handle commands first because we might already have one at the beginning
-            if command := self.dequeue_command():
-                await self.handle_command(command)
+            # Handle tasks **without blocking the event loop**
+            # We do it first because we might already have one task to handle
+            # at startup
+            if task := self.dequeue_task():
+                await self.handle_task(task)
 
             # Now we expect the user to interact
             if new_message := renderer.next_message():
