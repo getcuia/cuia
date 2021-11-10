@@ -15,6 +15,23 @@ import kay
 
 
 @dataclass
+class TickMessage(kay.Message):
+    """A message to tick the model."""
+
+    time: datetime
+
+
+async def tick() -> Optional[TickMessage]:
+    """
+    Tick the model.
+
+    This won't block the main loop.
+    """
+    await asyncio.sleep(1)
+    return TickMessage(datetime.now())
+
+
+@dataclass
 class Model(kay.Model):
     """The model for the application."""
 
@@ -36,20 +53,7 @@ class Model(kay.Model):
 
     def view(self) -> Text:
         """Render the view."""
-        return f"{kay.Attr.BOLD}It is {self.time.strftime('%H:%M:%S')} in {self.time.tzname()}"
-
-
-@dataclass
-class TickMessage(kay.Message):
-    """A message to tick the model."""
-
-    time: datetime
-
-
-async def tick() -> Optional[TickMessage]:
-    """Tick the model."""
-    await asyncio.sleep(1)
-    return TickMessage(datetime.now())
+        return f"{kay.Attr.BOLD}{self.time.strftime('%H:%M:%S')}{kay.Attr.NORMAL}"
 
 
 async def main() -> None:
