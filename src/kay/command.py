@@ -9,5 +9,5 @@ Command = Callable[[], Awaitable[Optional[Message]]]
 
 
 async def quit() -> Optional[Message]:
-    """Signal to quit the application."""
+    """A command that signals to quit the application."""
     return QuitMessage()

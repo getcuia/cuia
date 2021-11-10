@@ -10,12 +10,17 @@ from kay.message import KeyMessage, Message
 
 @runtime_checkable
 class Model(Protocol):
-    """Model protocol."""
+    """
+    A simple model protocol.
+
+    Your application should implement this protocol.
+    """
 
     def init(self) -> Optional[Command]:
         """
         Return a command to initialize the model.
 
+        You can override this method to pass a command at startup.
         The default implementation does nothing and always returns None.
         """
         return None
@@ -24,6 +29,7 @@ class Model(Protocol):
         """
         Update the model with a message and possibly return a command.
 
+        You can override this method to implement the actual application logic.
         The default implementation terminates the program if the user presses Ctrl-C,
         otherwise it does nothing.
         """
@@ -37,6 +43,7 @@ class Model(Protocol):
         """
         Return a textual representation of the model.
 
-        This is required to be implemented by subclasses.
+        You should override this method to implement the application's
+        view representation.
         """
         raise NotImplementedError()

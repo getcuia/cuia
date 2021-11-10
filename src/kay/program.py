@@ -16,39 +16,48 @@ from kay.renderer.curses import Renderer
 
 @dataclass
 class Program:
-    """Program class."""
+    """
+    The program runtime.
+
+    This object is responsible for properly running the program.
+    """
 
     model: Model
+    """The current state of the program."""
     messages: Optional[Queue[Message]] = None
+    """The queue of messages to be handled."""
     commands: Optional[Queue[Command]] = None
+    """The queue of commands to be handled."""
     should_render: bool = True
+    """An indicator that the program should redraw the screen."""
     should_quit: bool = False
+    """An indicator that the program should quit."""
     # output: TextIO = sys.stdout
     # input: TextIO = sys.stdin
 
     async def start(self) -> None:
-        """Start program."""
+        """Begin the program."""
         with Renderer() as renderer:
             with renderer.into_raw_mode() as renderer:
                 await self._start_impl(renderer)
 
     def init_queues(self) -> None:
-        """Initialize queues."""
+        """Initialize message and command queues."""
         self.messages = Queue()
         self.commands = Queue()
 
     async def enqueue_message(self, message: Message) -> None:
-        """Enqueue a message."""
+        """Enqueue a message to be handled later."""
         assert self.messages is not None, "Messages queue not initialized"
         await self.messages.put(message)
 
     async def enqueue_command(self, command: Command) -> None:
-        """Enqueue a command."""
+        """Enqueue a command to be handled later."""
         assert self.commands is not None, "Commands queue not initialized"
         await self.commands.put(command)
 
     def dequeue_message(self) -> Optional[Message]:
-        """Get next message or return None."""
+        """Get the next message if available, None otherwise."""
         try:
             assert self.messages is not None, "Messages queue not initialized"
             return self.messages.get_nowait()
@@ -56,7 +65,7 @@ class Program:
             return None
 
     def dequeue_command(self) -> Optional[Command]:
-        """Get next command or return None."""
+        """Get the next command if available, None otherwise."""
         try:
             assert self.commands is not None, "Commands queue not initialized"
             return self.commands.get_nowait()
@@ -64,7 +73,7 @@ class Program:
             return None
 
     async def handle_message(self, message: Message) -> None:
-        """Handle a message if it is not None."""
+        """Handle a message and update the model."""
         if isinstance(message, QuitMessage):
             self.should_quit = True
 
@@ -76,13 +85,17 @@ class Program:
         self.should_render = True
 
     async def handle_command(self, command: Command) -> None:
-        """Handle a command if it is not None."""
+        """Handle a command and maybe enqueue an obtained message."""
         # Run the command and maybe enqueue a message
         if message := await command():
             await self.enqueue_message(message)
 
     async def _start_impl(self, renderer: Renderer):
-        """Start program implementation."""
+        """
+        Begin the program.
+
+        This is the actual implementation of the `start` method.
+        """
         # Queues have to be created inside the coroutine's event loop
         self.init_queues()
 

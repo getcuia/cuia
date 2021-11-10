@@ -1,4 +1,4 @@
-"""Facilities for working with attributes."""
+"""Facilities for working with text style attributes."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from kay.ansi.token import Token
 
 class Attr(Enum):
     r"""
-    ANSI escape sequence attributes.
+    ANSI escape sequence text style attributes.
 
     Examples
     --------
@@ -30,9 +30,16 @@ class Attr(Enum):
     REVERSE = 7
 
     def token(self) -> Token:
-        """Return a Token with this attribute."""
+        """
+        Return a ANSI Token with this text style attribute.
+
+        Examples
+        --------
+        >>> Attr.BOLD.token()
+        Token(group='m', data=1)
+        """
         return Token(group="m", data=self.value)
 
     def __str__(self) -> Text:
-        """Return the ANSI escape sequence for this attribute."""
+        """Return the ANSI escape sequence for this text style attribute."""
         return Text(self.token())

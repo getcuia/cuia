@@ -15,7 +15,7 @@ def clamp(value: float, min_value: float = 0.0, max_value: float = 1.0) -> float
 
 
 def xyz_to_uv(x: float, y: float, z: float) -> tuple[float, float]:
-    """Convert XYZ to chromaticity coordinates u'v'."""
+    """Convert CIE XYZ to chromaticity coordinates u'v'."""
     if x == y == 0:
         return 0, 0
     d = x + 15 * y + 3 * z
@@ -23,7 +23,7 @@ def xyz_to_uv(x: float, y: float, z: float) -> tuple[float, float]:
 
 
 def luv_to_uv(ell: float, u: float, v: float) -> tuple[float, float]:
-    """Convert CIE L*u*v* to chromaticity coordinates u'v'."""
+    r"""Convert CIE L\*u\*v\* to chromaticity coordinates u'v'."""
     d = 13 * ell
     return u / d + REF_UV_D65_2[0], v / d + REF_UV_D65_2[1]
 
@@ -33,7 +33,7 @@ REF_XYZ_D65_2 = 0.95047, 1.00000, 1.08883
 REF_UV_D65_2 = xyz_to_uv(*REF_XYZ_D65_2)
 
 
-# Constant used in the CIE L*u*v* to XYZ conversion.
+# Constant used in the CIE L*u*v* to CIE XYZ conversion.
 KAPPA = 903.2962962962961
 
 
@@ -41,24 +41,27 @@ class Color(NamedTuple):
     """
     An RGB color.
 
-    Each color is represented by three floats between 0 and 1.
+    Each channel is represented by a float between zero and one.
     """
 
     red: float
+    """Amount of red in the color."""
     green: float
+    """Amount of green in the color."""
     blue: float
+    """Amount of blue in the color."""
 
     @staticmethod
     def frombytes(red: int, green: int, blue: int) -> Color:
         """
-        Create a Color from bytes.
+        Create a color from bytes.
+
+        The input values are expected to be between 0 and 255.
 
         Examples
         --------
-        >>> Color.frombytes(0, 0, 0)
-        Color(red=0.0, green=0.0, blue=0.0)
-        >>> Color.frombytes(255, 255, 255)
-        Color(red=1.0, green=1.0, blue=1.0)
+        >>> Color.frombytes(0, 255, 255)
+        Color(red=0.0, green=1.0, blue=1.0)
         """
         return Color(clamp(red / 255), clamp(green / 255), clamp(blue / 255))
 
@@ -66,8 +69,12 @@ class Color(NamedTuple):
         """
         Return the bytes for this color.
 
+        The output values are between 0 and 255.
+
         Examples
         --------
+        >>> Color(red=0.0, green=1.0, blue=1.0).tobytes()
+        (0, 255, 255)
         >>> Color.frombytes(10, 20, 30).tobytes() == (10, 20, 30)
         True
         """
@@ -76,11 +83,11 @@ class Color(NamedTuple):
     @staticmethod
     def fromxyz(x: float, y: float, z: float) -> Color:
         """
-        Create a Color from XYZ coordinates.
+        Create a color from CIE XYZ coordinates.
 
-        The input refers to a D65/2° standard illuminant.
+        The input should refer to a D65/2° standard illuminant.
 
-        Source: https://en.wikipedia.org/wiki/SRGB#The_forward_transformation_(CIE_XYZ_to_sRGB).
+        Source: [From CIE XYZ to sRGB](https://en.wikipedia.org/wiki/SRGB#From_CIE_XYZ_to_sRGB).
 
         Examples
         --------
@@ -114,11 +121,11 @@ class Color(NamedTuple):
 
     def toxyz(self) -> tuple[float, float, float]:
         """
-        Return the XYZ color for this color.
+        Return the CIE XYZ color for this color.
 
         The output refers to a D65/2° standard illuminant.
 
-        Source: https://en.wikipedia.org/wiki/SRGB#The_reverse_transformation_(sRGB_to_CIE_XYZ).
+        Source: [From sRGB to CIE XYZ](https://en.wikipedia.org/wiki/SRGB#From_sRGB_to_CIE_XYZ).
 
         Examples
         --------
@@ -151,12 +158,10 @@ class Color(NamedTuple):
 
     @staticmethod
     def fromluv(ell: float, u: float, v: float) -> Color:
-        """
-        Create a Color from CIE L*u*v* coordinates.
+        r"""
+        Create a color from CIE L\*u\*v\* coordinates.
 
         The input refers to a D65/2° standard illuminant.
-
-        Source: https://en.wikipedia.org/wiki/CIELUV#The_reverse_transformation.
 
         Examples
         --------
@@ -168,12 +173,10 @@ class Color(NamedTuple):
         return Color.fromxyz(*luv_to_xyz(ell, u, v))
 
     def toluv(self) -> tuple[float, float, float]:
-        """
-        Return the CIE L*u*v* color for this color.
+        r"""
+        Return the CIE L\*u\*v\* color for this color.
 
         The output refers to a D65/2° standard illuminant.
-
-        Source: https://en.wikipedia.org/wiki/CIELUV#The_reverse_transformation.
 
         Examples
         --------
@@ -185,10 +188,10 @@ class Color(NamedTuple):
     @staticmethod
     def fromlch(ell: float, c: float, h: float) -> Color:
         """
-        Create a Color from CIE LCh coordinates.
+        Create a color from CIE LCh coordinates.
 
-        The input refers to a D65/2° standard illuminant.
-        The returned angle h is in radians.
+        The input refers to a D65/2° standard illuminant and the angle h is
+        in radians.
 
         Examples
         --------
@@ -201,8 +204,8 @@ class Color(NamedTuple):
         """
         Return the CIE LCh color for this color.
 
-        The output refers to a D65/2° standard illuminant.
-        The returned angle h is in radians.
+        The output refers to a D65/2° standard illuminant and the angle h is
+        in radians.
 
         Examples
         --------
@@ -216,8 +219,12 @@ class Color(NamedTuple):
         """
         Create a color from an integer.
 
-        The integer should be a 3-bit SGR color code.
-        A ValueError is raised otherwise.
+        The integer should be a 3-bit SGR color code (A ValueError is raised otherwise).
+
+        Examples
+        --------
+        >>> Color.fromint(44) == BLUE
+        True
         """
         if code in {30, 40}:
             return BLACK
@@ -281,10 +288,10 @@ class Color(NamedTuple):
 
     @property
     def lightness(self) -> float:
-        """
-        Return the lightness of this color as per the CIE L*u*v*/LCh color spaces.
+        r"""
+        Return the lightness of this color as per the CIE L\*u\*v\*/LCh color spaces.
 
-        The lightness is a value between 0 and 1.
+        The lightness is a value between zero and one.
 
         Examples
         --------
@@ -298,26 +305,12 @@ class Color(NamedTuple):
         """
         return self.toluv()[0]
 
-    def with_lightness(self, ell: float) -> Color:
-        """
-        Create a new color with the same chroma and hue but a new lightness.
-
-        The lightness is a value between 0 and 1.
-
-        Examples
-        --------
-        >>> Color.frombytes(0, 255, 0).with_lightness(0.5)  # doctest: +NUMBER
-        Color(red=0.0, green=0.58, blue=0.0)
-        """
-        _, u, v = self.toluv()
-        return self.fromluv(ell, u, v)
-
     @property
     def chroma(self) -> float:
         """
         Return the chroma of this color as per the CIE LCh color space.
 
-        The chroma is a value between 0 and 1.
+        The chroma is a value between zero and one.
 
         Examples
         --------
@@ -329,20 +322,6 @@ class Color(NamedTuple):
         0.0
         """
         return self.tolch()[1]
-
-    def with_chroma(self, c: float) -> Color:
-        """
-        Create a new color with the same hue and lightness but a new chroma.
-
-        The chroma is a value between 0 and 1.
-
-        Examples
-        --------
-        >>> Color.frombytes(0, 255, 0).with_chroma(0.5)  # doctest: +NUMBER
-        Color(red=0.7, green=0.9, blue=0.7)
-        """
-        ell, _, h = self.tolch()
-        return self.fromlch(ell, c, h)
 
     @property
     def hue(self) -> float:
@@ -361,6 +340,34 @@ class Color(NamedTuple):
         2.3
         """
         return self.tolch()[2]
+
+    def with_lightness(self, ell: float) -> Color:
+        """
+        Create a new color with the same chroma and hue but a new lightness.
+
+        The lightness is a value between zero and one.
+
+        Examples
+        --------
+        >>> Color.frombytes(0, 255, 0).with_lightness(0.5)  # doctest: +NUMBER
+        Color(red=0.0, green=0.58, blue=0.0)
+        """
+        _, u, v = self.toluv()
+        return self.fromluv(ell, u, v)
+
+    def with_chroma(self, c: float) -> Color:
+        """
+        Create a new color with the same hue and lightness but a new chroma.
+
+        The chroma is a value between zero and one.
+
+        Examples
+        --------
+        >>> Color.frombytes(0, 255, 0).with_chroma(0.5)  # doctest: +NUMBER
+        Color(red=0.7, green=0.9, blue=0.7)
+        """
+        ell, _, h = self.tolch()
+        return self.fromlch(ell, c, h)
 
     def with_hue(self, h: float) -> Color:
         """
@@ -409,12 +416,19 @@ class Color(NamedTuple):
 
 @dataclass(frozen=True)
 class Foreground:
-    """A foreground color."""
+    """A terminal foreground color."""
 
     color: Color
 
     def tokens(self) -> Iterable[Token]:
-        """Yield the tokens to set the foreground color."""
+        """
+        Yield token to set the foreground color.
+
+        Examples
+        --------
+        >>> list(Foreground(RED).tokens())
+        [Token(group='m', data=31)]
+        """
         _tokens = self.color._tokens()
         head = next(_tokens)
         yield Token(group=head.group, data=head.data + 30)
@@ -427,12 +441,19 @@ class Foreground:
 
 @dataclass(frozen=True)
 class Background:
-    """A background color."""
+    """A terminal background color."""
 
     color: Color
 
     def tokens(self) -> Iterable[Token]:
-        """Yield the tokens to set the background color."""
+        """
+        Yield token to set the background color.
+
+        Examples
+        --------
+        >>> list(Background(MAGENTA).tokens())
+        [Token(group='m', data=45)]
+        """
         _tokens = self.color._tokens()
         head = next(_tokens)
         yield Token(group=head.group, data=head.data + 40)
@@ -444,8 +465,8 @@ class Background:
 
 
 def xyz_to_luv(x: float, y: float, z: float) -> tuple[float, float, float]:
-    """
-    Convert CIE XYZ to CIE L*u*v*.
+    r"""
+    Convert CIE XYZ to CIE L\*u\*v\*.
 
     The input refers to a D65/2° standard illuminant.
 
@@ -471,8 +492,8 @@ def xyz_to_luv(x: float, y: float, z: float) -> tuple[float, float, float]:
 
 
 def luv_to_xyz(ell: float, u: float, v: float) -> tuple[float, float, float]:
-    """
-    Convert CIE L*u*v* to CIE XYZ.
+    r"""
+    Convert CIE L\*u\*v\* to CIE XYZ.
 
     The output refers to a D65/2° standard illuminant.
 
@@ -500,11 +521,11 @@ def luv_to_xyz(ell: float, u: float, v: float) -> tuple[float, float, float]:
 
 
 def luv_to_lch(ell: float, u: float, v: float) -> tuple[float, float, float]:
-    """
-    Convert CIE L*u*v* to CIE LCh.
+    r"""
+    Convert CIE L\*u\*v\* to CIE LCh.
 
-    The input refers to a D65/2° standard illuminant.
-    The returned angle h is in radians.
+    The input refers to a D65/2° standard illuminant and the angle h is
+    in radians.
 
     Source: https://en.wikipedia.org/wiki/CIELUV#Cylindrical_representation_(CIELCh).
 
@@ -522,11 +543,11 @@ def luv_to_lch(ell: float, u: float, v: float) -> tuple[float, float, float]:
 
 
 def lch_to_luv(ell: float, c: float, h: float) -> tuple[float, float, float]:
-    """
-    Convert CIE LCh to CIE L*u*v*.
+    r"""
+    Convert CIE LCh to CIE L\*u\*v\*.
 
-    The output refers to a D65/2° standard illuminant.
-    The input angle h is in radians.
+    The output refers to a D65/2° standard illuminant and the angle h is
+    in radians.
 
     Source: https://observablehq.com/@mbostock/luv-and-hcl#cell-219.
 
