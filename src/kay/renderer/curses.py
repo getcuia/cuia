@@ -13,6 +13,64 @@ from kay.attr import Attr
 from kay.color import Background, Color, Foreground
 from kay.message import KeyMessage, Message
 
+RULES = (
+    (lambda key: key == curses.KEY_UP, lambda _: KeyMessage("up")),
+    (lambda key: key == curses.KEY_DOWN, lambda _: KeyMessage("down")),
+    (lambda key: key == curses.KEY_LEFT, lambda _: KeyMessage("left")),
+    (lambda key: key == curses.KEY_RIGHT, lambda _: KeyMessage("right")),
+    (lambda key: key == curses.KEY_HOME, lambda _: KeyMessage("home")),
+    (lambda key: key == curses.KEY_END, lambda _: KeyMessage("end")),
+    (lambda key: key == curses.KEY_PPAGE, lambda _: KeyMessage("pageup")),
+    (lambda key: key == curses.KEY_NPAGE, lambda _: KeyMessage("pagedown")),
+    (lambda key: key == curses.KEY_BACKSPACE, lambda _: KeyMessage("backspace")),
+    (lambda key: key == curses.KEY_DC, lambda _: KeyMessage("delete")),
+    (lambda key: key == curses.KEY_F1, lambda _: KeyMessage("f1")),
+    (lambda key: key == curses.KEY_F2, lambda _: KeyMessage("f2")),
+    (lambda key: key == curses.KEY_F3, lambda _: KeyMessage("f3")),
+    (lambda key: key == curses.KEY_F4, lambda _: KeyMessage("f4")),
+    (lambda key: key == curses.KEY_F5, lambda _: KeyMessage("f5")),
+    (lambda key: key == curses.KEY_F6, lambda _: KeyMessage("f6")),
+    (lambda key: key == curses.KEY_F7, lambda _: KeyMessage("f7")),
+    (lambda key: key == curses.KEY_F8, lambda _: KeyMessage("f8")),
+    (lambda key: key == curses.KEY_F9, lambda _: KeyMessage("f9")),
+    (lambda key: key == curses.KEY_F10, lambda _: KeyMessage("f10")),
+    (lambda key: key == curses.KEY_F11, lambda _: KeyMessage("f11")),
+    # KEY_ENTER is rather unreliable, so we also accept ascii.LF
+    # and ascii.CR.
+    # See <https://stackoverflow.com/a/32255045/4039050>.
+    (
+        lambda key: key in {curses.KEY_ENTER, ascii.LF, ascii.CR},
+        lambda _: KeyMessage("enter"),
+    ),
+    # (lambda key: key == curses.KEY_RESIZE, lambda _: KeyMessage("resize")),
+    (lambda key: key == ascii.BEL, lambda _: KeyMessage("bell")),
+    (lambda key: key == ascii.BS, lambda _: KeyMessage("backspace")),
+    (lambda key: key == ascii.CAN, lambda _: KeyMessage("can")),
+    (lambda key: key == ascii.DEL, lambda _: KeyMessage("delete")),
+    (lambda key: key == ascii.EM, lambda _: KeyMessage("em")),
+    (lambda key: key == ascii.ESC, lambda _: KeyMessage("escape")),
+    (lambda key: key == ascii.ETB, lambda _: KeyMessage("etb")),
+    (lambda key: key == ascii.FF, lambda _: KeyMessage("formfeed")),
+    (lambda key: key == ascii.FS, lambda _: KeyMessage("fs")),
+    (lambda key: key == ascii.GS, lambda _: KeyMessage("gs")),
+    (lambda key: key == ascii.NAK, lambda _: KeyMessage("nak")),
+    (lambda key: key == ascii.NL, lambda _: KeyMessage("newline")),
+    (lambda key: key == ascii.RS, lambda _: KeyMessage("rs")),
+    (lambda key: key == ascii.SI, lambda _: KeyMessage("shiftin")),
+    (lambda key: key == ascii.SO, lambda _: KeyMessage("shiftout")),
+    (lambda key: key == ascii.SP, lambda _: KeyMessage("space")),
+    (lambda key: key == ascii.SUB, lambda _: KeyMessage("sub")),
+    (lambda key: key == ascii.SYN, lambda _: KeyMessage("syn")),
+    (lambda key: key == ascii.TAB, lambda _: KeyMessage("tab")),
+    (lambda key: key == ascii.US, lambda _: KeyMessage("us")),
+    (lambda key: key == ascii.VT, lambda _: KeyMessage("verticaltab")),
+    (
+        lambda key: ascii.isalnum(key) or ascii.isspace(key),
+        lambda key: KeyMessage(chr(key)),
+    ),
+    (ascii.isctrl, lambda key: KeyMessage(f"ctrl+{chr(ord('a') - 1 + key)}")),
+)
+
 
 class Renderer(renderer.Renderer):
     """Curses renderer."""
@@ -172,23 +230,8 @@ class Renderer(renderer.Renderer):
         if (key := self._stdscr.getch()) == curses.ERR:
             return None
 
-        if key == curses.KEY_UP:
-            return KeyMessage("up")
-        if key == curses.KEY_DOWN:
-            return KeyMessage("down")
-        if key == curses.KEY_LEFT:
-            return KeyMessage("left")
-        if key == curses.KEY_RIGHT:
-            return KeyMessage("right")
-        if key in {curses.KEY_ENTER, ascii.LF, ascii.CR}:
-            # KEY_ENTER is rather unreliable, so we also accept ascii.LF
-            # and ascii.CR.
-            # See <https://stackoverflow.com/a/32255045/4039050>.
-            return KeyMessage("enter")
-        if key == ascii.SP:
-            return KeyMessage("space")
-        if ascii.isalnum(key) or ascii.isspace(key):
-            return KeyMessage(chr(key))
-        if ascii.isctrl(key):
-            return KeyMessage(f"ctrl+{chr(ord('a') - 1 + key)}")
+        for isvalid, translate in RULES:
+            if isvalid(key):
+                return translate(key)
+
         return KeyMessage(f"unknown: {key}")
