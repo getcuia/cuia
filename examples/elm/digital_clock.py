@@ -56,7 +56,7 @@ class Model(kay.Model):
 
     def view(self) -> Text:
         """Render the view."""
-        clock = pyfiglet.figlet_format(self.time.strftime("%H:%M:%S"), font="lcd")
+        clock = pyfiglet.figlet_format(self.time.strftime("%H:%M:%S"))
         return f"{Attr.BOLD}{clock}{Attr.NORMAL}"
 
 
