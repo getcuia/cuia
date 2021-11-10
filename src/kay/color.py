@@ -87,7 +87,8 @@ class Color(NamedTuple):
 
         The input should refer to a D65/2° standard illuminant.
 
-        **Source**: [From CIE XYZ to sRGB](https://en.wikipedia.org/wiki/SRGB#From_CIE_XYZ_to_sRGB).
+        **Source**:
+        [From CIE XYZ to sRGB](https://en.wikipedia.org/wiki/SRGB#From_CIE_XYZ_to_sRGB).
 
         Examples
         --------
@@ -125,7 +126,8 @@ class Color(NamedTuple):
 
         The output refers to a D65/2° standard illuminant.
 
-        **Source**: [From sRGB to CIE XYZ](https://en.wikipedia.org/wiki/SRGB#From_sRGB_to_CIE_XYZ).
+        **Source**:
+        [From sRGB to CIE XYZ](https://en.wikipedia.org/wiki/SRGB#From_sRGB_to_CIE_XYZ).
 
         Examples
         --------
@@ -190,8 +192,8 @@ class Color(NamedTuple):
         """
         Create a color from CIE LCh coordinates.
 
-        The input refers to a D65/2° standard illuminant and the angle h is
-        in radians.
+        The input refers to a D65/2° standard illuminant and the angle h (for hue) input
+        is in radians.
 
         Examples
         --------
@@ -204,8 +206,8 @@ class Color(NamedTuple):
         """
         Return the CIE LCh color for this color.
 
-        The output refers to a D65/2° standard illuminant and the angle h is
-        in radians.
+        The output refers to a D65/2° standard illuminant and the angle h (for hue)
+        output is in radians.
 
         Examples
         --------
@@ -470,7 +472,8 @@ def xyz_to_luv(x: float, y: float, z: float) -> tuple[float, float, float]:
 
     The input refers to a D65/2° standard illuminant.
 
-    **Source**: [The forward transformation](https://en.wikipedia.org/wiki/CIELUV#The_forward_transformation).
+    **Source**:
+    [The forward transformation](https://en.wikipedia.org/wiki/CIELUV#The_forward_transformation).
 
     Examples
     --------
@@ -497,7 +500,8 @@ def luv_to_xyz(ell: float, u: float, v: float) -> tuple[float, float, float]:
 
     The output refers to a D65/2° standard illuminant.
 
-    **Source**: [The reverse transformation](https://en.wikipedia.org/wiki/CIELUV#The_reverse_transformation).
+    **Source**:
+    [The reverse transformation](https://en.wikipedia.org/wiki/CIELUV#The_reverse_transformation).
 
     Examples
     --------
@@ -524,10 +528,11 @@ def luv_to_lch(ell: float, u: float, v: float) -> tuple[float, float, float]:
     r"""
     Convert CIE L\*u\*v\* to CIE LCh.
 
-    The input refers to a D65/2° standard illuminant and the angle h is
+    The input refers to a D65/2° standard illuminant and the angle h (for hue) output is
     in radians.
 
-    **Source**: [Cylindrical representation (CIELCh)](https://en.wikipedia.org/wiki/CIELUV#Cylindrical_representation_(CIELCh)).
+    **Source**:
+    [Cylindrical representation (CIELCh)](https://en.wikipedia.org/wiki/CIELUV#Cylindrical_representation_(CIELCh)).
 
     Examples
     --------
@@ -546,7 +551,7 @@ def lch_to_luv(ell: float, c: float, h: float) -> tuple[float, float, float]:
     r"""
     Convert CIE LCh to CIE L\*u\*v\*.
 
-    The output refers to a D65/2° standard illuminant and the angle h is
+    The output refers to a D65/2° standard illuminant and the angle h (for hue) input is
     in radians.
 
     **Source**: [Polar CIELUV](https://observablehq.com/@mbostock/luv-and-hcl#cell-219).
