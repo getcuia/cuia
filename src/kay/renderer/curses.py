@@ -219,7 +219,10 @@ class Renderer(renderer.Renderer):
         parser.tokenize(view)
         for piece in parser.parse():
             if isinstance(piece, Text):
-                self._stdscr.addstr(piece)
+                try:
+                    self._stdscr.addstr(piece)
+                except curses.error:
+                    pass
             elif piece == Attr.NORMAL:
                 self._reset_attributes()
             elif isinstance(piece, Attr):
