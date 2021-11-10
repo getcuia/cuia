@@ -131,10 +131,10 @@ class Color(NamedTuple):
         --------
         >>> Color(0, 0, 0).toxyz()
         (0.0, 0.0, 0.0)
-        >>> Color(1, 1, 1).toxyz()  # doctest: +NUMBER
-        (0.9505, 1.0000, 1.0890)
+        >>> Color(1, 1, 1).toxyz()
+        (0.9505, 1.0, 1.089)
         >>> Color(0.5, 0.5, 0.5).toxyz()  # doctest: +NUMBER
-        (0.203446104, 0.214041140, 0.233090801)
+        (0.203446, 0.214041, 0.233091)
         """
         red, green, blue = self
 
@@ -210,7 +210,7 @@ class Color(NamedTuple):
         Examples
         --------
         >>> Color(0.3, 0.6, 0.9).tolch()  # doctest: +NUMBER
-        (0.617, 0.787, 4.317)
+        (0.616755, 0.786916, 4.317256)
         """
         return luv_to_lch(*self.toluv())
 
@@ -301,7 +301,7 @@ class Color(NamedTuple):
         0.077396
         >>> c = Color.frombytes(0, 255, 0)
         >>> c.lightness  # doctest: +NUMBER
-        0.878
+        0.877370
         """
         return self.toluv()[0]
 
@@ -317,9 +317,9 @@ class Color(NamedTuple):
         >>> Color(0, 0, 0).chroma
         0.0
         >>> Color.frombytes(30, 60, 90).chroma  # doctest: +NUMBER
-        0.3
+        0.2799813
         >>> Color.frombytes(255, 255, 255).chroma  # doctest: +NUMBER
-        0.0
+        0.000171
         """
         return self.tolch()[1]
 
@@ -332,12 +332,12 @@ class Color(NamedTuple):
 
         Examples
         --------
-        >>> Color(0, 0, 0).hue
-        3.141592653589793
+        >>> Color(0, 0, 0).hue  # doctest: +NUMBER
+        3.141593
         >>> Color.frombytes(30, 60, 90).hue  # doctest: +NUMBER
-        4.2
+        4.296177
         >>> Color.frombytes(0, 255, 0).hue  # doctest: +NUMBER
-        2.3
+        2.229197
         """
         return self.tolch()[2]
 
@@ -350,7 +350,7 @@ class Color(NamedTuple):
         Examples
         --------
         >>> Color.frombytes(0, 255, 0).with_lightness(0.5)  # doctest: +NUMBER
-        Color(red=0.0, green=0.58, blue=0.0)
+        Color(red=0.0, green=0.582453, blue=0.0)
         """
         _, u, v = self.toluv()
         return self.fromluv(ell, u, v)
@@ -364,7 +364,7 @@ class Color(NamedTuple):
         Examples
         --------
         >>> Color.frombytes(0, 255, 0).with_chroma(0.5)  # doctest: +NUMBER
-        Color(red=0.7, green=0.9, blue=0.7)
+        Color(red=0.680477, green=0.922408, blue=0.680426)
         """
         ell, _, h = self.tolch()
         return self.fromlch(ell, c, h)
@@ -378,7 +378,7 @@ class Color(NamedTuple):
         Examples
         --------
         >>> Color.frombytes(0, 255, 0).with_hue(1.5)  # doctest: +NUMBER
-        Color(red=0.9, green=0.9, blue=0.0)
+        Color(red=0.900022, green=0.900897, blue=0.0)
         """
         ell, c, _ = self.tolch()
         return self.fromlch(ell, c, h)
@@ -532,7 +532,7 @@ def luv_to_lch(ell: float, u: float, v: float) -> tuple[float, float, float]:
     Examples
     --------
     >>> luv_to_lch(0.5, 0.5, 0.5)  # doctest: +NUMBER
-    (0.5, 0.707107, 0.7853981633974483)
+    (0.5, 0.707107, 0.7853982)
     >>> luv_to_lch(0.616729, -0.302960, -0.726142)  # doctest: +NUMBER
     (0.616729, 0.786808, 4.317128)
     """
