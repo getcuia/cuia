@@ -11,7 +11,7 @@ general.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterable, Iterator, Optional, Text, Type
+from typing import Iterable, Iterator, Optional, Text, Type, TypeVar, Union
 
 from kay.ansi import PATTERN, isplit
 from kay.ansi.token import Token
@@ -81,7 +81,9 @@ class Parser:
             else:
                 yield token
 
-    def _parse_token(self, token: Token):
+    def _parse_token(
+        self, token: Token
+    ) -> Iterable[Token | Attr | Foreground | Background | Text]:
         """Parse a single token."""
         if token.issgr():
             yield from self._parse_token_sgr(token)
@@ -91,7 +93,7 @@ class Parser:
 
     def _parse_token_sgr(
         self, token: Token
-    ) -> Iterable[Attr | Foreground | Background | Token]:
+    ) -> Iterable[Attr | Foreground | Background | Token | Text]:
         """Parse a SGR token."""
         if token.data < 30 or 50 <= token.data < 76:
             yield from self._parse_token_sgr_attr(token)
@@ -109,10 +111,12 @@ class Parser:
 
     def _parse_token_sgr_color(
         self, token: Token
-    ) -> Iterable[Foreground | Background | Token]:
+    ) -> Iterable[Foreground | Background | Token | Text]:
         """Parse an SGR color token."""
 
-        def _rgb(cls: Type[Foreground | Background]):
+        def _rgb(
+            cls: Type[Foreground | Background],
+        ) -> Iterable[Foreground | Background | Token | Text]:
             """Parse an RGB color."""
             assert self.tokens is not None, "Parser has no tokens"
 

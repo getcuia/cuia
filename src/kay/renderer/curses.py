@@ -5,7 +5,8 @@ from __future__ import annotations
 import curses
 from contextlib import contextmanager
 from curses import ascii
-from typing import Iterator, Optional, Text
+from types import TracebackType
+from typing import Callable, Iterator, Optional, Text, Type
 
 from kay import color, renderer
 from kay.ansi.parser import Parser
@@ -13,7 +14,7 @@ from kay.attr import Attr
 from kay.color import Background, Color, Foreground
 from kay.message import KeyMessage, Message
 
-RULES = (
+RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
     (lambda key: key == curses.KEY_UP, lambda _: KeyMessage("up")),
     (lambda key: key == curses.KEY_DOWN, lambda _: KeyMessage("down")),
     (lambda key: key == curses.KEY_LEFT, lambda _: KeyMessage("left")),
@@ -69,7 +70,7 @@ RULES = (
         lambda key: KeyMessage(chr(key)),
     ),
     (ascii.isctrl, lambda key: KeyMessage(f"ctrl+{chr(ord('a') - 1 + key)}")),
-)
+]
 
 
 class Renderer(renderer.Renderer):
@@ -109,11 +110,17 @@ class Renderer(renderer.Renderer):
         self._stdscr.nodelay(True)
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+    def __exit__(
+        self,
+        exctype: Optional[Type[BaseException]],
+        excinst: Optional[BaseException],
+        exctb: Optional[TracebackType],
+    ) -> Optional[bool]:
         """Exit context."""
         self._stdscr.nodelay(False)
         self._stdscr.keypad(False)
         curses.endwin()
+        return None
 
     @contextmanager
     def into_raw_mode(self) -> Iterator[Renderer]:

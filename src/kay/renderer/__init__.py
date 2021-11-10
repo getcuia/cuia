@@ -3,20 +3,34 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from contextlib import contextmanager
-from typing import ContextManager, Iterator, Optional, Protocol, Text, runtime_checkable
+from types import TracebackType
+from typing import (
+    ContextManager,
+    Iterator,
+    Optional,
+    Protocol,
+    Text,
+    Type,
+    runtime_checkable,
+)
 
 from kay.message import Message
 
 
 @runtime_checkable
-class Renderer(ContextManager, Protocol):
+class Renderer(ContextManager["Renderer"], Protocol):
     """Renderer protocol."""
 
     def __enter__(self) -> Renderer:
         """Enter context."""
         raise NotImplementedError()
 
-    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+    def __exit__(
+        self,
+        exctype: Optional[Type[BaseException]],
+        excinst: Optional[BaseException],
+        exctb: Optional[TracebackType],
+    ) -> Optional[bool]:
         """Exit context."""
         raise NotImplementedError()
 

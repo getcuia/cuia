@@ -8,7 +8,7 @@ PATTERN = re.compile(r"(\N{ESC}\[[\d;]*[a-zA-Z])")
 
 
 def isplit(
-    pattern: Pattern, text: Text, include_separators: bool = False
+    pattern: Pattern[Text], text: Text, include_separators: bool = False
 ) -> Iterable[Text]:
     """
     Split text into parts separated by the given pattern.

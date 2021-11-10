@@ -4,7 +4,7 @@ from kay import color
 from kay.renderer.curses import Renderer
 
 
-def test_initial_colors():
+def test_initial_colors() -> None:
     """Test that the curses renderer starts with the correct colors."""
     renderer = Renderer()
     assert renderer.colors == {
