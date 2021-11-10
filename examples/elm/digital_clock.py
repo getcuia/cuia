@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional, Text
 
-import pyfiglet
+import pyfiglet  # type: ignore
 
 import kay
 from kay import Attr
