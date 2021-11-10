@@ -11,7 +11,10 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional, Text
 
+import pyfiglet
+
 import kay
+from kay import Attr
 
 
 @dataclass
@@ -53,7 +56,8 @@ class Model(kay.Model):
 
     def view(self) -> Text:
         """Render the view."""
-        return f"{kay.Attr.BOLD}{self.time.strftime('%H:%M:%S')}{kay.Attr.NORMAL}"
+        clock = pyfiglet.figlet_format(self.time.strftime("%H:%M:%S"), font="lcd")
+        return f"{Attr.BOLD}{clock}{Attr.NORMAL}"
 
 
 async def main() -> None:
