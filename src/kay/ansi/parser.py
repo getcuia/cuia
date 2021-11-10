@@ -11,7 +11,7 @@ general.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterable, Iterator, Optional, Text, Type, TypeVar, Union
+from typing import Iterable, Iterator, Optional, Text, Type
 
 from kay.ansi import PATTERN, isplit
 from kay.ansi.token import Token
@@ -96,17 +96,14 @@ class Parser:
     ) -> Iterable[Attr | Foreground | Background | Token | Text]:
         """Parse a SGR token."""
         if token.data < 30 or 50 <= token.data < 76:
-            yield from self._parse_token_sgr_attr(token)
+            # Parse an SGR attribute token
+            try:
+                yield Attr(token.data)
+            except ValueError:
+                yield token
         elif 30 <= token.data < 50 or 90 <= token.data < 108:
             yield from self._parse_token_sgr_color(token)
         else:
-            yield token
-
-    def _parse_token_sgr_attr(self, token: Token) -> Iterable[Attr | Token]:
-        """Parse an SGR attribute token."""
-        try:
-            yield Attr(token.data)
-        except ValueError:
             yield token
 
     def _parse_token_sgr_color(

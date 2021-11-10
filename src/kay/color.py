@@ -138,7 +138,7 @@ class Color(NamedTuple):
         >>> Color(0.5, 0.5, 0.5).toxyz()  # doctest: +NUMBER
         (0.203446, 0.214041, 0.233091)
         """
-        red, green, blue = self
+        red, green, blue = self.red, self.green, self.blue
 
         if red > 0.04045:
             red = ((red + 0.055) / 1.055) ** 2.4
