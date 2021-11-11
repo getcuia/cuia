@@ -13,10 +13,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Iterable, Iterator, Optional, Text, Type
 
-from kay.ansi import PATTERN, isplit
+from kay.ansi import PATTERN
 from kay.ansi.token import Token
 from kay.attr import Attr
 from kay.color import Background, Color, Foreground
+from kay.misc import isplit
 
 
 @dataclass

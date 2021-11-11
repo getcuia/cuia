@@ -6,7 +6,7 @@ import re
 from dataclasses import dataclass
 from typing import Iterable, Text
 
-from kay.ansi import isplit
+from kay.misc import isplit
 
 SEPARATOR = re.compile(r";")
 
