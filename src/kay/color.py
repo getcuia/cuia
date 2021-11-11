@@ -264,29 +264,29 @@ class Color(NamedTuple):
         [Token(group='m', data=7)]
         """
         if self == BLACK:
-            yield Token(group="m", data=0)
+            yield Token(kind="m", data=0)
         elif self == RED:
-            yield Token(group="m", data=1)
+            yield Token(kind="m", data=1)
         elif self == GREEN:
-            yield Token(group="m", data=2)
+            yield Token(kind="m", data=2)
         elif self == YELLOW:
-            yield Token(group="m", data=3)
+            yield Token(kind="m", data=3)
         elif self == BLUE:
-            yield Token(group="m", data=4)
+            yield Token(kind="m", data=4)
         elif self == MAGENTA:
-            yield Token(group="m", data=5)
+            yield Token(kind="m", data=5)
         elif self == CYAN:
-            yield Token(group="m", data=6)
+            yield Token(kind="m", data=6)
         elif self == WHITE:
-            yield Token(group="m", data=7)
+            yield Token(kind="m", data=7)
         else:
-            yield Token(group="m", data=8)
-            yield Token(group="m", data=2)
+            yield Token(kind="m", data=8)
+            yield Token(kind="m", data=2)
 
             red, green, blue = self.tobytes()
-            yield Token(group="m", data=red)
-            yield Token(group="m", data=green)
-            yield Token(group="m", data=blue)
+            yield Token(kind="m", data=red)
+            yield Token(kind="m", data=green)
+            yield Token(kind="m", data=blue)
 
     @property
     def lightness(self) -> float:
@@ -433,7 +433,7 @@ class Foreground:
         """
         _tokens = self.color._tokens()
         head = next(_tokens)
-        yield Token(group=head.group, data=head.data + 30)
+        yield Token(kind=head.kind, data=head.data + 30)
         yield from _tokens
 
     def __str__(self) -> Text:
@@ -458,7 +458,7 @@ class Background:
         """
         _tokens = self.color._tokens()
         head = next(_tokens)
-        yield Token(group=head.group, data=head.data + 40)
+        yield Token(kind=head.kind, data=head.data + 40)
         yield from _tokens
 
     def __str__(self) -> Text:

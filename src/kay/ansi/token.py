@@ -15,21 +15,21 @@ SEPARATOR = re.compile(r";")
 class Token:
     """A token is a single ANSI escape sequence."""
 
-    group: Text
+    kind: Text
     data: int
 
     def issgr(self) -> bool:
         """Return True if this is a SGR escape sequence."""
-        return self.group == "m"
+        return self.kind == "m"
 
     def __str__(self) -> Text:
         """Return a string representation of this token."""
-        return f"\N{ESC}[{self.data}{self.group}"
+        return f"\N{ESC}[{self.data}{self.kind}"
 
     @staticmethod
     def fromstring(text: Text) -> Iterable[Text | Token]:
         r"""
-        Create tokens from a string or return it.
+        Create tokens from a string or return it as-is if not an ANSI escape sequence.
 
         Examples
         --------
@@ -37,7 +37,9 @@ class Token:
         [Token(group='m', data=0)]
         >>> list(Token.fromstring("\x1b[1;31m"))
         [Token(group='m', data=1), Token(group='m', data=31)]
-        >>> list(Token.fromstring("\x1b[38;2;30;60;90m"))  # doctest: +NORMALIZE_WHITESPACE
+        >>> list(Token.fromstring(
+        ...      "\x1b[38;2;30;60;90m"
+        ...     ))  # doctest: +NORMALIZE_WHITESPACE
         [Token(group='m', data=38),
          Token(group='m', data=2),
          Token(group='m', data=30),
@@ -50,6 +52,6 @@ class Token:
             marker = text[-1]
             if params := text[2:-1]:
                 for param in isplit(SEPARATOR, params):
-                    yield Token(group=marker, data=int(param))
+                    yield Token(kind=marker, data=int(param))
             else:
-                yield Token(group=marker, data=0)
+                yield Token(kind=marker, data=0)

@@ -38,7 +38,7 @@ class Attr(Enum):
         >>> Attr.BOLD.token()
         Token(group='m', data=1)
         """
-        return Token(group="m", data=self.value)
+        return Token(kind="m", data=self.value)
 
     def __str__(self) -> Text:
         """Return the ANSI escape sequence for this text style attribute."""
