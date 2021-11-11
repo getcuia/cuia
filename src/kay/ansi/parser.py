@@ -95,7 +95,7 @@ class Parser:
     def _parse_token_sgr(
         self, token: Token
     ) -> Iterable[Text | Token | Attr | Foreground | Background]:
-        """Parse a SGR token."""
+        """Parse an SGR token."""
         if token.data < 30 or 50 <= token.data < 76:
             # Parse an SGR attribute token
             try:

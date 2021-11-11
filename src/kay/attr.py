@@ -3,9 +3,6 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Text
-
-from kay.ansi.token import Token
 
 
 class Attr(Enum):
@@ -16,7 +13,10 @@ class Attr(Enum):
     --------
     >>> Attr.BOLD
     <Attr.BOLD: 1>
-    >>> Text(Attr.BOLD)
+    >>> from kay.ansi import escape, Token
+    >>> Token.encode(Attr.BOLD)
+    Token(kind='m', data=1)
+    >>> escape(Token.encode(Attr.BOLD))
     '\x1b[1m'
     """
 
@@ -28,18 +28,3 @@ class Attr(Enum):
     BLINK = 5
     #
     REVERSE = 7
-
-    def token(self) -> Token:
-        """
-        Return a ANSI Token with this text style attribute.
-
-        Examples
-        --------
-        >>> Attr.BOLD.token()
-        Token(group='m', data=1)
-        """
-        return Token(kind="m", data=self.value)
-
-    def __str__(self) -> Text:
-        """Return the ANSI escape sequence for this text style attribute."""
-        return Text(self.token())

@@ -4,9 +4,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import Iterable, Iterator, NamedTuple, Text
-
-from kay.ansi.token import Token
+from typing import NamedTuple
 
 
 def clamp(value: float, min_value: float = 0.0, max_value: float = 1.0) -> float:
@@ -216,78 +214,6 @@ class Color(NamedTuple):
         """
         return luv_to_lch(*self.toluv())
 
-    @staticmethod
-    def fromint(code: int) -> Color:
-        """
-        Create a color from an integer.
-
-        The integer should be a 3-bit SGR color code (A ValueError is raised otherwise).
-
-        Examples
-        --------
-        >>> Color.fromint(44) == BLUE
-        True
-        """
-        if code in {30, 40}:
-            return BLACK
-        if code in {31, 41}:
-            return RED
-        if code in {32, 42}:
-            return GREEN
-        if code in {33, 43}:
-            return YELLOW
-        if code in {34, 44}:
-            return BLUE
-        if code in {35, 45}:
-            return MAGENTA
-        if code in {36, 46}:
-            return CYAN
-        if code in {37, 47}:
-            return WHITE
-        raise ValueError(f"Invalid color code: {code}")
-
-    def _tokens(self) -> Iterator[Token]:
-        """
-        Yield **dummy** ANSI tokens for this color.
-
-        The tokens yielded are not actually valid ANSI tokens because the
-        first token always starts at zero (when it should have been between
-        30-38, 40-48, etc.)
-
-        This is for internal use only.
-
-        Examples
-        --------
-        >>> list(BLACK._tokens())
-        [Token(group='m', data=0)]
-        >>> list(WHITE._tokens())
-        [Token(group='m', data=7)]
-        """
-        if self == BLACK:
-            yield Token(kind="m", data=0)
-        elif self == RED:
-            yield Token(kind="m", data=1)
-        elif self == GREEN:
-            yield Token(kind="m", data=2)
-        elif self == YELLOW:
-            yield Token(kind="m", data=3)
-        elif self == BLUE:
-            yield Token(kind="m", data=4)
-        elif self == MAGENTA:
-            yield Token(kind="m", data=5)
-        elif self == CYAN:
-            yield Token(kind="m", data=6)
-        elif self == WHITE:
-            yield Token(kind="m", data=7)
-        else:
-            yield Token(kind="m", data=8)
-            yield Token(kind="m", data=2)
-
-            red, green, blue = self.tobytes()
-            yield Token(kind="m", data=red)
-            yield Token(kind="m", data=green)
-            yield Token(kind="m", data=blue)
-
     @property
     def lightness(self) -> float:
         r"""
@@ -422,48 +348,12 @@ class Foreground:
 
     color: Color
 
-    def tokens(self) -> Iterable[Token]:
-        """
-        Yield token to set the foreground color.
-
-        Examples
-        --------
-        >>> list(Foreground(RED).tokens())
-        [Token(group='m', data=31)]
-        """
-        _tokens = self.color._tokens()
-        head = next(_tokens)
-        yield Token(kind=head.kind, data=head.data + 30)
-        yield from _tokens
-
-    def __str__(self) -> Text:
-        """Return a string representation of this foreground color."""
-        return Text(*self.tokens())
-
 
 @dataclass(frozen=True)
 class Background:
     """A terminal background color."""
 
     color: Color
-
-    def tokens(self) -> Iterable[Token]:
-        """
-        Yield token to set the background color.
-
-        Examples
-        --------
-        >>> list(Background(MAGENTA).tokens())
-        [Token(group='m', data=45)]
-        """
-        _tokens = self.color._tokens()
-        head = next(_tokens)
-        yield Token(kind=head.kind, data=head.data + 40)
-        yield from _tokens
-
-    def __str__(self) -> Text:
-        """Return a string representation of this background color."""
-        return Text(*self.tokens())
 
 
 def xyz_to_luv(x: float, y: float, z: float) -> tuple[float, float, float]:

@@ -1,4 +1,8 @@
-"""Representation of ANSI escape sequences."""
+"""
+Representation of ANSI escape sequences.
+
+The token is the hub of all things ANSI.
+"""
 
 from __future__ import annotations
 
@@ -6,6 +10,7 @@ import re
 from dataclasses import dataclass
 from typing import Iterable, Text
 
+from kay.attr import Attr
 from kay.misc import isplit
 
 SEPARATOR = re.compile(r";")
@@ -13,7 +18,14 @@ SEPARATOR = re.compile(r";")
 
 @dataclass(frozen=True)
 class Token:
-    """A token is a single ANSI escape sequence."""
+    """
+    A token is a single ANSI escape.
+
+    A complete ANSI escape sequence can require multiple tokens.
+    This object is used as a representation of the ANSI escape sequence "language": we
+    can encode properties into tokens, and we can decode strings into tokens.
+    Furthermore, by having a token, we can transform them into compact strings.
+    """
 
     kind: Text
     data: int
@@ -21,10 +33,6 @@ class Token:
     def issgr(self) -> bool:
         """Return True if this is a SGR escape sequence."""
         return self.kind == "m"
-
-    def __str__(self) -> Text:
-        """Return a string representation of this token."""
-        return f"\N{ESC}[{self.data}{self.kind}"
 
     @staticmethod
     def decode(text: Text) -> Iterable[Text | Token]:

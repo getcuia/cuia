@@ -28,7 +28,6 @@ def escape(tokens: Token | Iterable[Token]) -> Text:
     >>> escape([Token(kind="m", data=1), Token(kind="H", data=0)])
     '\x1b[1m\x1b[H'
     """
-    # TODO: encode automatically if not tokens using a map
 
     def _escape(kind: Text, data: int | Text) -> Text:
         return f"\N{ESC}[{data or ''}{kind}"
