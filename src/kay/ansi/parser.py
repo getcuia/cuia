@@ -84,7 +84,7 @@ class Parser:
 
     def _parse_token(
         self, token: Token
-    ) -> Iterable[Token | Attr | Foreground | Background | Text]:
+    ) -> Iterable[Text | Token | Attr | Foreground | Background]:
         """Parse a single token."""
         if token.issgr():
             yield from self._parse_token_sgr(token)
@@ -94,7 +94,7 @@ class Parser:
 
     def _parse_token_sgr(
         self, token: Token
-    ) -> Iterable[Attr | Foreground | Background | Token | Text]:
+    ) -> Iterable[Text | Token | Attr | Foreground | Background]:
         """Parse a SGR token."""
         if token.data < 30 or 50 <= token.data < 76:
             # Parse an SGR attribute token
@@ -109,12 +109,12 @@ class Parser:
 
     def _parse_token_sgr_color(
         self, token: Token
-    ) -> Iterable[Foreground | Background | Token | Text]:
+    ) -> Iterable[Text | Token | Foreground | Background]:
         """Parse an SGR color token."""
 
         def _rgb(
             cls: Type[Foreground | Background],
-        ) -> Iterable[Foreground | Background | Token | Text]:
+        ) -> Iterable[Text | Token | Foreground | Background]:
             """Parse an RGB color."""
             assert self.tokens is not None, "Parser has no tokens"
 
