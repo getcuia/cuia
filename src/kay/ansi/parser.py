@@ -167,17 +167,17 @@ class Parser:
         >>> list(
         ...     Parser._tokenize("\x1b[38;2;0;255;0mHello, green!\x1b[m")
         ... )  # doctest: +NORMALIZE_WHITESPACE
-        [Token(group='m', data=38),
-        Token(group='m', data=2),
-        Token(group='m', data=0),
-        Token(group='m', data=255),
-        Token(group='m', data=0),
+        [Token(kind='m', data=38),
+        Token(kind='m', data=2),
+        Token(kind='m', data=0),
+        Token(kind='m', data=255),
+        Token(kind='m', data=0),
         'Hello, green!',
-        Token(group='m', data=0)]
+        Token(kind='m', data=0)]
         """
         for piece in isplit(PATTERN, text, include_separators=True):
             if piece:
-                yield from Token.fromstring(piece)
+                yield from Token.decode(piece)
 
 
 if __name__ == "__main__":

@@ -27,24 +27,22 @@ class Token:
         return f"\N{ESC}[{self.data}{self.kind}"
 
     @staticmethod
-    def fromstring(text: Text) -> Iterable[Text | Token]:
+    def decode(text: Text) -> Iterable[Text | Token]:
         r"""
-        Create tokens from a string or return it as-is if not an ANSI escape sequence.
+        Decode a string into tokens if possible, otherwise yield the unknown parts.
 
         Examples
         --------
-        >>> list(Token.fromstring("\033[m"))
-        [Token(group='m', data=0)]
-        >>> list(Token.fromstring("\x1b[1;31m"))
-        [Token(group='m', data=1), Token(group='m', data=31)]
-        >>> list(Token.fromstring(
-        ...      "\x1b[38;2;30;60;90m"
-        ...     ))  # doctest: +NORMALIZE_WHITESPACE
-        [Token(group='m', data=38),
-         Token(group='m', data=2),
-         Token(group='m', data=30),
-         Token(group='m', data=60),
-         Token(group='m', data=90)]
+        >>> list(Token.decode("\033[m"))
+        [Token(kind='m', data=0)]
+        >>> list(Token.decode("\x1b[1;31m"))
+        [Token(kind='m', data=1), Token(kind='m', data=31)]
+        >>> list(Token.decode("\x1b[38;2;30;60;90m"))  # doctest: +NORMALIZE_WHITESPACE
+        [Token(kind='m', data=38),
+         Token(kind='m', data=2),
+         Token(kind='m', data=30),
+         Token(kind='m', data=60),
+         Token(kind='m', data=90)]
         """
         if not text.startswith("\N{ESC}["):
             yield text
