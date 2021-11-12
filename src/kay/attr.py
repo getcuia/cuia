@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from enum import Enum
 
+from kay import ansi
+
 
 class Attr(Enum):
     r"""
@@ -28,3 +30,7 @@ class Attr(Enum):
     BLINK = 5
     #
     REVERSE = 7
+
+    def __str__(self) -> str:
+        """Return the ANSI escape sequence for this attribute."""
+        return ansi.escape(ansi.token.encode(self))

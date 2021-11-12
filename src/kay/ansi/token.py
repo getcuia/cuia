@@ -10,8 +10,7 @@ import re
 from dataclasses import dataclass
 from typing import Iterable, Iterator, Text, Type
 
-from kay import color
-from kay.attr import Attr
+from kay import attr, color
 from kay.color import Color, ground
 from kay.misc import isplit
 
@@ -163,7 +162,7 @@ def escape(ts: Token | Iterable[Token]) -> Text:
     return f"{res}{kind}"
 
 
-def decode(ts: Iterable[Token]) -> Iterable[Attr | ground.Ground | Token]:
+def decode(ts: Iterable[Token]) -> Iterable[attr.Attr | ground.Ground | Token]:
     """
     Decode a string of tokens into objects if possible, otherwise yield the token as-is.
 
@@ -182,7 +181,7 @@ def decode(ts: Iterable[Token]) -> Iterable[Attr | ground.Ground | Token]:
             if t.data < 30 or 50 <= t.data < 76:
                 # Parse an SGR attribute token
                 try:
-                    yield Attr(t.data)
+                    yield attr.Attr(t.data)
                 except ValueError:
                     yield t
             elif 30 <= t.data < 50 or 90 <= t.data < 108:
@@ -228,9 +227,11 @@ def decode(ts: Iterable[Token]) -> Iterable[Attr | ground.Ground | Token]:
             yield t
 
 
-def encode(data: Attr | ground.Ground | Token | Iterable[Token]) -> Iterable[Token]:
+def encode(
+    data: attr.Attr | ground.Ground | Token | Iterable[Token],
+) -> Iterable[Token]:
     """
-    Encode an Attr into a Token.
+    Encode an object into a sequence of tokens if possible, otherwise yield the object as-is.
 
     Examples
     --------
@@ -240,7 +241,7 @@ def encode(data: Attr | ground.Ground | Token | Iterable[Token]) -> Iterable[Tok
     True
     """
     # TODO: dispatch table!
-    if isinstance(data, Attr):
+    if isinstance(data, attr.Attr):
         yield Token(kind="m", data=data.value)
     if isinstance(data, ground.Ground):
         base = 40 if isinstance(data, ground.Back) else 30
