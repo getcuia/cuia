@@ -20,6 +20,16 @@ class Program:
     The program runtime.
 
     This object is responsible for properly running the program.
+
+    Examples
+    --------
+    >>> class Hello(Model):
+    ...     def init(self) -> Optional[Command]:
+    ...         return quit
+    ...     def view(self) -> Text:
+    ...         return "Hello, world!"
+    >>> program = Program(Hello())
+    >>> asyncio.run(program.start())  # doctest: +SKIP
     """
 
     model: Model
