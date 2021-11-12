@@ -20,9 +20,23 @@ class Ground:
 
 @dataclass(frozen=True)
 class Fore(Ground):
-    """A terminal foreground color."""
+    """
+    A terminal foreground color.
+
+    Examples
+    --------
+    >>> Fore(color.RED)
+    Fore(color=Color(red=1.0, green=0.5826106699754192, blue=0.5805635742506021))
+    """
 
 
 @dataclass(frozen=True)
 class Back(Ground):
-    """A terminal background color."""
+    """
+    A terminal background color.
+
+    Examples
+    --------
+    >>> Back(color.RED)
+    Back(color=Color(red=1.0, green=0.5826106699754192, blue=0.5805635742506021))
+    """
