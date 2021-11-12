@@ -16,7 +16,7 @@ class Model(Protocol):
     Your application should implement this protocol.
     """
 
-    def init(self) -> Optional[Command]:
+    def start(self) -> Optional[Command]:
         """
         Return a command to initialize the model.
 

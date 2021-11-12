@@ -52,7 +52,7 @@ class Program:
                 self.messages = Queue()
 
                 # Get our first command
-                if command := self.model.init():
+                if command := self.model.start():
                     await self.obey(command)
 
                 while not self.should_quit:
