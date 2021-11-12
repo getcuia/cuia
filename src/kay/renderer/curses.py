@@ -14,6 +14,17 @@ from ..color import BLACK, BLUE, CYAN, GREEN, MAGENTA, RED, WHITE, YELLOW, Color
 from ..message import Key, Message
 from ._renderer import AbstractRenderer
 
+
+def just(key: Key) -> Callable[[int], Key]:
+    """Return a function that returns the given key when called."""
+    return lambda _: key
+
+
+def equal(key: int) -> Callable[[int], bool]:
+    """Return a function that returns True when called with the given key."""
+    return lambda k: k == key
+
+
 RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
     (lambda key: key == curses.KEY_UP, lambda _: KeyMessage("up")),
     (lambda key: key == curses.KEY_DOWN, lambda _: KeyMessage("down")),
