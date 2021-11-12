@@ -69,7 +69,7 @@ class Token:
         return self.kind == "m"
 
 
-def tokenize(text: Text) -> Iterable[Text | Token]:
+def tokenize(text: Text) -> Iterator[Text | Token]:
     r"""
     Tokenize ANSI escape sequences from a string.
 
@@ -188,11 +188,9 @@ def decode(ts: Iterable[Token]) -> Iterable[Attr | ground.Ground | Token]:
             elif 30 <= t.data < 50 or 90 <= t.data < 108:
 
                 def _rgb(
-                    t: Token, ts: Iterable[Token], cls: Type[ground.Ground]
+                    t: Token, ts: Iterator[Token], cls: Type[ground.Ground]
                 ) -> Iterable[Token | ground.Ground]:
                     """Parse an RGB color."""
-                    if not isinstance(ts, Iterator):
-                        ts = iter(ts)
                     bits = next(ts)
                     if isinstance(bits, Token) and bits.data == 2:
                         # 24-bit RGB color
