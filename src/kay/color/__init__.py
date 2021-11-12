@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
 from typing import NamedTuple
 
 
@@ -340,20 +339,6 @@ class Color(NamedTuple):
         False
         """
         return not self.islight()
-
-
-@dataclass(frozen=True)
-class Foreground:
-    """A terminal foreground color."""
-
-    color: Color
-
-
-@dataclass(frozen=True)
-class Background:
-    """A terminal background color."""
-
-    color: Color
 
 
 def xyz_to_luv(x: float, y: float, z: float) -> tuple[float, float, float]:
