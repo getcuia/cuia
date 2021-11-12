@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import asyncio
-import sys
 from dataclasses import dataclass, field
 from typing import Optional, Text
 
@@ -88,12 +87,7 @@ async def main() -> None:
     event loop.
     """
     program = kay.Program(Model())
-    try:
-        await program.start()
-    except Exception as err:
-        # It is a good idea to narrow down the error type in production code.
-        print(f"Alas, there's been an error: {err}", file=sys.stderr)
-        sys.exit(1)
+    await program.start()
 
 
 if __name__ == "__main__":

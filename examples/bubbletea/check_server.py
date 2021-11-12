@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import asyncio
-import sys
 from dataclasses import dataclass
 from typing import Optional, Text
 
@@ -30,10 +29,10 @@ async def check_server() -> Optional[kay.Message]:
 
     **Note**: what if you need to pass some data to a command? Use a factory function:
 
-    >>> def cmd_with_arg(id: int) -> Command:
-    ...     async def cmd() -> Optional[kay.Message]:
+    >>> def command_with_arg(id: int) -> Command:
+    ...     async def command() -> Optional[kay.Message]:
     ...         return SomeMessage(id)
-    ...     return cmd
+    ...     return command
 
     Then you can call this factory function when you need to get a command.
     """
@@ -117,12 +116,7 @@ async def main() -> None:
     event loop.
     """
     program = kay.Program(Model())
-    try:
-        await program.start()
-    except Exception as err:
-        # It is a good idea to narrow down the error type in production code.
-        print(f"Uh oh, there was an error: {err}\n", file=sys.stderr)
-        sys.exit(1)
+    await program.start()
 
 
 if __name__ == "__main__":

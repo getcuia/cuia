@@ -6,7 +6,6 @@ This example is based on the Elm example at: <https://elm-lang.org/examples/time
 
 
 import asyncio
-import sys
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional, Text
@@ -63,12 +62,7 @@ class Model(kay.Model):
 async def main() -> None:
     """Run the application."""
     program = kay.Program(Model(datetime.now()))
-    try:
-        await program.start()
-    except Exception as err:
-        # It is a good idea to narrow down the error type in production code.
-        print(f"Alas, there's been an error: {err}", file=sys.stderr)
-        sys.exit(1)
+    await program.start()
 
 
 if __name__ == "__main__":
