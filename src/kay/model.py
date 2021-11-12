@@ -4,8 +4,8 @@
 from abc import abstractmethod
 from typing import Optional, Protocol, Text, runtime_checkable
 
-from kay.command import Command, quit
-from kay.message import KeyMessage, Message
+from .command import Command
+from .message import KeyMessage, Message
 
 
 @runtime_checkable

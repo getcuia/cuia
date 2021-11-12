@@ -43,23 +43,22 @@ is updated, instead of a virtual DOM tree.
 
 
 __version__ = "0.1.0"
-__all__ = [
-    "Model",
-    "Program",
-    "Message",
-    "KeyMessage",
-    "QuitMessage",
-    "Command",
-    "quit",
-    "Attr",
-    "Back",
-    "Fore",
-    "Color",
-]
 
 
-from .attr import Attr
+from .ansi import Attr, Back, Fore
 from .command import Command, quit
-from .message import KeyMessage, Message, QuitMessage
+from .message import KeyMessage, Message
 from .model import Model
 from .program import Program
+
+__all__ = [
+    "Attr",
+    "Back",
+    "Command",
+    "Fore",
+    "KeyMessage",
+    "Message",
+    "Model",
+    "Program",
+    "quit",
+]

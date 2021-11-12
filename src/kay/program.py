@@ -6,12 +6,12 @@ from __future__ import annotations
 import asyncio
 from asyncio import Queue
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Type
 
-from kay.command import Command
-from kay.message import Message, QuitMessage
-from kay.model import Model
-from kay.renderer.curses import Renderer
+from .command import Command
+from .message import Message, QuitMessage
+from .model import Model
+from .renderer import AbstractRenderer, curses
 
 
 @dataclass
@@ -40,12 +40,13 @@ class Program:
     """An indicator that the program should redraw the screen."""
     should_quit: bool = False
     """An indicator that the program should quit."""
+    renderer: Type[AbstractRenderer] = curses.Renderer
     # output: TextIO = sys.stdout
     # input: TextIO = sys.stdin
 
     async def start(self) -> None:
         """Begin the program."""
-        with Renderer() as renderer:
+        with self.renderer() as renderer:
             with renderer.into_raw_mode() as renderer:
                 # Queues have to be created inside the coroutine's event loop
                 self.messages = Queue()

@@ -4,6 +4,11 @@ import re
 from typing import Iterable, Pattern, Text
 
 
+def clamp(value: float, min_value: float = 0.0, max_value: float = 1.0) -> float:
+    """Clamp a value to a range."""
+    return max(min_value, min(value, max_value))
+
+
 def isplit(
     pattern: Pattern[Text], text: Text, include_separators: bool = False
 ) -> Iterable[Text]:
