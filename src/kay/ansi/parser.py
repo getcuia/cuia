@@ -16,7 +16,6 @@ from typing import Iterable, Iterator, Optional, Text
 from kay.ansi import token
 from kay.attr import Attr
 from kay.color import ground
-from kay.misc import isplit
 
 
 @dataclass
