@@ -5,7 +5,7 @@ from abc import abstractmethod
 from typing import Optional, Protocol, Text, runtime_checkable
 
 from .command import Command
-from .message import KeyMessage, Message
+from .message import Key, Message
 
 
 @runtime_checkable
@@ -33,7 +33,7 @@ class Model(Protocol):
         The default implementation terminates the program if the user presses Ctrl-C,
         otherwise it does nothing.
         """
-        if isinstance(message, KeyMessage):
+        if isinstance(message, Key):
             if Text(message) == "ctrl+c":
                 return quit
         return None

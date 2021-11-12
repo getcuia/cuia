@@ -11,7 +11,7 @@ from typing import Callable, Iterator, Optional, Text, Type
 from ..ansi import Parser
 from ..ansi.token import Attr, Back, Fore, Ground
 from ..color import BLACK, BLUE, CYAN, GREEN, MAGENTA, RED, WHITE, YELLOW, Color
-from ..message import KeyMessage, Message
+from ..message import Key, Message
 from ._renderer import AbstractRenderer
 
 RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
@@ -241,4 +241,4 @@ class Renderer(AbstractRenderer):
             if isvalid(key):
                 return translate(key)
 
-        return KeyMessage(f"unknown: {key}")
+        raise ValueError(f"unknown key: {key}")

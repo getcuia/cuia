@@ -47,7 +47,7 @@ __version__ = "0.1.0"
 
 from .ansi import Attr, Back, Fore
 from .command import Command, quit
-from .message import KeyMessage, Message
+from .message import Key, Message
 from .model import Model
 from .program import Program
 
@@ -56,7 +56,7 @@ __all__ = [
     "Back",
     "Command",
     "Fore",
-    "KeyMessage",
+    "Key",
     "Message",
     "Model",
     "Program",

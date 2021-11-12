@@ -93,7 +93,7 @@ class Model(kay.Model):
             self.reason = message.reason
         elif isinstance(message, ErrorMessage):
             self.error = message.error
-        elif isinstance(message, kay.KeyMessage):
+        elif isinstance(message, kay.Key):
             if Text(message) in {"ctrl+c", "q"}:
                 return kay.quit
         return None

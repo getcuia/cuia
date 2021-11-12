@@ -48,7 +48,7 @@ class Model(kay.Model):
         if isinstance(message, TickMessage):
             self.time = message.time
             return tick
-        if isinstance(message, kay.KeyMessage):
+        if isinstance(message, kay.Key):
             if message.key == "ctrl+c":
                 return kay.quit
         return None

@@ -32,7 +32,7 @@ class Model(kay.Model):
         It is called when "things happen." Its job is to look at what has happened and
         update the model in response.
         """
-        if isinstance(message, kay.KeyMessage):
+        if isinstance(message, kay.Key):
             # The user pressed a key.
             if Text(message) in {"ctrl+c", "q"}:
                 # Quit the application.
