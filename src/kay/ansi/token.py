@@ -13,8 +13,8 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Iterable, Iterator, Text, Type
 
+from .._misc import isplit
 from ..color import BLACK, BLUE, CYAN, GREEN, MAGENTA, RED, WHITE, YELLOW, Color
-from ..misc import isplit
 
 PATTERN = re.compile(r"(\N{ESC}\[[\d;]*[a-zA-Z])")
 SEPARATOR = re.compile(r";")

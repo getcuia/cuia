@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import NamedTuple
 
-from ..misc import clamp
+from .._misc import clamp
 from .conversions import lch_to_luv, luv_to_lch, luv_to_xyz, xyz_to_luv
 
 
