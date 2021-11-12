@@ -1,4 +1,4 @@
-"""
+r"""
 A simple ANSI escape sequence parser.
 
 Only a subset of the ANSI escape sequences are supported, namely a subset of
@@ -13,16 +13,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Iterable, Iterator, Optional, Text
 
-from kay.ansi import token
-from kay.attr import Attr
-from kay.color import ground
+from .token import Escapable, Token, decode, tokenize
 
 
 @dataclass
 class Parser:
     """A parser for ANSI escape sequences."""
 
-    tokens: Optional[Iterator[Text | token.Token]] = None
+    tokens: Optional[Iterator[Text | Token]] = None
 
     def tokenize(self, text: Text) -> None:
         r"""
@@ -33,9 +31,9 @@ class Parser:
         >>> p = Parser()
         >>> p.tokenize("\x1B[38;2;0;255;0mHello, green!\x1b[m")
         """
-        self.tokens = token.tokenize(text)
+        self.tokens = tokenize(text)
 
-    def parse(self) -> Iterable[Text | token.Token | Attr | ground.Ground]:
+    def parse(self) -> Iterable[Text | Escapable]:
         r"""
         Parse ANSI escape sequences from a string.
 
@@ -84,19 +82,19 @@ class Parser:
                 "tokenize() must be called before parse()"
             )
 
-        ts: list[token.Token] = []
+        ts: list[Token] = []
         while t := next(self.tokens, None):
-            if isinstance(t, token.Token):
+            if isinstance(t, Token):
                 ts.append(t)
             else:
                 if ts:
-                    yield from token.decode(ts)
+                    yield from decode(ts)
                     ts.clear()
 
                 yield t
 
         if ts:
-            yield from token.decode(ts)
+            yield from decode(ts)
 
 
 if __name__ == "__main__":
