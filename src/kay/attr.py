@@ -13,10 +13,10 @@ class Attr(Enum):
     --------
     >>> Attr.BOLD
     <Attr.BOLD: 1>
-    >>> from kay.ansi import escape, Token
-    >>> Token.encode(Attr.BOLD)
-    Token(kind='m', data=1)
-    >>> escape(Token.encode(Attr.BOLD))
+    >>> from kay.ansi import escape, token
+    >>> list(token.encode(Attr.BOLD))
+    [Token(kind='m', data=1)]
+    >>> escape(token.encode(Attr.BOLD))
     '\x1b[1m'
     """
 
