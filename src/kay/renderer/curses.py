@@ -74,7 +74,14 @@ RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
 
 
 class Renderer(renderer.Renderer):
-    """Curses renderer."""
+    """
+    Curses renderer.
+
+    Examples
+    --------
+    >>> with Renderer() as renderer:  # doctest: +SKIP
+    ...     renderer.render("Hello, world!")
+    """
 
     _stdscr: curses._CursesWindow
     foreground: Optional[Color] = None
