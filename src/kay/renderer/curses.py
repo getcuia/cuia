@@ -8,11 +8,11 @@ from curses import ascii
 from types import TracebackType
 from typing import Callable, Iterator, Optional, Text, Type
 
-from kay import color, renderer
-from kay.ansi.parser import Parser
-from kay.attr import Attr
-from kay.color import Color, ground
-from kay.message import KeyMessage, Message
+from ..ansi import Parser
+from ..ansi.token import Attr, Back, Fore, Ground
+from ..color import BLACK, BLUE, CYAN, GREEN, MAGENTA, RED, WHITE, YELLOW, Color
+from ..message import KeyMessage, Message
+from ._renderer import AbstractRenderer
 
 RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
     (lambda key: key == curses.KEY_UP, lambda _: KeyMessage("up")),
@@ -73,7 +73,7 @@ RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
 ]
 
 
-class Renderer(renderer.Renderer):
+class Renderer(AbstractRenderer):
     """
     Curses renderer.
 
@@ -96,19 +96,9 @@ class Renderer(renderer.Renderer):
         curses.use_default_colors()
         # More:
         # https://github.com/gyscos/cursive/blob/c4c74c02996f3f6e66136b51a4d83d2562af740a/cursive/src/backends/curses/n.rs#L137-L143
-        for hue in (
-            None,
-            color.BLACK,
-            color.RED,
-            color.GREEN,
-            color.YELLOW,
-            color.BLUE,
-            color.MAGENTA,
-            color.CYAN,
-            color.WHITE,
-        ):
+        for hue in (None, BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE):
             self._init_color(hue)
-        for foreground, background in ((None, None), (color.WHITE, color.BLACK)):
+        for foreground, background in ((None, None), (WHITE, BLACK)):
             self._init_pair(foreground, background)
 
     def __enter__(self) -> Renderer:
@@ -165,16 +155,16 @@ class Renderer(renderer.Renderer):
             return curses.A_REVERSE
         raise ValueError(f"unknown attribute: {attr}")
 
-    def _translate_color(self, hue: ground.Ground) -> int:
+    def _translate_color(self, hue: Ground) -> int:
         """
         Translate color.
 
         This returns the appropriate curses color pair based on the new color and the
         kept state.
         """
-        if isinstance(hue, ground.Fore):
+        if isinstance(hue, Fore):
             self.foreground = hue.color
-        elif isinstance(hue, ground.Back):
+        elif isinstance(hue, Back):
             self.background = hue.color
 
         self._init_color(self.foreground)
@@ -235,7 +225,7 @@ class Renderer(renderer.Renderer):
             elif isinstance(piece, Attr):
                 curses_attr = self._translate_attribute(piece)
                 self._stdscr.attron(curses_attr)
-            elif isinstance(piece, ground.Ground):
+            elif isinstance(piece, Ground):
                 curses_attr = self._translate_color(piece)
                 self._stdscr.attron(curses_attr)
             # Silently ignore other pieces because they are probably unparsed Tokens.
