@@ -52,14 +52,13 @@ __all__ = [
     "Command",
     "quit",
     "Attr",
-    "Background",
-    "Foreground",
+    "Back",
+    "Fore",
     "Color",
 ]
 
 
 from .attr import Attr
-from .color import Background, Color, Foreground
 from .command import Command, quit
 from .message import KeyMessage, Message, QuitMessage
 from .model import Model
