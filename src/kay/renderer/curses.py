@@ -99,7 +99,7 @@ class Renderer(AbstractRenderer):
         for hue in (None, BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE):
             self._init_color(hue)
         for foreground, background in ((None, None), (WHITE, BLACK)):
-            self._init_pair(foreground, background)
+            self._init_color_pair(foreground, background)
 
     def __enter__(self) -> Renderer:
         """Enter context."""
@@ -155,7 +155,7 @@ class Renderer(AbstractRenderer):
             return curses.A_REVERSE
         raise ValueError(f"unknown attribute: {attr}")
 
-    def _translate_color(self, hue: Ground) -> int:
+    def _get_color_index(self, hue: Ground) -> int:
         """
         Translate color.
 
@@ -170,7 +170,7 @@ class Renderer(AbstractRenderer):
         self._init_color(self.foreground)
         self._init_color(self.background)
 
-        self._init_pair(self.foreground, self.background)
+        self._init_color_pair(self.foreground, self.background)
         return curses.color_pair(self.color_pairs[(self.foreground, self.background)])
 
     def _init_color(self, hue: Optional[Color], id: Optional[int] = None) -> None:
@@ -188,7 +188,7 @@ class Renderer(AbstractRenderer):
                 blue = int(blue * 1000)
                 curses.init_color(self.colors[hue], red, green, blue)
 
-    def _init_pair(
+    def _init_color_pair(
         self,
         foreground: Optional[Color],
         background: Optional[Color],
@@ -226,7 +226,7 @@ class Renderer(AbstractRenderer):
                 curses_attr = self._translate_attribute(piece)
                 self._stdscr.attron(curses_attr)
             elif isinstance(piece, Ground):
-                curses_attr = self._translate_color(piece)
+                curses_attr = self._get_color_index(piece)
                 self._stdscr.attron(curses_attr)
             # Silently ignore other pieces because they are probably unparsed Tokens.
         self._stdscr.noutrefresh()
