@@ -1,4 +1,6 @@
-"""
+r"""
+Facilities for working with ANSI escape sequences as objects.
+
 Representation of ANSI escape sequences.
 
 The token is the hub of all things ANSI.
@@ -8,40 +10,31 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from enum import Enum
 from typing import Iterable, Iterator, Text, Type
 
-from kay import attr, color
-from kay.color import Color, ground
-from kay.misc import isplit
+from ..color import BLACK, BLUE, CYAN, GREEN, MAGENTA, RED, WHITE, YELLOW, Color
+from ..misc import isplit
 
 PATTERN = re.compile(r"(\N{ESC}\[[\d;]*[a-zA-Z])")
 SEPARATOR = re.compile(r";")
 
 
-GROUNDS = {
-    # Foregrounds
-    30: ground.Fore(color.BLACK),
-    31: ground.Fore(color.RED),
-    32: ground.Fore(color.GREEN),
-    33: ground.Fore(color.YELLOW),
-    34: ground.Fore(color.BLUE),
-    35: ground.Fore(color.MAGENTA),
-    36: ground.Fore(color.CYAN),
-    37: ground.Fore(color.WHITE),
-    # Backgrounds
-    40: ground.Back(color.BLACK),
-    41: ground.Back(color.RED),
-    42: ground.Back(color.GREEN),
-    43: ground.Back(color.YELLOW),
-    44: ground.Back(color.BLUE),
-    45: ground.Back(color.MAGENTA),
-    46: ground.Back(color.CYAN),
-    47: ground.Back(color.WHITE),
-}
+class Escapable:
+    """
+    An object that corresponds to an ANSI escape sequence.
+
+    This is not meant to be instantiated directly, but rather to be used as a
+    base class for other classes.
+    """
+
+    def __str__(self) -> str:
+        """Return the ANSI escape sequence for this object."""
+        return escape(encode(self))
 
 
 @dataclass(frozen=True)
-class Token:
+class Token(Escapable):
     """
     A token is a single ANSI escape.
 
@@ -162,7 +155,7 @@ def escape(ts: Token | Iterable[Token]) -> Text:
     return f"{res}{kind}"
 
 
-def decode(ts: Iterable[Token]) -> Iterable[attr.Attr | ground.Ground | Token]:
+def decode(ts: Iterable[Token]) -> Iterable[Escapable]:
     """
     Decode a string of tokens into objects if possible, otherwise yield the token as-is.
 
@@ -181,14 +174,14 @@ def decode(ts: Iterable[Token]) -> Iterable[attr.Attr | ground.Ground | Token]:
             if t.data < 30 or 50 <= t.data < 76:
                 # Parse an SGR attribute token
                 try:
-                    yield attr.Attr(t.data)
+                    yield Attr(t.data)
                 except ValueError:
                     yield t
             elif 30 <= t.data < 50 or 90 <= t.data < 108:
 
                 def _rgb(
-                    t: Token, ts: Iterator[Token], cls: Type[ground.Ground]
-                ) -> Iterable[Token | ground.Ground]:
+                    t: Token, ts: Iterator[Token], cls: Type[Ground]
+                ) -> Iterable[Token | Ground]:
                     """Parse an RGB color."""
                     bits = next(ts)
                     if isinstance(bits, Token) and bits.data == 2:
@@ -207,17 +200,17 @@ def decode(ts: Iterable[Token]) -> Iterable[attr.Attr | ground.Ground | Token]:
 
                         yield cls(Color.frombytes(red.data, green.data, blue.data))
                     else:
-                        # Send them back, we don't support 256-color mode yet (and we might
-                        # never do).
+                        # Send them back, we don't support 256-color mode yet (and we
+                        # might never do).
                         yield t
                         yield bits
 
                 if t.data in GROUNDS:
                     yield GROUNDS[t.data]
                 elif t.data == 38:
-                    yield from _rgb(t, ts, ground.Fore)
+                    yield from _rgb(t, ts, Fore)
                 elif t.data == 48:
-                    yield from _rgb(t, ts, ground.Back)
+                    yield from _rgb(t, ts, Back)
                 else:
                     yield t
             else:
@@ -227,11 +220,9 @@ def decode(ts: Iterable[Token]) -> Iterable[attr.Attr | ground.Ground | Token]:
             yield t
 
 
-def encode(
-    data: attr.Attr | ground.Ground | Token | Iterable[Token],
-) -> Iterable[Token]:
+def encode(data: Escapable | Iterable[Token]) -> Iterable[Token]:
     """
-    Encode an object into a sequence of tokens if possible, otherwise yield the object as-is.
+    Encode an object into tokens if possible, otherwise yield the object as-is.
 
     Examples
     --------
@@ -241,25 +232,25 @@ def encode(
     True
     """
     # TODO: dispatch table!
-    if isinstance(data, attr.Attr):
+    if isinstance(data, Attr):
         yield Token(kind="m", data=data.value)
-    if isinstance(data, ground.Ground):
-        base = 40 if isinstance(data, ground.Back) else 30
-        if data.color == color.BLACK:
+    if isinstance(data, Ground):
+        base = 40 if isinstance(data, Back) else 30
+        if data.color == BLACK:
             yield Token(kind="m", data=base)
-        elif data.color == color.RED:
+        elif data.color == RED:
             yield Token(kind="m", data=base + 1)
-        elif data.color == color.GREEN:
+        elif data.color == GREEN:
             yield Token(kind="m", data=base + 2)
-        elif data.color == color.YELLOW:
+        elif data.color == YELLOW:
             yield Token(kind="m", data=base + 3)
-        elif data.color == color.BLUE:
+        elif data.color == BLUE:
             yield Token(kind="m", data=base + 4)
-        elif data.color == color.MAGENTA:
+        elif data.color == MAGENTA:
             yield Token(kind="m", data=base + 5)
-        elif data.color == color.CYAN:
+        elif data.color == CYAN:
             yield Token(kind="m", data=base + 6)
-        elif data.color == color.WHITE:
+        elif data.color == WHITE:
             yield Token(kind="m", data=base + 7)
         else:
             yield Token(kind="m", data=base + 8)
@@ -273,3 +264,80 @@ def encode(
         yield data
     if isinstance(data, Iterable):
         yield from data
+
+
+@dataclass(frozen=True)
+class Ground(Escapable):
+    """A ground color."""
+
+    color: Color
+
+
+@dataclass(frozen=True)
+class Fore(Ground):
+    """
+    A terminal foreground color.
+
+    Examples
+    --------
+    >>> Fore(RED)
+    Fore(color=Color(red=1.0, green=0.5826106699754192, blue=0.5805635742506021))
+    """
+
+
+@dataclass(frozen=True)
+class Back(Ground):
+    """
+    A terminal background color.
+
+    Examples
+    --------
+    >>> Back(RED)
+    Back(color=Color(red=1.0, green=0.5826106699754192, blue=0.5805635742506021))
+    """
+
+
+GROUNDS = {
+    # Foregrounds
+    30: Fore(BLACK),
+    31: Fore(RED),
+    32: Fore(GREEN),
+    33: Fore(YELLOW),
+    34: Fore(BLUE),
+    35: Fore(MAGENTA),
+    36: Fore(CYAN),
+    37: Fore(WHITE),
+    # Backgrounds
+    40: Back(BLACK),
+    41: Back(RED),
+    42: Back(GREEN),
+    43: Back(YELLOW),
+    44: Back(BLUE),
+    45: Back(MAGENTA),
+    46: Back(CYAN),
+    47: Back(WHITE),
+}
+
+
+class Attr(Escapable, Enum):
+    r"""
+    ANSI escape sequence text style attributes.
+
+    Examples
+    --------
+    >>> Attr.BOLD
+    <Attr.BOLD: 1>
+    >>> list(encode(Attr.BOLD))
+    [Token(kind='m', data=1)]
+    >>> escape(encode(Attr.BOLD))
+    '\x1b[1m'
+    """
+
+    NORMAL = 0
+    BOLD = 1
+    FAINT = 2
+    # ITALIC = 3
+    UNDERLINE = 4
+    BLINK = 5
+    #
+    REVERSE = 7
