@@ -11,7 +11,7 @@ from typing import Callable, Iterator, Optional, Text, Type
 from kay import color, renderer
 from kay.ansi.parser import Parser
 from kay.attr import Attr
-from kay.color import Background, Color, Foreground
+from kay.color import Color, ground
 from kay.message import KeyMessage, Message
 
 RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
@@ -158,16 +158,16 @@ class Renderer(renderer.Renderer):
             return curses.A_REVERSE
         raise ValueError(f"unknown attribute: {attr}")
 
-    def _translate_color(self, hue: Foreground | Background) -> int:
+    def _translate_color(self, hue: ground.Ground) -> int:
         """
         Translate color.
 
         This returns the appropriate curses color pair based on the new color and the
         kept state.
         """
-        if isinstance(hue, Foreground):
+        if isinstance(hue, ground.Fore):
             self.foreground = hue.color
-        elif isinstance(hue, Background):
+        elif isinstance(hue, ground.Back):
             self.background = hue.color
 
         self._init_color(self.foreground)
@@ -228,7 +228,7 @@ class Renderer(renderer.Renderer):
             elif isinstance(piece, Attr):
                 curses_attr = self._translate_attribute(piece)
                 self._stdscr.attron(curses_attr)
-            elif isinstance(piece, (Foreground, Background)):
+            elif isinstance(piece, ground.Ground):
                 curses_attr = self._translate_color(piece)
                 self._stdscr.attron(curses_attr)
             # Silently ignore other pieces because they are probably unparsed Tokens.
