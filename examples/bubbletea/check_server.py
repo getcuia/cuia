@@ -72,7 +72,7 @@ class Model(kay.Model):
     reason: Optional[Text] = None
     error: Optional[Exception] = None
 
-    def init(self) -> Optional[kay.Command]:
+    def start(self) -> Optional[kay.Command]:
         """
         Initialize the model.
 

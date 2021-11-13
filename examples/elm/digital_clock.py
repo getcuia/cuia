@@ -39,7 +39,7 @@ class Model(kay.Model):
 
     time: datetime
 
-    def init(self) -> Optional[kay.Command]:
+    def start(self) -> Optional[kay.Command]:
         """Initialize the model."""
         return tick
 

@@ -24,7 +24,7 @@ class Program:
     Examples
     --------
     >>> class Hello(Model):
-    ...     def init(self) -> Optional[Command]:
+    ...     def start(self) -> Optional[Command]:
     ...         return quit
     ...     def view(self) -> Text:
     ...         return "Hello, world!"
