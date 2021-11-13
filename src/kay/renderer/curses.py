@@ -26,61 +26,195 @@ def equal(key: int) -> Callable[[int], bool]:
 
 
 RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
-    (lambda key: key == curses.KEY_UP, lambda _: KeyMessage("up")),
-    (lambda key: key == curses.KEY_DOWN, lambda _: KeyMessage("down")),
-    (lambda key: key == curses.KEY_LEFT, lambda _: KeyMessage("left")),
-    (lambda key: key == curses.KEY_RIGHT, lambda _: KeyMessage("right")),
-    (lambda key: key == curses.KEY_HOME, lambda _: KeyMessage("home")),
-    (lambda key: key == curses.KEY_END, lambda _: KeyMessage("end")),
-    (lambda key: key == curses.KEY_PPAGE, lambda _: KeyMessage("pageup")),
-    (lambda key: key == curses.KEY_NPAGE, lambda _: KeyMessage("pagedown")),
-    (lambda key: key == curses.KEY_BACKSPACE, lambda _: KeyMessage("backspace")),
-    (lambda key: key == curses.KEY_DC, lambda _: KeyMessage("delete")),
-    (lambda key: key == curses.KEY_F1, lambda _: KeyMessage("f1")),
-    (lambda key: key == curses.KEY_F2, lambda _: KeyMessage("f2")),
-    (lambda key: key == curses.KEY_F3, lambda _: KeyMessage("f3")),
-    (lambda key: key == curses.KEY_F4, lambda _: KeyMessage("f4")),
-    (lambda key: key == curses.KEY_F5, lambda _: KeyMessage("f5")),
-    (lambda key: key == curses.KEY_F6, lambda _: KeyMessage("f6")),
-    (lambda key: key == curses.KEY_F7, lambda _: KeyMessage("f7")),
-    (lambda key: key == curses.KEY_F8, lambda _: KeyMessage("f8")),
-    (lambda key: key == curses.KEY_F9, lambda _: KeyMessage("f9")),
-    (lambda key: key == curses.KEY_F10, lambda _: KeyMessage("f10")),
-    (lambda key: key == curses.KEY_F11, lambda _: KeyMessage("f11")),
-    # KEY_ENTER is rather unreliable, so we also accept ascii.LF
-    # and ascii.CR.
-    # See <https://stackoverflow.com/a/32255045/4039050>.
+    # Minimum key value
+    (equal(curses.KEY_MIN), just(Key("min"))),
+    # Break key (unreliable)
+    (equal(curses.KEY_BREAK), just(Key("break"))),
+    # Down-arrow
+    (equal(curses.KEY_DOWN), just(Key("down"))),
+    # Up-arrow
+    (equal(curses.KEY_UP), just(Key("up"))),
+    # Left-arrow
+    (equal(curses.KEY_LEFT), just(Key("left"))),
+    # Right-arrow
+    (equal(curses.KEY_RIGHT), just(Key("right"))),
+    # Home key (upward+left arrow)
+    (equal(curses.KEY_HOME), just(Key("home"))),
+    # Backspace (unreliable)
+    (equal(curses.KEY_BACKSPACE), just(Key("backspace"))),
+    # Function keys. Up to 64 function keys are supported.
     (
-        lambda key: key in {curses.KEY_ENTER, ascii.LF, ascii.CR},
-        lambda _: KeyMessage("enter"),
+        lambda key: curses.KEY_F0 <= key <= curses.KEY_F63,
+        lambda key: Key(f"f{key - curses.KEY_F0}"),
     ),
-    # (lambda key: key == curses.KEY_RESIZE, lambda _: KeyMessage("resize")),
-    (lambda key: key == ascii.BEL, lambda _: KeyMessage("bell")),
-    (lambda key: key == ascii.BS, lambda _: KeyMessage("backspace")),
-    (lambda key: key == ascii.CAN, lambda _: KeyMessage("can")),
-    (lambda key: key == ascii.DEL, lambda _: KeyMessage("delete")),
-    (lambda key: key == ascii.EM, lambda _: KeyMessage("em")),
-    (lambda key: key == ascii.ESC, lambda _: KeyMessage("escape")),
-    (lambda key: key == ascii.ETB, lambda _: KeyMessage("etb")),
-    (lambda key: key == ascii.FF, lambda _: KeyMessage("formfeed")),
-    (lambda key: key == ascii.FS, lambda _: KeyMessage("fs")),
-    (lambda key: key == ascii.GS, lambda _: KeyMessage("gs")),
-    (lambda key: key == ascii.NAK, lambda _: KeyMessage("nak")),
-    (lambda key: key == ascii.NL, lambda _: KeyMessage("newline")),
-    (lambda key: key == ascii.RS, lambda _: KeyMessage("rs")),
-    (lambda key: key == ascii.SI, lambda _: KeyMessage("shiftin")),
-    (lambda key: key == ascii.SO, lambda _: KeyMessage("shiftout")),
-    (lambda key: key == ascii.SP, lambda _: KeyMessage("space")),
-    (lambda key: key == ascii.SUB, lambda _: KeyMessage("sub")),
-    (lambda key: key == ascii.SYN, lambda _: KeyMessage("syn")),
-    (lambda key: key == ascii.TAB, lambda _: KeyMessage("tab")),
-    (lambda key: key == ascii.US, lambda _: KeyMessage("us")),
-    (lambda key: key == ascii.VT, lambda _: KeyMessage("verticaltab")),
-    (
-        lambda key: ascii.isalnum(key) or ascii.isspace(key),
-        lambda key: KeyMessage(chr(key)),
-    ),
-    (ascii.isctrl, lambda key: KeyMessage(f"ctrl+{chr(ord('a') - 1 + key)}")),
+    # Delete line
+    (equal(curses.KEY_DL), just(Key("dl"))),
+    # Insert line
+    (equal(curses.KEY_IL), just(Key("il"))),
+    # Delete character
+    (equal(curses.KEY_DC), just(Key("delete"))),
+    # Insert char or enter insert mode
+    (equal(curses.KEY_IC), just(Key("ic"))),
+    # Exit insert char mode
+    (equal(curses.KEY_EIC), just(Key("eic"))),
+    # Clear screen
+    (equal(curses.KEY_CLEAR), just(Key("clear"))),
+    # Clear to end of screen
+    (equal(curses.KEY_EOS), just(Key("eos"))),
+    # Clear to end of line
+    (equal(curses.KEY_EOL), just(Key("eol"))),
+    # Scroll 1 line forward
+    (equal(curses.KEY_SF), just(Key("sf"))),
+    # Scroll 1 line backward (reverse)
+    (equal(curses.KEY_SR), just(Key("sr"))),
+    # Next page
+    (equal(curses.KEY_NPAGE), just(Key("pagedown"))),
+    # Previous page
+    (equal(curses.KEY_PPAGE), just(Key("pageup"))),
+    # Set tab
+    (equal(curses.KEY_STAB), just(Key("stab"))),
+    # Clear tab
+    (equal(curses.KEY_CTAB), just(Key("ctab"))),
+    # Clear all tabs
+    (equal(curses.KEY_CATAB), just(Key("catab"))),
+    # Soft (partial) reset (unreliable)
+    (equal(curses.KEY_SRESET), just(Key("sreset"))),
+    # Reset or hard reset (unreliable)
+    (equal(curses.KEY_RESET), just(Key("reset"))),
+    # Print
+    (equal(curses.KEY_PRINT), just(Key("print"))),
+    # Home down or bottom (lower left)
+    (equal(curses.KEY_LL), just(Key("ll"))),
+    # Upper left of keypad
+    (equal(curses.KEY_A1), just(Key("a1"))),
+    # Upper right of keypad
+    (equal(curses.KEY_A3), just(Key("a3"))),
+    # Center of keypad
+    (equal(curses.KEY_B2), just(Key("b2"))),
+    # Lower left of keypad
+    (equal(curses.KEY_C1), just(Key("c1"))),
+    # Lower right of keypad
+    (equal(curses.KEY_C3), just(Key("c3"))),
+    # Back tab
+    (equal(curses.KEY_BTAB), just(Key("btab"))),
+    # Beg (beginning)
+    (equal(curses.KEY_BEG), just(Key("beg"))),
+    # Cancel
+    (equal(curses.KEY_CANCEL), just(Key("cancel"))),
+    # Close
+    (equal(curses.KEY_CLOSE), just(Key("close"))),
+    # Cmd (command)
+    (equal(curses.KEY_COMMAND), just(Key("cmd"))),
+    # Copy
+    (equal(curses.KEY_COPY), just(Key("copy"))),
+    # Create
+    (equal(curses.KEY_CREATE), just(Key("create"))),
+    # End
+    (equal(curses.KEY_END), just(Key("end"))),
+    # Exit
+    (equal(curses.KEY_EXIT), just(Key("exit"))),
+    # Find
+    (equal(curses.KEY_FIND), just(Key("find"))),
+    # Help
+    (equal(curses.KEY_HELP), just(Key("help"))),
+    # Mark
+    (equal(curses.KEY_MARK), just(Key("mark"))),
+    # Message
+    (equal(curses.KEY_MESSAGE), just(Key("message"))),
+    # Move
+    (equal(curses.KEY_MOVE), just(Key("move"))),
+    # Next
+    (equal(curses.KEY_NEXT), just(Key("next"))),
+    # Open
+    (equal(curses.KEY_OPEN), just(Key("open"))),
+    # Options
+    (equal(curses.KEY_OPTIONS), just(Key("options"))),
+    # Prev (previous)
+    (equal(curses.KEY_PREVIOUS), just(Key("previous"))),
+    # Redo
+    (equal(curses.KEY_REDO), just(Key("redo"))),
+    # Ref (reference)
+    (equal(curses.KEY_REFERENCE), just(Key("reference"))),
+    # Refresh
+    (equal(curses.KEY_REFRESH), just(Key("refresh"))),
+    # Replace
+    (equal(curses.KEY_REPLACE), just(Key("replace"))),
+    # Restart
+    (equal(curses.KEY_RESTART), just(Key("restart"))),
+    # Resume
+    (equal(curses.KEY_RESUME), just(Key("resume"))),
+    # Save
+    (equal(curses.KEY_SAVE), just(Key("save"))),
+    # Shifted Beg (beginning)
+    (equal(curses.KEY_SBEG), just(Key("sbeg"))),
+    # Shifted Cancel
+    (equal(curses.KEY_SCANCEL), just(Key("scancel"))),
+    # Shifted Command
+    (equal(curses.KEY_SCOMMAND), just(Key("scommand"))),
+    # Shifted Copy
+    (equal(curses.KEY_SCOPY), just(Key("scopy"))),
+    # Shifted Create
+    (equal(curses.KEY_SCREATE), just(Key("screate"))),
+    # Shifted Delete char
+    (equal(curses.KEY_SDC), just(Key("sdc"))),
+    # Shifted Delete line
+    (equal(curses.KEY_SDL), just(Key("sdl"))),
+    # Select
+    (equal(curses.KEY_SELECT), just(Key("select"))),
+    # Shifted End
+    (equal(curses.KEY_SEND), just(Key("send"))),
+    # Shifted Clear line
+    (equal(curses.KEY_SEOL), just(Key("seol"))),
+    # Shifted Exit
+    (equal(curses.KEY_SEXIT), just(Key("sexit"))),
+    # Shifted Find
+    (equal(curses.KEY_SFIND), just(Key("sfind"))),
+    # Shifted Help
+    (equal(curses.KEY_SHELP), just(Key("shelp"))),
+    # Shifted Home
+    (equal(curses.KEY_SHOME), just(Key("shome"))),
+    # Shifted Input
+    (equal(curses.KEY_SIC), just(Key("sic"))),
+    # Shifted Left arrow
+    (equal(curses.KEY_SLEFT), just(Key("sleft"))),
+    # Shifted Message
+    (equal(curses.KEY_SMESSAGE), just(Key("shmemu"))),
+    # Shifted Move
+    (equal(curses.KEY_SMOVE), just(Key("shome"))),
+    # Shifted Next
+    (equal(curses.KEY_SNEXT), just(Key("s-next"))),
+    # Shifted Options
+    (equal(curses.KEY_SOPTIONS), just(Key("shift-f1"))),
+    # Shifted Prev
+    (equal(curses.KEY_SPREVIOUS), just(Key("shleft"))),
+    # Shifted Print
+    (equal(curses.KEY_SPRINT), just(Key("sprint"))),
+    # Shifted Redo
+    (equal(curses.KEY_SREDO), just(Key("sh redo"))),
+    # Shifted Replace
+    (equal(curses.KEY_SREPLACE), just(Key("sredo"))),
+    # Shifted Right arrow
+    (equal(curses.KEY_SRIGHT), just(Key("sright"))),
+    # Shifted Resume
+    (equal(curses.KEY_SRSUME), just(Key("shift_resume"))),
+    # Shifted Save
+    (equal(curses.KEY_SSAVE), just(Key("sbeg"))),
+    # Shifted Suspend
+    (equal(curses.KEY_SSUSPEND), just(Key("suspend"))),
+    # Shifted Undo
+    (equal(curses.KEY_SUNDO), just(Key("undo"))),
+    # Suspend
+    (equal(curses.KEY_SUSPEND), just(Key("suspend"))),
+    # Undo
+    (equal(curses.KEY_UNDO), just(Key("undo"))),
+    # Mouse event has occurred
+    (equal(curses.KEY_MOUSE), just(Key("mouse"))),
+    # Terminal resize event
+    (equal(curses.KEY_RESIZE), just(Key("resize"))),
+    # Maximum key value
+    (equal(curses.KEY_MAX), just(Key("max"))),
+    # Enter or send (unreliable)
+    (equal(curses.KEY_ENTER), just(Key("enter"))),
 ]
 
 
