@@ -26,6 +26,20 @@ def equal(key: int) -> Callable[[int], bool]:
 
 
 RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
+    # Up-arrow
+    (equal(curses.KEY_UP), just(Key("up"))),
+    # Down-arrow
+    (equal(curses.KEY_DOWN), just(Key("down"))),
+    # Left-arrow
+    (equal(curses.KEY_LEFT), just(Key("left"))),
+    # Right-arrow
+    (equal(curses.KEY_RIGHT), just(Key("right"))),
+    # Function keys. Up to 64 function keys are supported.
+    (
+        lambda key: curses.KEY_F0 <= key <= curses.KEY_F63,
+        lambda key: Key(f"f{key - curses.KEY_F0}"),
+    ),
+    #
     # Insert char or enter insert mode
     (equal(curses.KEY_IC), just(Key("insert"))),
     # Delete character
@@ -41,23 +55,6 @@ RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
     #
     # Minimum key value
     (equal(curses.KEY_MIN), just(Key("min"))),
-    # Break key (unreliable)
-    (equal(curses.KEY_BREAK), just(Key("break"))),
-    # Down-arrow
-    (equal(curses.KEY_DOWN), just(Key("down"))),
-    # Up-arrow
-    (equal(curses.KEY_UP), just(Key("up"))),
-    # Left-arrow
-    (equal(curses.KEY_LEFT), just(Key("left"))),
-    # Right-arrow
-    (equal(curses.KEY_RIGHT), just(Key("right"))),
-    # Backspace (unreliable)
-    (equal(curses.KEY_BACKSPACE), just(Key("backspace"))),
-    # Function keys. Up to 64 function keys are supported.
-    (
-        lambda key: curses.KEY_F0 <= key <= curses.KEY_F63,
-        lambda key: Key(f"f{key - curses.KEY_F0}"),
-    ),
     # Delete line
     (equal(curses.KEY_DL), just(Key("dl"))),
     # Insert line
@@ -80,10 +77,6 @@ RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
     (equal(curses.KEY_CTAB), just(Key("ctab"))),
     # Clear all tabs
     (equal(curses.KEY_CATAB), just(Key("catab"))),
-    # Soft (partial) reset (unreliable)
-    (equal(curses.KEY_SRESET), just(Key("sreset"))),
-    # Reset or hard reset (unreliable)
-    (equal(curses.KEY_RESET), just(Key("reset"))),
     # Print
     (equal(curses.KEY_PRINT), just(Key("print"))),
     # Home down or bottom (lower left)
@@ -214,8 +207,17 @@ RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
     (equal(curses.KEY_RESIZE), just(Key("resize"))),
     # Maximum key value
     (equal(curses.KEY_MAX), just(Key("max"))),
+    #
+    # Break key (unreliable)
+    (equal(curses.KEY_BREAK), just(Key("break"))),
+    # Backspace (unreliable)
+    (equal(curses.KEY_BACKSPACE), just(Key("backspace"))),
     # Enter or send (unreliable)
     (equal(curses.KEY_ENTER), just(Key("enter"))),
+    # Soft (partial) reset (unreliable)
+    (equal(curses.KEY_SRESET), just(Key("sreset"))),
+    # Reset or hard reset (unreliable)
+    (equal(curses.KEY_RESET), just(Key("reset"))),
 ]
 
 
