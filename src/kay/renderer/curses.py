@@ -26,6 +26,19 @@ def equal(key: int) -> Callable[[int], bool]:
 
 
 RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
+    # Insert char or enter insert mode
+    (equal(curses.KEY_IC), just(Key("insert"))),
+    # Delete character
+    (equal(curses.KEY_DC), just(Key("delete"))),
+    # Home key (upward+left arrow)
+    (equal(curses.KEY_HOME), just(Key("home"))),
+    # End
+    (equal(curses.KEY_END), just(Key("end"))),
+    # Previous page
+    (equal(curses.KEY_PPAGE), just(Key("pageup"))),
+    # Next page
+    (equal(curses.KEY_NPAGE), just(Key("pagedown"))),
+    #
     # Minimum key value
     (equal(curses.KEY_MIN), just(Key("min"))),
     # Break key (unreliable)
@@ -38,8 +51,6 @@ RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
     (equal(curses.KEY_LEFT), just(Key("left"))),
     # Right-arrow
     (equal(curses.KEY_RIGHT), just(Key("right"))),
-    # Home key (upward+left arrow)
-    (equal(curses.KEY_HOME), just(Key("home"))),
     # Backspace (unreliable)
     (equal(curses.KEY_BACKSPACE), just(Key("backspace"))),
     # Function keys. Up to 64 function keys are supported.
@@ -51,10 +62,6 @@ RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
     (equal(curses.KEY_DL), just(Key("dl"))),
     # Insert line
     (equal(curses.KEY_IL), just(Key("il"))),
-    # Delete character
-    (equal(curses.KEY_DC), just(Key("delete"))),
-    # Insert char or enter insert mode
-    (equal(curses.KEY_IC), just(Key("ic"))),
     # Exit insert char mode
     (equal(curses.KEY_EIC), just(Key("eic"))),
     # Clear screen
@@ -67,10 +74,6 @@ RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
     (equal(curses.KEY_SF), just(Key("sf"))),
     # Scroll 1 line backward (reverse)
     (equal(curses.KEY_SR), just(Key("sr"))),
-    # Next page
-    (equal(curses.KEY_NPAGE), just(Key("pagedown"))),
-    # Previous page
-    (equal(curses.KEY_PPAGE), just(Key("pageup"))),
     # Set tab
     (equal(curses.KEY_STAB), just(Key("stab"))),
     # Clear tab
@@ -109,8 +112,6 @@ RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
     (equal(curses.KEY_COPY), just(Key("copy"))),
     # Create
     (equal(curses.KEY_CREATE), just(Key("create"))),
-    # End
-    (equal(curses.KEY_END), just(Key("end"))),
     # Exit
     (equal(curses.KEY_EXIT), just(Key("exit"))),
     # Find
