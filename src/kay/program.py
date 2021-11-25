@@ -70,6 +70,9 @@ class Program:
                     if message := self.dequeue_message():
                         await self.handle_message(message)
 
+                    # TODO: should we sleep here?
+                    await asyncio.sleep(1 / 60)
+
     async def obey(self, command: Command) -> None:
         """
         Spawn a concurrent task to await the command's result.

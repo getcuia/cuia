@@ -11,3 +11,6 @@ Command = Callable[[], Awaitable[Optional[Message]]]
 async def quit() -> Optional[Message]:
     """Signal to quit the application."""
     return QuitMessage()
+
+
+# TODO: a command to request the current window size?

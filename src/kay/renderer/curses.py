@@ -321,6 +321,7 @@ class Renderer(AbstractRenderer):
         This **does not check for `Attribute.NORMAL`**, you have to do
         that yourself.
         """
+        # TODO: use a dispatch table instead of a switch statement.
         if attr == Attr.BOLD:
             return curses.A_BOLD
         if attr == Attr.FAINT:
