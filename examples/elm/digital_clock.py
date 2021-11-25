@@ -12,12 +12,12 @@ from typing import Optional, Text
 
 import pyfiglet  # type: ignore
 
-import kay
-from kay import Attr
+import cuia
+from cuia import Attr
 
 
 @dataclass
-class TickMessage(kay.Message):
+class TickMessage(cuia.Message):
     """A message to tick the model."""
 
     time: datetime
@@ -34,23 +34,23 @@ async def tick() -> Optional[TickMessage]:
 
 
 @dataclass
-class Model(kay.Model):
+class Model(cuia.Model):
     """The model for the application."""
 
     time: datetime
 
-    def start(self) -> Optional[kay.Command]:
+    def start(self) -> Optional[cuia.Command]:
         """Initialize the model."""
         return tick
 
-    def update(self, message: kay.Message) -> Optional[kay.Command]:
+    def update(self, message: cuia.Message) -> Optional[cuia.Command]:
         """Update the model based on the message received."""
         if isinstance(message, TickMessage):
             self.time = message.time
             return tick
-        if isinstance(message, kay.Key):
+        if isinstance(message, cuia.Key):
             if message.key == "ctrl+c":
-                return kay.quit
+                return cuia.quit
         return None
 
     def view(self) -> Text:
@@ -61,7 +61,7 @@ class Model(kay.Model):
 
 async def main() -> None:
     """Run the application."""
-    program = kay.Program(Model(datetime.now()))
+    program = cuia.Program(Model(datetime.now()))
     await program.start()
 
 

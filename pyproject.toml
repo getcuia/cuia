@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "kay"
+name = "cuia"
 version = "0.1.0"
 description = "🧓🏾🖥️ An old lady made a text-based app."
 authors = ["Felipe S. S. Schneider <schneider.felipe@posgrad.ufsc.br>"]

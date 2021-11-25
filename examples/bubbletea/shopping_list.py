@@ -7,12 +7,12 @@ import asyncio
 from dataclasses import dataclass, field
 from typing import Optional, Text
 
-import kay
-from kay import Attr
+import cuia
+from cuia import Attr
 
 
 @dataclass
-class Model(kay.Model):
+class Model(cuia.Model):
     """
     A simple a shopping list.
 
@@ -25,18 +25,18 @@ class Model(kay.Model):
     cursor: int = 0
     selected: set[Text] = field(default_factory=set)
 
-    def update(self, message: kay.Message) -> Optional[kay.Command]:
+    def update(self, message: cuia.Message) -> Optional[cuia.Command]:
         """
         Update the model.
 
         It is called when "things happen." Its job is to look at what has happened and
         update the model in response.
         """
-        if isinstance(message, kay.Key):
+        if isinstance(message, cuia.Key):
             # The user pressed a key.
             if Text(message) in {"ctrl+c", "q"}:
                 # Quit the application.
-                return kay.quit
+                return cuia.quit
 
             if Text(message) in {"up", "k"}:
                 # Move the cursor up.
@@ -86,7 +86,7 @@ async def main() -> None:
     This creates a new application that receives our initial model and starts the
     event loop.
     """
-    program = kay.Program(Model())
+    program = cuia.Program(Model())
     await program.start()
 
 

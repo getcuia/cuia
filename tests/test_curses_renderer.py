@@ -1,7 +1,7 @@
 """Tests for the CursesRenderer class."""
 
-from kay import color
-from kay.renderer.curses import Renderer
+from cuia import color
+from cuia.renderer.curses import Renderer
 
 
 def test_initial_colors() -> None:

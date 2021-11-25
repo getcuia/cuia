@@ -9,17 +9,17 @@ from typing import Optional, Text
 
 import requests
 
-import kay
-from kay import Attr
+import cuia
+from cuia import Attr
 
 URL = "https://httpstat.us/418"
 
 
-async def check_server() -> Optional[kay.Message]:
+async def check_server() -> Optional[cuia.Message]:
     """
     Make a request to the server and report the status code.
 
-    This coroutine is a command that can be executed by kay. A command is any coroutine
+    This coroutine is a command that can be executed by cuia. A command is any coroutine
     that performs some action and returns an optional message about its result.
     Returning `None` is also OK and means that the command has silently finished
     (useful when notifying back is not necessary).
@@ -30,7 +30,7 @@ async def check_server() -> Optional[kay.Message]:
     **Note**: what if you need to pass some data to a command? Use a factory function:
 
     >>> def command_with_arg(id: int) -> Command:
-    ...     async def command() -> Optional[kay.Message]:
+    ...     async def command() -> Optional[cuia.Message]:
     ...         return SomeMessage(id)
     ...     return command
 
@@ -46,7 +46,7 @@ async def check_server() -> Optional[kay.Message]:
 
 
 @dataclass(frozen=True)
-class StatusMessage(kay.Message):
+class StatusMessage(cuia.Message):
     """A message that indicates the status of the server."""
 
     status: int
@@ -54,14 +54,14 @@ class StatusMessage(kay.Message):
 
 
 @dataclass(frozen=True)
-class ErrorMessage(kay.Message, Exception):
+class ErrorMessage(cuia.Message, Exception):
     """A message that indicates an error."""
 
     error: Exception
 
 
 @dataclass
-class Model(kay.Model):
+class Model(cuia.Model):
     """
     Make an HTTP request to a server and reports the status code of the response.
 
@@ -72,7 +72,7 @@ class Model(kay.Model):
     reason: Optional[Text] = None
     error: Optional[Exception] = None
 
-    def start(self) -> Optional[kay.Command]:
+    def start(self) -> Optional[cuia.Command]:
         """
         Initialize the model.
 
@@ -81,7 +81,7 @@ class Model(kay.Model):
         """
         return check_server
 
-    def update(self, message: kay.Message) -> Optional[kay.Command]:
+    def update(self, message: cuia.Message) -> Optional[cuia.Command]:
         """
         Update the model.
 
@@ -93,9 +93,9 @@ class Model(kay.Model):
             self.reason = message.reason
         elif isinstance(message, ErrorMessage):
             self.error = message.error
-        elif isinstance(message, kay.Key):
+        elif isinstance(message, cuia.Key):
             if Text(message) in {"ctrl+c", "q"}:
-                return kay.quit
+                return cuia.quit
         return None
 
     def view(self) -> Text:
@@ -115,7 +115,7 @@ async def main() -> None:
     This creates a new application that receives our initial model and starts the
     event loop.
     """
-    program = kay.Program(Model())
+    program = cuia.Program(Model())
     await program.start()
 
 

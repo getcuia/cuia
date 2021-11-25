@@ -1,6 +1,6 @@
-"""General tests for the kay package."""
+"""General tests for the cuia package."""
 
-from kay import __version__
+from cuia import __version__
 
 
 def test_version() -> None:
