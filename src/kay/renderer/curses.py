@@ -26,6 +26,8 @@ def equal(key: int) -> Callable[[int], bool]:
 
 
 RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
+    (lambda key: ascii.isalnum(key) or ascii.isspace(key), lambda key: Key(chr(key))),
+    (ascii.isctrl, lambda key: Key(f"ctrl+{chr(ord('a') - 1 + key)}")),
     # Up-arrow
     (equal(curses.KEY_UP), just(Key("up"))),
     # Down-arrow
@@ -219,6 +221,34 @@ RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
     # Reset or hard reset (unreliable)
     (equal(curses.KEY_RESET), just(Key("reset"))),
 ]
+
+# (lambda key: key == ascii.BEL, lambda _: KeyMessage("bell")),
+# (lambda key: key == ascii.BS, lambda _: KeyMessage("backspace")),
+# (lambda key: key == ascii.CAN, lambda _: KeyMessage("can")),
+# (lambda key: key == ascii.DEL, lambda _: KeyMessage("delete")),
+# (lambda key: key == ascii.EM, lambda _: KeyMessage("em")),
+# (lambda key: key == ascii.ESC, lambda _: KeyMessage("escape")),
+# (lambda key: key == ascii.ETB, lambda _: KeyMessage("etb")),
+# (lambda key: key == ascii.FF, lambda _: KeyMessage("formfeed")),
+# (lambda key: key == ascii.FS, lambda _: KeyMessage("fs")),
+# (lambda key: key == ascii.GS, lambda _: KeyMessage("gs")),
+# (lambda key: key == ascii.NAK, lambda _: KeyMessage("nak")),
+# (lambda key: key == ascii.NL, lambda _: KeyMessage("newline")),
+# (lambda key: key == ascii.RS, lambda _: KeyMessage("rs")),
+# (lambda key: key == ascii.SI, lambda _: KeyMessage("shiftin")),
+# (lambda key: key == ascii.SO, lambda _: KeyMessage("shiftout")),
+# (lambda key: key == ascii.SP, lambda _: KeyMessage("space")),
+# (lambda key: key == ascii.SUB, lambda _: KeyMessage("sub")),
+# (lambda key: key == ascii.SYN, lambda _: KeyMessage("syn")),
+# (lambda key: key == ascii.TAB, lambda _: KeyMessage("tab")),
+# (lambda key: key == ascii.US, lambda _: KeyMessage("us")),
+# (lambda key: key == ascii.VT, lambda _: KeyMessage("verticaltab")),
+
+# KEY_ENTER is rather unreliable, so we also accept ascii.LF
+# and ascii.CR.
+# See <https://stackoverflow.com/a/32255045/4039050>.
+# lambda key: key in {curses.KEY_ENTER, ascii.LF, ascii.CR},
+# lambda _: KeyMessage("enter"),
 
 
 class Renderer(AbstractRenderer):
