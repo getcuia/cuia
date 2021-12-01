@@ -8,7 +8,6 @@ from dataclasses import dataclass, field
 from typing import Optional, Text
 
 import cuia
-from cuia import Attr
 
 
 @dataclass

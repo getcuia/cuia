@@ -10,7 +10,6 @@ from typing import Optional, Text
 import requests
 
 import cuia
-from cuia import Attr
 
 URL = "https://httpstat.us/418"
 

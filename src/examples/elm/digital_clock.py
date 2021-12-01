@@ -13,7 +13,6 @@ from typing import Optional, Text
 import pyfiglet  # type: ignore
 
 import cuia
-from cuia import Attr
 
 
 @dataclass
