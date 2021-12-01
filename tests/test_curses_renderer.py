@@ -1,6 +1,5 @@
 """Tests for the CursesRenderer class."""
 
-from cuia import color
 from cuia.renderer.curses import Renderer
 
 

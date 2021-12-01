@@ -45,7 +45,6 @@ is updated, instead of a virtual DOM tree.
 __version__ = "0.1.0"
 
 
-from .ansi import Attr, Back, Fore
 from .command import Command, quit
 from .message import Key, Message
 from .model import Model

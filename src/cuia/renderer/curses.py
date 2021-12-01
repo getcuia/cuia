@@ -8,9 +8,6 @@ from curses import ascii
 from types import TracebackType
 from typing import Callable, Iterator, Optional, Text, Type
 
-from ..ansi import Parser
-from ..ansi.token import Attr, Back, Fore, Ground
-from ..color import BLACK, BLUE, CYAN, GREEN, MAGENTA, RED, WHITE, YELLOW, Color
 from ..message import Key, Message
 from ._renderer import AbstractRenderer
 
