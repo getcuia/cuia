@@ -92,9 +92,9 @@ class ServerChecker(cuia.Store):
             self.reason = message.reason
         elif isinstance(message, ErrorMessage):
             self.error = message.error
-        elif isinstance(message, cuia.Key):
-            if Text(message) in {"ctrl+c", "q"}:
-                return cuia.quit
+        elif isinstance(message, cuia.Key) and Text(message) in {"ctrl+c", "q"}:
+            # The user pressed Ctrl-C, so we quit the application.
+            return cuia.quit
         return None
 
     def __str__(self) -> Text:
