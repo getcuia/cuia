@@ -58,20 +58,15 @@ class Model(cuia.Model):
         It is called when it is time to render our UI. It basically just returns a
         string that will be printed to the screen.
         """
-        res = (
-            f"{Attr.BOLD}{Attr.REVERSE}"
-            "What should we buy at the market?"
-            f"{Attr.NORMAL}"
-            "\n\n"
-        )
+        res = "\033[1;7mWhat should we buy at the market?\033[0;27m\n\n"
         for i, choice in enumerate(self.choices):
             cursor = "〉" if i == self.cursor else "  "
             checked = "×" if choice in self.selected else " "
             res += f"{cursor}[{checked}] "
             res += (
-                f"{Attr.BOLD}{choice}{Attr.NORMAL}"
+                f"\033[1m{choice}\033[0;22m"
                 if i == self.cursor
-                else f"{Attr.FAINT}{choice}{Attr.NORMAL}"
+                else f"\033[2m{choice}\033[0;22m"
             )
             res += "\n"
         res += "\nPress q to quit.\n"

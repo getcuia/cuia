@@ -2,14 +2,15 @@
 
 
 from abc import abstractmethod
-from typing import Optional, Protocol, Text, runtime_checkable
+from dataclasses import dataclass
+from typing import Optional, Text
 
 from .command import Command
 from .message import Key, Message
 
 
-@runtime_checkable
-class Model(Protocol):
+@dataclass
+class Model:
     """
     A simple model protocol.
 

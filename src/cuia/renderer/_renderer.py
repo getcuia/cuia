@@ -3,22 +3,15 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from contextlib import contextmanager
+from dataclasses import dataclass
 from types import TracebackType
-from typing import (
-    ContextManager,
-    Iterator,
-    Optional,
-    Protocol,
-    Text,
-    Type,
-    runtime_checkable,
-)
+from typing import ContextManager, Iterator, Optional, Text, Type
 
 from ..message import Message
 
 
-@runtime_checkable
-class AbstractRenderer(ContextManager["AbstractRenderer"], Protocol):
+@dataclass
+class AbstractRenderer(ContextManager["AbstractRenderer"]):
     """Renderer protocol."""
 
     def __enter__(self) -> AbstractRenderer:

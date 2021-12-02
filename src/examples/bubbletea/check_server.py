@@ -100,10 +100,10 @@ class Model(cuia.Model):
     def view(self) -> Text:
         """Look at the current model and build a string accordingly."""
         if self.error:
-            return f"{Attr.BOLD}We had some trouble: {self.error}!{Attr.NORMAL}"
-        res = f"{Attr.FAINT}Checking {URL} ... {Attr.NORMAL}"
+            return f"\033[1mWe had some trouble: {self.error}!\033[0m"
+        res = f"\033[2mChecking {URL} … \033[0m"
         if self.status is not None:
-            res += f"{self.status} {Attr.BOLD}{self.reason}{Attr.NORMAL}"
+            res += f"\033[22;1m{self.status}: {self.reason}\033[0m"
         return res
 
 

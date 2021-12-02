@@ -3,11 +3,12 @@
 
 from __future__ import annotations
 
-from typing import Protocol, Text, runtime_checkable
+from dataclasses import dataclass
+from typing import Text
 
 
-@runtime_checkable
-class Message(Protocol):
+@dataclass(frozen=True)
+class Message:
     """Simple message protocol."""
 
 
