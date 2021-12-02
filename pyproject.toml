@@ -6,7 +6,7 @@ authors = ["Felipe S. S. Schneider <schneider.felipe@posgrad.ufsc.br>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 cusser = "^0.1.0"
 
 [tool.poetry.dev-dependencies]
