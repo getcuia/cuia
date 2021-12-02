@@ -17,14 +17,14 @@ import cuia
 
 @dataclass
 class TickMessage(cuia.Message):
-    """A message to tick the model."""
+    """A message to tick the store."""
 
     time: datetime
 
 
 async def tick() -> Optional[TickMessage]:
     """
-    Tick the model.
+    Tick the store.
 
     This won't block the main loop.
     """
@@ -33,17 +33,17 @@ async def tick() -> Optional[TickMessage]:
 
 
 @dataclass
-class Model(cuia.Model):
-    """The model for the application."""
+class DigitalClock(cuia.Store):
+    """The store for the application."""
 
     time: datetime
 
     def start(self) -> Optional[cuia.Command]:
-        """Initialize the model."""
+        """Initialize the store."""
         return tick
 
     def update(self, message: cuia.Message) -> Optional[cuia.Command]:
-        """Update the model based on the message received."""
+        """Update the store based on the message received."""
         if isinstance(message, TickMessage):
             self.time = message.time
             return tick
@@ -60,7 +60,7 @@ class Model(cuia.Model):
 
 async def main() -> None:
     """Run the application."""
-    program = cuia.Program(Model(datetime.now()))
+    program = cuia.Program(DigitalClock(datetime.now()))
     await program.start()
 
 

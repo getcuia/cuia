@@ -60,7 +60,7 @@ class ErrorMessage(cuia.Message, Exception):
 
 
 @dataclass
-class Model(cuia.Model):
+class ServerChecker(cuia.Store):
     """
     Make an HTTP request to a server and reports the status code of the response.
 
@@ -73,7 +73,7 @@ class Model(cuia.Model):
 
     def start(self) -> Optional[cuia.Command]:
         """
-        Initialize the model.
+        Initialize the store.
 
         This function is called when the application starts. It returns the command we
         made earlier. **We don't call it, just return it.**
@@ -82,7 +82,7 @@ class Model(cuia.Model):
 
     def update(self, message: cuia.Message) -> Optional[cuia.Command]:
         """
-        Update the model.
+        Update the store.
 
         Commands are executed asynchronously and the messages they return are passed to
         this function for handling.
@@ -98,7 +98,7 @@ class Model(cuia.Model):
         return None
 
     def __str__(self) -> Text:
-        """Look at the current model and build a string accordingly."""
+        """Look at the current store and build a string accordingly."""
         if self.error:
             return f"\033[1mWe had some trouble: {self.error}!\033[0m"
         res = f"\033[2mChecking {URL} … \033[0m"
@@ -111,10 +111,10 @@ async def main() -> None:
     """
     Run the application.
 
-    This creates a new application that receives our initial model and starts the
+    This creates a new application that receives our initial store and starts the
     event loop.
     """
-    program = cuia.Program(Model())
+    program = cuia.Program(ServerChecker())
     await program.start()
 
 

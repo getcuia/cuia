@@ -300,8 +300,9 @@ class Renderer(AbstractRenderer):
             curses.echo()
 
     def render(self, screen: Text) -> None:
-        """Render model."""
+        """Render a screen."""
         self._stdscr.erase()
+        # calling _set_attribute(Attribute.NORMAL)
         self._stdscr._set_attribute(Attribute.NORMAL)
         self._stdscr.addstr(screen)
         self._stdscr.noutrefresh()

@@ -10,8 +10,8 @@ from typing import Optional, Type
 
 from .command import Command
 from .message import Message, QuitMessage
-from .model import Model
 from .renderer import AbstractRenderer, curses
+from .store import Store
 
 
 @dataclass
@@ -23,7 +23,7 @@ class Program:
 
     Examples
     --------
-    >>> class Hello(Model):
+    >>> class Hello(Store):
     ...     def start(self) -> Optional[Command]:
     ...         return quit
     ...     def __str__(self) -> Text:
@@ -32,7 +32,7 @@ class Program:
     >>> asyncio.run(program.start())  # doctest: +SKIP
     """
 
-    model: Model
+    store: Store
     """The current state of the program."""
     messages: Optional[Queue[Message]] = None
     """The queue of messages to be handled."""
@@ -52,13 +52,13 @@ class Program:
                 self.messages = Queue()
 
                 # Get our first command
-                if command := self.model.start():
+                if command := self.store.start():
                     await self.obey(command)
 
                 while not self.should_quit:
                     # Show something to the screen as soon as possible
                     if self.should_render:
-                        renderer.render(str(self.model))
+                        renderer.render(str(self.store))
                         self.should_render = False
 
                     # Expect the user to interact
@@ -101,12 +101,12 @@ class Program:
             return None
 
     async def handle_message(self, message: Message) -> None:
-        """Handle a message and update the model."""
+        """Handle a message and update the store."""
         if isinstance(message, QuitMessage):
             self.should_quit = True
 
-        # Update the model and maybe obey a command
-        if command := self.model.update(message):
+        # Update the store and maybe obey a command
+        if command := self.store.update(message):
             await self.obey(command)
 
         # Remember to render the next time

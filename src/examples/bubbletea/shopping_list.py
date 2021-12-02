@@ -11,7 +11,7 @@ import cuia
 
 
 @dataclass
-class Model(cuia.Model):
+class ShoppingList(cuia.Store):
     """
     A simple a shopping list.
 
@@ -26,10 +26,10 @@ class Model(cuia.Model):
 
     def update(self, message: cuia.Message) -> Optional[cuia.Command]:
         """
-        Update the model.
+        Update the store.
 
         It is called when "things happen." Its job is to look at what has happened and
-        update the model in response.
+        update the store in response.
         """
         if isinstance(message, cuia.Key):
             # The user pressed a key.
@@ -53,7 +53,7 @@ class Model(cuia.Model):
 
     def __str__(self) -> Text:
         """
-        Render the model.
+        Render the store.
 
         It is called when it is time to render our UI. It basically just returns a
         string that will be printed to the screen.
@@ -77,10 +77,10 @@ async def main() -> None:
     """
     Run the application.
 
-    This creates a new application that receives our initial model and starts the
+    This creates a new application that receives our initial store and starts the
     event loop.
     """
-    program = cuia.Program(Model())
+    program = cuia.Program(ShoppingList())
     await program.start()
 
 
