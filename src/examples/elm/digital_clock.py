@@ -17,14 +17,14 @@ import cuia
 
 @dataclass
 class TickMessage(cuia.Message):
-    """A message to tick the store."""
+    """A message informing the tick of the clock."""
 
     time: datetime
 
 
 async def tick() -> Optional[TickMessage]:
     """
-    Tick the store.
+    Tick the clock.
 
     This won't block the main loop.
     """
@@ -34,16 +34,16 @@ async def tick() -> Optional[TickMessage]:
 
 @dataclass
 class DigitalClock(cuia.Store):
-    """The store for the application."""
+    """The store for our digital clock."""
 
     time: datetime
 
     def start(self) -> Optional[cuia.Command]:
-        """Initialize the store."""
+        """Initialize the ticking."""
         return tick
 
     def update(self, message: cuia.Message) -> Optional[cuia.Command]:
-        """Update the store based on the message received."""
+        """Update the clock state based on the message received."""
         if isinstance(message, TickMessage):
             self.time = message.time
             return tick
@@ -53,7 +53,7 @@ class DigitalClock(cuia.Store):
         return None
 
     def __str__(self) -> Text:
-        """Render the interface."""
+        """Render the digital clock as a string."""
         clock = pyfiglet.figlet_format(self.time.strftime("%H:%M:%S"))
         return f"\033[1m{clock}\033[0m"
 

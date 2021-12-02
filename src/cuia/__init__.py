@@ -50,4 +50,4 @@ from .message import Key, Message
 from .program import Program
 from .store import Store
 
-__all__ = ["Command", "Key", "Message", "Store", "Program", "quit"]
+__all__ = ["Command", "Key", "Message", "Program", "quit", "Store"]

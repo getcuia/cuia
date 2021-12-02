@@ -20,7 +20,7 @@ class Store:
 
     def start(self) -> Optional[Command]:
         """
-        Return a command to initialize the store.
+        Return a command to initialize the store state.
 
         You can override this method to pass a command at startup.
         The default implementation does nothing and always returns None.
@@ -29,7 +29,7 @@ class Store:
 
     def update(self, message: Message) -> Optional[Command]:
         """
-        Update the store with a message and possibly return a command.
+        Update the store state with a message and possibly return a command.
 
         You can override this method to implement the actual application logic.
         The default implementation terminates the program if the user presses Ctrl-C,
@@ -44,7 +44,7 @@ class Store:
     @abstractmethod
     def __str__(self) -> Text:
         """
-        Return a textual representation of the store.
+        Render the store state as a string.
 
         You should override this method to implement the application's user interface.
         """

@@ -64,7 +64,7 @@ class ServerChecker(cuia.Store):
     """
     Make an HTTP request to a server and reports the status code of the response.
 
-    We need to store the status code of the HTTP response and a possible error.
+    We need to save the status code of the HTTP response and a possible error.
     """
 
     status: Optional[int] = None
@@ -73,7 +73,7 @@ class ServerChecker(cuia.Store):
 
     def start(self) -> Optional[cuia.Command]:
         """
-        Initialize the store.
+        Initialize the store state by demanding an HTTP request.
 
         This function is called when the application starts. It returns the command we
         made earlier. **We don't call it, just return it.**
@@ -82,7 +82,7 @@ class ServerChecker(cuia.Store):
 
     def update(self, message: cuia.Message) -> Optional[cuia.Command]:
         """
-        Update the store.
+        Update the store state.
 
         Commands are executed asynchronously and the messages they return are passed to
         this function for handling.
@@ -98,7 +98,7 @@ class ServerChecker(cuia.Store):
         return None
 
     def __str__(self) -> Text:
-        """Look at the current store and build a string accordingly."""
+        """Render the store state as a string."""
         if self.error:
             return f"\033[1mWe had some trouble: {self.error}!\033[0m"
         res = f"\033[2mChecking {URL} … \033[0m"
@@ -111,7 +111,7 @@ async def main() -> None:
     """
     Run the application.
 
-    This creates a new application that receives our initial store and starts the
+    This creates a new application that receives our initial store state and starts the
     event loop.
     """
     program = cuia.Program(ServerChecker())

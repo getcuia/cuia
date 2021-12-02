@@ -101,11 +101,11 @@ class Program:
             return None
 
     async def handle_message(self, message: Message) -> None:
-        """Handle a message and update the store."""
+        """Handle a message and update the store state."""
         if isinstance(message, QuitMessage):
             self.should_quit = True
 
-        # Update the store and maybe obey a command
+        # Update the store state and maybe obey a command
         if command := self.store.update(message):
             await self.obey(command)
 

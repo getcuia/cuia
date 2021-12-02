@@ -26,10 +26,10 @@ class ShoppingList(cuia.Store):
 
     def update(self, message: cuia.Message) -> Optional[cuia.Command]:
         """
-        Update the store.
+        Update the shopping list.
 
         It is called when "things happen." Its job is to look at what has happened and
-        update the store in response.
+        update the store state in response.
         """
         if isinstance(message, cuia.Key):
             # The user pressed a key.
@@ -53,7 +53,7 @@ class ShoppingList(cuia.Store):
 
     def __str__(self) -> Text:
         """
-        Render the store.
+        Render the shopping list as a string.
 
         It is called when it is time to render our UI. It basically just returns a
         string that will be printed to the screen.
@@ -77,7 +77,7 @@ async def main() -> None:
     """
     Run the application.
 
-    This creates a new application that receives our initial store and starts the
+    This creates a new application that receives our initial store state and starts the
     event loop.
     """
     program = cuia.Program(ShoppingList())
