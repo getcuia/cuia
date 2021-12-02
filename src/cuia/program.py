@@ -8,6 +8,8 @@ from asyncio import Queue
 from dataclasses import dataclass
 from typing import Optional, Type
 
+from stransi import Ansi
+
 from .command import Command
 from .message import Message, QuitMessage
 from .renderer import Renderer, curses
@@ -58,7 +60,7 @@ class Program:
                 while not self.should_quit:
                     # Show something to the screen as soon as possible
                     if self.should_render:
-                        renderer.render(str(self.store))
+                        renderer.render(Ansi(self.store))
                         self.should_render = False
 
                     # Expect the user to interact
