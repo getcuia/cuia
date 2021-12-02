@@ -13,9 +13,10 @@ from .message import Key, Message
 @dataclass
 class Store:
     """
-    A simple store protocol.
+    A simple store base class.
 
-    Your application should implement this protocol.
+    Your application should extend this class and implement at least the
+    `__str__` method.
     """
 
     def start(self) -> Optional[Command]:
@@ -23,7 +24,7 @@ class Store:
         Return a command to initialize the store state.
 
         You can override this method to pass a command at startup.
-        The default implementation does nothing and always returns None.
+        The default implementation does nothing (always returns None).
         """
         return None
 
@@ -33,7 +34,7 @@ class Store:
 
         You can override this method to implement the actual application logic.
         The default implementation terminates the program if the user presses Ctrl-C,
-        otherwise it does nothing.
+        but does nothing else.
         """
         if isinstance(message, Key):
             if Text(message) == "ctrl+c":

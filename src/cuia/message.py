@@ -9,7 +9,7 @@ from typing import Text
 
 @dataclass
 class Message:
-    """Simple message protocol."""
+    """Simple message base class."""
 
 
 class QuitMessage(Message):

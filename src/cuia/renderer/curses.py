@@ -1,4 +1,4 @@
-"""An implementation of the renderer protocol using curses."""
+"""A renderer that uses Python's standard curses library."""
 
 from __future__ import annotations
 

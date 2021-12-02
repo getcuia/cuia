@@ -1,4 +1,4 @@
-"""A renderer protocol."""
+"""A renderer base class."""
 from __future__ import annotations
 
 from abc import abstractmethod
@@ -12,7 +12,7 @@ from ..message import Message
 
 @dataclass
 class AbstractRenderer(ContextManager["AbstractRenderer"]):
-    """Renderer protocol."""
+    """Renderer base class."""
 
     def __enter__(self) -> AbstractRenderer:
         """Enter context."""
