@@ -25,6 +25,7 @@ class Key(Message):
 
     def __init__(self, key: Text):
         """Initialize a keyboard message."""
+        super().__init__()
         self.key = key
 
     def __repr__(self) -> Text:

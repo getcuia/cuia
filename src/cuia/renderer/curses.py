@@ -265,6 +265,7 @@ class Renderer(AbstractRenderer):
 
     def __init__(self) -> None:
         """Initialize."""
+        super().__init__()
         self._stdscr = Cusser(curses.initscr())
         # More:
         # https://github.com/gyscos/cursive/blob/c4c74c02996f3f6e66136b51a4d83d2562af740a/cursive/src/backends/curses/n.rs#L137-L143
