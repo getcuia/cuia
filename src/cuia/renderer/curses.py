@@ -299,11 +299,11 @@ class Renderer(AbstractRenderer):
             curses.noraw()
             curses.echo()
 
-    def render(self, view: Text) -> None:
+    def render(self, screen: Text) -> None:
         """Render model."""
         self._stdscr.erase()
         self._stdscr._set_attribute(Attribute.NORMAL)
-        self._stdscr.addstr(view)
+        self._stdscr.addstr(screen)
         self._stdscr.noutrefresh()
         curses.doupdate()
 

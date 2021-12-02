@@ -52,8 +52,8 @@ class Model(cuia.Model):
                 return cuia.quit
         return None
 
-    def view(self) -> Text:
-        """Render the view."""
+    def __str__(self) -> Text:
+        """Render the interface."""
         clock = pyfiglet.figlet_format(self.time.strftime("%H:%M:%S"))
         return f"\033[1m{clock}\033[0m"
 

@@ -40,11 +40,10 @@ class Model:
         return None
 
     @abstractmethod
-    def view(self) -> Text:
+    def __str__(self) -> Text:
         """
         Return a textual representation of the model.
 
-        You should override this method to implement the application's
-        view representation.
+        You should override this method to implement the application's user interface.
         """
         raise NotImplementedError()

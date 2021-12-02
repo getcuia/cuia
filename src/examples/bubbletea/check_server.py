@@ -97,7 +97,7 @@ class Model(cuia.Model):
                 return cuia.quit
         return None
 
-    def view(self) -> Text:
+    def __str__(self) -> Text:
         """Look at the current model and build a string accordingly."""
         if self.error:
             return f"\033[1mWe had some trouble: {self.error}!\033[0m"

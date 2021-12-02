@@ -26,7 +26,7 @@ class Program:
     >>> class Hello(Model):
     ...     def start(self) -> Optional[Command]:
     ...         return quit
-    ...     def view(self) -> Text:
+    ...     def __str__(self) -> Text:
     ...         return "Hello, world!"
     >>> program = Program(Hello())
     >>> asyncio.run(program.start())  # doctest: +SKIP
@@ -58,8 +58,7 @@ class Program:
                 while not self.should_quit:
                     # Show something to the screen as soon as possible
                     if self.should_render:
-                        view = self.model.view()
-                        renderer.render(view)
+                        renderer.render(str(self.model))
                         self.should_render = False
 
                     # Expect the user to interact

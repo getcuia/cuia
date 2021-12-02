@@ -51,7 +51,7 @@ class Model(cuia.Model):
                     self.selected.add(choice)
         return None
 
-    def view(self) -> Text:
+    def __str__(self) -> Text:
         """
         Render the model.
 

@@ -34,7 +34,7 @@ class AbstractRenderer(ContextManager["AbstractRenderer"]):
         raise NotImplementedError()
 
     @abstractmethod
-    def render(self, view: Text) -> None:
+    def render(self, screen: Text) -> None:
         """Render model."""
         raise NotImplementedError()
 
