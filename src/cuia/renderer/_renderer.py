@@ -25,20 +25,20 @@ class Renderer(ContextManager["Renderer"]):
         exctb: Optional[TracebackType],
     ) -> Optional[bool]:
         """Exit context."""
-        raise NotImplementedError()
+        raise NotImplementedError("You must implement this method")
 
     @abstractmethod
     @contextmanager
     def into_raw_mode(self) -> Iterator[Renderer]:
         """Enter raw mode."""
-        raise NotImplementedError()
+        raise NotImplementedError("You must implement this method")
 
     @abstractmethod
     def render(self, screen: Text) -> None:
         """Render a screen."""
-        raise NotImplementedError()
+        raise NotImplementedError("You must implement this method")
 
     @abstractmethod
     def next_message(self) -> Optional[Message]:
         """Get next message."""
-        raise NotImplementedError()
+        raise NotImplementedError("You must implement this method")

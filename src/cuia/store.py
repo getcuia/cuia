@@ -49,4 +49,4 @@ class Store:
 
         You should override this method to implement the application's user interface.
         """
-        raise NotImplementedError()
+        raise NotImplementedError("You must implement this method")
