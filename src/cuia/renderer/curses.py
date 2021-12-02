@@ -8,6 +8,9 @@ from curses import ascii
 from types import TracebackType
 from typing import Callable, Iterator, Optional, Text, Type
 
+from cusser import Cusser
+from stransi.attribute import Attribute
+
 from ..message import Key, Message
 from ._renderer import AbstractRenderer
 
@@ -258,23 +261,13 @@ class Renderer(AbstractRenderer):
     ...     renderer.render("Hello, world!")
     """
 
-    _stdscr: curses._CursesWindow
-    foreground: Optional[Color] = None
-    background: Optional[Color] = None
-    colors: dict[Optional[Color], int] = {}
-    color_pairs: dict[tuple[Optional[Color], Optional[Color]], int] = {}
+    _stdscr: Cusser
 
     def __init__(self) -> None:
         """Initialize."""
-        self._stdscr = curses.initscr()
-        curses.start_color()
-        curses.use_default_colors()
+        self._stdscr = Cusser(curses.initscr())
         # More:
         # https://github.com/gyscos/cursive/blob/c4c74c02996f3f6e66136b51a4d83d2562af740a/cursive/src/backends/curses/n.rs#L137-L143
-        for hue in (None, BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE):
-            self._init_color(hue)
-        for foreground, background in ((None, None), (WHITE, BLACK)):
-            self._init_color_pair(foreground, background)
 
     def __enter__(self) -> Renderer:
         """Enter context."""
@@ -305,106 +298,11 @@ class Renderer(AbstractRenderer):
             curses.noraw()
             curses.echo()
 
-    def _reset_attributes(self) -> None:
-        """Reset."""
-        self.foreground = None
-        self.background = None
-        self._stdscr.attrset(curses.A_NORMAL)
-
-    def _translate_attribute(self, attr: Attr) -> int:
-        """
-        Translate attribute.
-
-        This **does not check for `Attribute.NORMAL`**, you have to do
-        that yourself.
-        """
-        # TODO: use a dispatch table instead of a switch statement.
-        if attr == Attr.BOLD:
-            return curses.A_BOLD
-        if attr == Attr.FAINT:
-            return curses.A_DIM
-        if attr == Attr.UNDERLINE:
-            return curses.A_UNDERLINE
-        if attr == Attr.BLINK:
-            return curses.A_BLINK
-        if attr == Attr.REVERSE:
-            return curses.A_REVERSE
-        raise ValueError(f"unknown attribute: {attr}")
-
-    def _get_color_index(self, hue: Ground) -> int:
-        """
-        Translate color.
-
-        This returns the appropriate curses color pair based on the new color and the
-        kept state.
-        """
-        if isinstance(hue, Fore):
-            self.foreground = hue.color
-        elif isinstance(hue, Back):
-            self.background = hue.color
-
-        self._init_color(self.foreground)
-        self._init_color(self.background)
-
-        self._init_color_pair(self.foreground, self.background)
-        return curses.color_pair(self.color_pairs[(self.foreground, self.background)])
-
-    def _init_color(self, hue: Optional[Color], id: Optional[int] = None) -> None:
-        """
-        Initialize color.
-
-        This initializes the color if it is not yet initialized.
-        """
-        if hue not in self.colors:
-            self.colors[hue] = id or len(self.colors) - 1
-            if hue is not None:
-                red, green, blue = hue
-                red = int(red * 1000)
-                green = int(green * 1000)
-                blue = int(blue * 1000)
-                curses.init_color(self.colors[hue], red, green, blue)
-
-    def _init_color_pair(
-        self,
-        foreground: Optional[Color],
-        background: Optional[Color],
-        id: Optional[int] = None,
-    ) -> None:
-        """
-        Initialize color pair.
-
-        This initializes the color pair if it is not yet initialized.
-        """
-        if (foreground, background) not in self.color_pairs:
-            self.color_pairs[(foreground, background)] = id or len(self.color_pairs) - 1
-            if (foreground, background) != (None, None):
-                curses.init_pair(
-                    self.color_pairs[(foreground, background)],
-                    self.colors[foreground],
-                    self.colors[background],
-                )
-
     def render(self, view: Text) -> None:
         """Render model."""
         self._stdscr.erase()
-        self._reset_attributes()
-        parser = Parser()
-        parser.tokenize(view)
-        for piece in parser.parse():
-            if isinstance(piece, Text):
-                try:
-                    self._stdscr.addstr(piece)
-                except curses.error:
-                    pass
-            elif piece == Attr.NORMAL:
-                self._reset_attributes()
-            elif isinstance(piece, Attr):
-                curses_attr = self._translate_attribute(piece)
-                self._stdscr.attron(curses_attr)
-            elif isinstance(piece, Ground):
-                curses_attr = self._get_color_index(piece)
-                self._stdscr.attron(curses_attr)
-            # Silently ignore other pieces because they are probably unparsed Tokens.
+        self._stdscr._set_attribute(Attribute.NORMAL)
+        self._stdscr.addstr(view)
         self._stdscr.noutrefresh()
         curses.doupdate()
 
