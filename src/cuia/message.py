@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import Text
 
 
-@dataclass(frozen=True)
+@dataclass
 class Message:
     """Simple message protocol."""
 
