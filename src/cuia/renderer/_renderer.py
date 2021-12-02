@@ -11,10 +11,10 @@ from ..message import Message
 
 
 @dataclass
-class AbstractRenderer(ContextManager["AbstractRenderer"]):
+class Renderer(ContextManager["Renderer"]):
     """Renderer base class."""
 
-    def __enter__(self) -> AbstractRenderer:
+    def __enter__(self) -> Renderer:
         """Enter context."""
         raise NotImplementedError()
 
@@ -29,7 +29,7 @@ class AbstractRenderer(ContextManager["AbstractRenderer"]):
 
     @abstractmethod
     @contextmanager
-    def into_raw_mode(self) -> Iterator[AbstractRenderer]:
+    def into_raw_mode(self) -> Iterator[Renderer]:
         """Enter raw mode."""
         raise NotImplementedError()
 

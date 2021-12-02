@@ -12,7 +12,7 @@ from cusser import Cusser
 from stransi.attribute import Attribute
 
 from ..message import Key, Message
-from ._renderer import AbstractRenderer
+from ._renderer import Renderer
 
 
 def just(key: Key) -> Callable[[int], Key]:
@@ -251,7 +251,7 @@ RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
 # lambda _: KeyMessage("enter"),
 
 
-class Renderer(AbstractRenderer):
+class CursesRenderer(Renderer):
     """
     Curses renderer.
 
@@ -270,7 +270,7 @@ class Renderer(AbstractRenderer):
         # More:
         # https://github.com/gyscos/cursive/blob/c4c74c02996f3f6e66136b51a4d83d2562af740a/cursive/src/backends/curses/n.rs#L137-L143
 
-    def __enter__(self) -> Renderer:
+    def __enter__(self) -> CursesRenderer:
         """Enter context."""
         self._stdscr.keypad(True)
         self._stdscr.nodelay(True)
@@ -289,7 +289,7 @@ class Renderer(AbstractRenderer):
         return None
 
     @contextmanager
-    def into_raw_mode(self) -> Iterator[Renderer]:
+    def into_raw_mode(self) -> Iterator[CursesRenderer]:
         """Enter raw mode."""
         curses.noecho()
         curses.raw()

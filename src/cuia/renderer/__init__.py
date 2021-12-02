@@ -1,5 +1,5 @@
 """Renderer facilities."""
 
-from ._renderer import AbstractRenderer
+from ._renderer import Renderer
 
-__all__ = ["AbstractRenderer"]
+__all__ = ["Renderer"]

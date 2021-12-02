@@ -10,7 +10,7 @@ from typing import Optional, Type
 
 from .command import Command
 from .message import Message, QuitMessage
-from .renderer import AbstractRenderer, curses
+from .renderer import Renderer, curses
 from .store import Store
 
 
@@ -40,7 +40,7 @@ class Program:
     """An indicator that the program should redraw the screen."""
     should_quit: bool = False
     """An indicator that the program should quit."""
-    renderer: Type[AbstractRenderer] = curses.Renderer
+    renderer: Type[Renderer] = curses.CursesRenderer
     # output: TextIO = sys.stdout
     # input: TextIO = sys.stdin
 
