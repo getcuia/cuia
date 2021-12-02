@@ -5,6 +5,7 @@ from abc import abstractmethod
 from dataclasses import dataclass
 from typing import Optional, Text
 
+from . import command
 from .command import Command
 from .message import Key, Message
 
@@ -36,10 +37,9 @@ class Store:
         The default implementation terminates the program if the user presses Ctrl-C,
         but does nothing else.
         """
-        if isinstance(message, Key):
-            if Text(message) == "ctrl+c":
-                # BUG: not working
-                return quit
+        if isinstance(message, Key) and Text(message) == "ctrl+c":
+            # The user pressed Ctrl-C, so we quit the application.
+            return command.quit
         return None
 
     @abstractmethod
