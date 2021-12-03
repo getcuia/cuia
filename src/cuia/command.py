@@ -13,4 +13,3 @@ async def quit() -> Optional[Message]:
     return QuitMessage()
 
 
-# TODO: a command to request the current window size?
