@@ -4,7 +4,7 @@
 from abc import abstractmethod
 from typing import Optional, Protocol, runtime_checkable
 
-from .message import Message, QuitMessage
+from .message import Message, Quit
 
 
 @runtime_checkable
@@ -43,4 +43,4 @@ async def quit() -> Optional[Message]:
     >>> cuia.quit
     <function quit at 0x...>
     """
-    return QuitMessage()
+    return Quit()

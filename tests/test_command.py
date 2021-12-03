@@ -10,4 +10,4 @@ def test_quit_command():
     assert isinstance(cuia.quit, cuia.Command)
 
     message = asyncio.run(cuia.quit())
-    assert message == cuia.QuitMessage()
+    assert message == cuia.Quit()

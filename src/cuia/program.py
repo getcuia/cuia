@@ -11,7 +11,7 @@ from typing import Optional, Type
 from stransi import Ansi
 
 from .command import Command
-from .message import Message, QuitMessage
+from .message import Message, Quit
 from .renderer import Renderer, curses
 from .store import Store
 
@@ -104,7 +104,7 @@ class Program:
 
     async def handle_message(self, message: Message) -> None:
         """Handle a message and update the store state."""
-        if isinstance(message, QuitMessage):
+        if isinstance(message, Quit):
             self.should_quit = True
 
         # Update the store state and maybe obey a command

@@ -46,8 +46,8 @@ __version__ = "0.1.0"
 
 
 from .command import Command, quit
-from .message import Key, Message, QuitMessage
+from .message import Key, Message, Quit
 from .program import Program
 from .store import Store
 
-__all__ = ["Command", "Key", "Message", "Program", "quit", "QuitMessage", "Store"]
+__all__ = ["Command", "Key", "Message", "Program", "quit", "Quit", "Store"]

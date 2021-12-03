@@ -12,7 +12,7 @@ class Message:
     """Simple message base class."""
 
 
-class QuitMessage(Message):
+class Quit(Message):
     """A message informing the application to quit."""
 
 
