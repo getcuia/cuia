@@ -50,29 +50,29 @@ class Program:
         """Begin the program."""
         with self.renderer() as renderer:
             with renderer.into_raw_mode() as renderer:
-                # Queues have to be created inside the coroutine's event loop
-                self.messages = Queue()
+                with renderer.hide_cursor() as renderer:
+                    # Queues have to be created inside the coroutine's event loop
+                    self.messages = Queue()
 
-                # Get our first command
-                if command := self.store.start():
-                    await self.obey(command)
+                    # Get our first command
+                    if command := self.store.start():
+                        await self.obey(command)
 
-                while not self.should_quit:
-                    # Show something to the screen as soon as possible
-                    if self.should_render:
-                        renderer.render(Ansi(self.store))
-                        self.should_render = False
+                    while not self.should_quit:
+                        # Show something to the screen as soon as possible
+                        if self.should_render:
+                            renderer.render(Ansi(self.store))
+                            self.should_render = False
 
-                    # Expect the user to interact
-                    if new_message := renderer.next_message():
-                        await self.enqueue_message(new_message)
+                        # Expect the user to interact
+                        if new_message := renderer.next_message():
+                            await self.enqueue_message(new_message)
 
-                    # Handle a next message if available
-                    if message := self.dequeue_message():
-                        await self.handle_message(message)
+                        # Handle a next message if available
+                        if message := self.dequeue_message():
+                            await self.handle_message(message)
 
-                    # TODO: should we sleep here?
-                    await asyncio.sleep(1 / 60)
+                        await asyncio.sleep(1 / 60)
 
     async def obey(self, command: Command) -> None:
         """

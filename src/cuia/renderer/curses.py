@@ -298,6 +298,16 @@ class CursesRenderer(Renderer):
             curses.noraw()
             curses.echo()
 
+    @contextmanager
+    def hide_cursor(self) -> Iterator[CursesRenderer]:
+        """Hide the cursor."""
+        # TODO: in the future we'll use an escape sequence for this
+        curses.curs_set(0)
+        try:
+            yield self
+        finally:
+            curses.curs_set(1)
+
     def render(self, screen: Text) -> None:
         """Render a screen."""
         self._stdscr.erase()

@@ -34,6 +34,12 @@ class Renderer(ContextManager["Renderer"]):
         raise NotImplementedError("You must implement this method")
 
     @abstractmethod
+    @contextmanager
+    def hide_cursor(self) -> Iterator[Renderer]:
+        """Hide the cursor."""
+        raise NotImplementedError("You must implement this method")
+
+    @abstractmethod
     def render(self, screen: Text) -> None:
         """Render a screen."""
         raise NotImplementedError("You must implement this method")
