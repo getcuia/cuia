@@ -9,7 +9,6 @@ from types import TracebackType
 from typing import Callable, Iterator, Optional, Text, Type
 
 from cusser import Cusser
-from stransi.attribute import Attribute
 
 from ..message import Key, Message
 from ._renderer import Renderer
@@ -302,8 +301,7 @@ class CursesRenderer(Renderer):
     def render(self, screen: Text) -> None:
         """Render a screen."""
         self._stdscr.erase()
-        # calling _set_attribute(Attribute.NORMAL)
-        self._stdscr._set_attribute(Attribute.NORMAL)
+        self._stdscr.addstr("\033[m")
         self._stdscr.addstr(screen)
         self._stdscr.noutrefresh()
         curses.doupdate()
