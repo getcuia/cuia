@@ -1,7 +1,7 @@
-"""A base class for all stores."""
+"""A base class for storing application state."""
 
 
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Optional, Text
 
@@ -10,14 +10,13 @@ from .command import Command
 from .message import Key, Message
 
 
-# TODO: make this an abstract class
 @dataclass
-class Store:
+class Store(ABC):
     """
-    A simple store base class.
+    A base class for storing application state.
 
-    Your application should extend this class and implement at least the
-    `__str__` method.
+    Your application should extend this class and implement at least
+    the `__str__` method (others are optional).
     """
 
     def start(self) -> Optional[Command]:
@@ -35,7 +34,7 @@ class Store:
 
         You can override this method to implement the actual application logic.
         The default implementation terminates the program if the user presses Ctrl-C,
-        but does nothing else.
+        but does nothing else other than that.
         """
         if isinstance(message, Key) and Text(message) == "ctrl+c":
             # The user pressed Ctrl-C, so we quit the application.
