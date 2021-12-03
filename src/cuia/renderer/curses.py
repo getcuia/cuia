@@ -25,8 +25,6 @@ def equal(key: int) -> Callable[[int], bool]:
 
 
 RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
-    (lambda key: ascii.isalnum(key) or ascii.isspace(key), lambda key: Key(chr(key))),
-    (ascii.isctrl, lambda key: Key(f"ctrl+{chr(ord('a') - 1 + key)}")),
     # Up-arrow
     (equal(curses.KEY_UP), just(Key("up"))),
     # Down-arrow
@@ -213,13 +211,19 @@ RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
     (equal(curses.KEY_BREAK), just(Key("break"))),
     # Backspace (unreliable)
     (equal(curses.KEY_BACKSPACE), just(Key("backspace"))),
-    # Enter or send (unreliable)
-    (equal(curses.KEY_ENTER), just(Key("enter"))),
     # Soft (partial) reset (unreliable)
     (equal(curses.KEY_SRESET), just(Key("sreset"))),
     # Reset or hard reset (unreliable)
     (equal(curses.KEY_RESET), just(Key("reset"))),
+    #
+    # Enter or send (unreliable, so we also accept carriage returns and line feeds .
+    # See <https://stackoverflow.com/a/32255045/4039050>.
+    (lambda key: key in {ascii.CR, ascii.LF, curses.KEY_ENTER}, just(Key("enter"))),
+    #
+    (ascii.isctrl, lambda key: Key(f"ctrl+{chr(ord('a') - 1 + key)}")),
+    (lambda key: ascii.isalnum(key) or ascii.isspace(key), lambda key: Key(chr(key))),
 ]
+
 
 # (lambda key: key == ascii.BEL, lambda _: KeyMessage("bell")),
 # (lambda key: key == ascii.BS, lambda _: KeyMessage("backspace")),
@@ -242,12 +246,6 @@ RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
 # (lambda key: key == ascii.TAB, lambda _: KeyMessage("tab")),
 # (lambda key: key == ascii.US, lambda _: KeyMessage("us")),
 # (lambda key: key == ascii.VT, lambda _: KeyMessage("verticaltab")),
-
-# KEY_ENTER is rather unreliable, so we also accept ascii.LF
-# and ascii.CR.
-# See <https://stackoverflow.com/a/32255045/4039050>.
-# lambda key: key in {curses.KEY_ENTER, ascii.LF, ascii.CR},
-# lambda _: KeyMessage("enter"),
 
 
 class CursesRenderer(Renderer):
