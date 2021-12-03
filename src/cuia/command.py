@@ -1,16 +1,30 @@
-"""
-Application commands.
-
-Commands are ways of delegating work to the runtime environment so that things can
-run asynchronously, not blocking the main thread, and yet be easy to code and test.
-"""
+"""Application commands."""
 
 
-from typing import Awaitable, Callable, Optional
+from abc import abstractmethod
+from typing import Optional, Protocol, runtime_checkable
 
 from .message import Message, QuitMessage
 
-Command = Callable[[], Awaitable[Optional[Message]]]
+
+@runtime_checkable
+class Command(Protocol):
+    """
+    Command interface.
+
+    Commands are ways of delegating work to the runtime environment so that things can
+    run asynchronously, not blocking the main thread, and yet be easy to code and test.
+    """
+
+    @abstractmethod
+    async def __call__(self) -> Optional[Message]:
+        """
+        Execute the command.
+
+        It returns the message to send to the client, or None if no message should
+        be sent.
+        """
+        raise NotImplementedError("Command must be callable")
 
 
 async def quit() -> Optional[Message]:
