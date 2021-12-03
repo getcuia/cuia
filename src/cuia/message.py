@@ -13,6 +13,8 @@ class Message(ABC):
     """
     Simple message base class.
 
+    This is a kind of a
+    [marker interface](https://en.wikipedia.org/wiki/Marker_interface_pattern).
     Subclass this to create custom messages. There are no requirements for
     custom messages, but subclassing ensures that messages can be identified
     by the runtime and handled correctly.
