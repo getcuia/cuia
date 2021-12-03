@@ -207,6 +207,13 @@ RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
     # Maximum key value
     (equal(curses.KEY_MAX), just(Key("max"))),
     #
+    # Enter or send (unreliable, so we also accept carriage returns and line feeds .
+    # See <https://stackoverflow.com/a/32255045/4039050>.
+    (lambda key: key in {ascii.CR, ascii.LF, curses.KEY_ENTER}, just(Key("enter"))),
+    #
+    # Space bar
+    (equal(ascii.SP), just(Key("space"))),
+    #
     # Break key (unreliable)
     (equal(curses.KEY_BREAK), just(Key("break"))),
     # Backspace (unreliable)
@@ -215,10 +222,6 @@ RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
     (equal(curses.KEY_SRESET), just(Key("sreset"))),
     # Reset or hard reset (unreliable)
     (equal(curses.KEY_RESET), just(Key("reset"))),
-    #
-    # Enter or send (unreliable, so we also accept carriage returns and line feeds .
-    # See <https://stackoverflow.com/a/32255045/4039050>.
-    (lambda key: key in {ascii.CR, ascii.LF, curses.KEY_ENTER}, just(Key("enter"))),
     #
     (ascii.isctrl, lambda key: Key(f"ctrl+{chr(ord('a') - 1 + key)}")),
     (lambda key: ascii.isalnum(key) or ascii.isspace(key), lambda key: Key(chr(key))),
@@ -240,7 +243,6 @@ RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
 # (lambda key: key == ascii.RS, lambda _: KeyMessage("rs")),
 # (lambda key: key == ascii.SI, lambda _: KeyMessage("shiftin")),
 # (lambda key: key == ascii.SO, lambda _: KeyMessage("shiftout")),
-# (lambda key: key == ascii.SP, lambda _: KeyMessage("space")),
 # (lambda key: key == ascii.SUB, lambda _: KeyMessage("sub")),
 # (lambda key: key == ascii.SYN, lambda _: KeyMessage("syn")),
 # (lambda key: key == ascii.TAB, lambda _: KeyMessage("tab")),
