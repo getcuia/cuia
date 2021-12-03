@@ -31,15 +31,6 @@ class Key(Message):
     key: Text
     """The key pressed."""
 
-    def __init__(self, key: Text):
-        """Initialize a keyboard message."""
-        super().__init__()
-        self.key = key
-
-    def __repr__(self) -> Text:
-        """Return a string representation of the keyboard message."""
-        return f"KeyMessage({repr(self.key)})"
-
     def __str__(self) -> Text:
         """Return a friendly representation of the keyboard message."""
         return self.key
