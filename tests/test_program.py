@@ -14,15 +14,15 @@ class Hello(cuia.Store):
 
 
 def test_program_creation() -> None:
-    """Test the program start method."""
+    """Test program creation."""
     program = cuia.Program(Hello())
 
     assert isinstance(program.renderer, cuia.renderer.CursesRenderer)
     assert Text(program.store) == "Hello, world!"
 
 
-def test_program_creation() -> None:
-    """Test the program start method."""
+def test_program_renderer() -> None:
+    """Test giving a custom renderer to a program."""
     renderer = cuia.renderer.LogRenderer(cuia.renderer.CursesRenderer())
     program = cuia.Program(Hello(), renderer)
 
