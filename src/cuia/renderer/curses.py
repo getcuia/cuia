@@ -5,6 +5,7 @@ from __future__ import annotations
 import curses
 from contextlib import contextmanager
 from curses import ascii
+from dataclasses import dataclass, field
 from types import TracebackType
 from typing import Callable, Iterator, Optional, Text, Type
 
@@ -12,6 +13,77 @@ from cusser import Cusser
 
 from ..message import Key, Message
 from .renderer import Renderer
+
+
+@dataclass
+class CursesRenderer(Renderer):
+    """
+    Curses renderer.
+
+    Examples
+    --------
+    >>> with CursesRenderer() as renderer:
+    ...     renderer.render("Hello, world!")  # doctest: +SKIP
+    """
+
+    stdscr: Cusser = field(default_factory=lambda: Cusser(curses.initscr()))
+
+    def render(self, screen: Text) -> None:
+        """Render a screen."""
+        self.stdscr.erase()
+        self.stdscr.addstr("\033[m")
+        self.stdscr.addstr(screen)
+        self.stdscr.noutrefresh()
+        curses.doupdate()
+
+    def next_message(self) -> Optional[Message]:
+        """Get next message."""
+        if (key := self.stdscr.getch()) == curses.ERR:
+            return None
+
+        for isvalid, translate in RULES:
+            if isvalid(key):
+                return translate(key)
+
+        raise ValueError(f"unknown key: {key}")
+
+    def __enter__(self) -> CursesRenderer:
+        """Enter context."""
+        self.stdscr.keypad(True)
+        self.stdscr.nodelay(True)
+        return self
+
+    def __exit__(
+        self,
+        exctype: Optional[Type[BaseException]],
+        excinst: Optional[BaseException],
+        exctb: Optional[TracebackType],
+    ) -> Optional[bool]:
+        """Exit context."""
+        self.stdscr.nodelay(False)
+        self.stdscr.keypad(False)
+        curses.endwin()
+        return None
+
+    @contextmanager
+    def into_raw_mode(self) -> Iterator[CursesRenderer]:
+        """Enter raw mode."""
+        curses.noecho()
+        curses.raw()
+        try:
+            yield self
+        finally:
+            curses.noraw()
+            curses.echo()
+
+    @contextmanager
+    def hide_cursor(self) -> Iterator[CursesRenderer]:
+        """Hide the cursor."""
+        curses.curs_set(0)
+        try:
+            yield self
+        finally:
+            curses.curs_set(1)
 
 
 def just(key: Key) -> Callable[[int], Key]:
@@ -248,81 +320,3 @@ RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
 # (lambda key: key == ascii.TAB, lambda _: KeyMessage("tab")),
 # (lambda key: key == ascii.US, lambda _: KeyMessage("us")),
 # (lambda key: key == ascii.VT, lambda _: KeyMessage("verticaltab")),
-
-
-class CursesRenderer(Renderer):
-    """
-    Curses renderer.
-
-    Examples
-    --------
-    >>> with Renderer() as renderer:  # doctest: +SKIP
-    ...     renderer.render("Hello, world!")
-    """
-
-    _stdscr: Cusser
-
-    def __init__(self) -> None:
-        """Initialize."""
-        super().__init__()
-        self._stdscr = Cusser(curses.initscr())
-        # More:
-        # https://github.com/gyscos/cursive/blob/c4c74c02996f3f6e66136b51a4d83d2562af740a/cursive/src/backends/curses/n.rs#L137-L143
-
-    def __enter__(self) -> CursesRenderer:
-        """Enter context."""
-        self._stdscr.keypad(True)
-        self._stdscr.nodelay(True)
-        return self
-
-    def __exit__(
-        self,
-        exctype: Optional[Type[BaseException]],
-        excinst: Optional[BaseException],
-        exctb: Optional[TracebackType],
-    ) -> Optional[bool]:
-        """Exit context."""
-        self._stdscr.nodelay(False)
-        self._stdscr.keypad(False)
-        curses.endwin()
-        return None
-
-    @contextmanager
-    def into_raw_mode(self) -> Iterator[CursesRenderer]:
-        """Enter raw mode."""
-        curses.noecho()
-        curses.raw()
-        try:
-            yield self
-        finally:
-            curses.noraw()
-            curses.echo()
-
-    @contextmanager
-    def hide_cursor(self) -> Iterator[CursesRenderer]:
-        """Hide the cursor."""
-        # TODO: in the future we'll use an escape sequence for this
-        curses.curs_set(0)
-        try:
-            yield self
-        finally:
-            curses.curs_set(1)
-
-    def render(self, screen: Text) -> None:
-        """Render a screen."""
-        self._stdscr.erase()
-        self._stdscr.addstr("\033[m")
-        self._stdscr.addstr(screen)
-        self._stdscr.noutrefresh()
-        curses.doupdate()
-
-    def next_message(self) -> Optional[Message]:
-        """Get next message."""
-        if (key := self._stdscr.getch()) == curses.ERR:
-            return None
-
-        for isvalid, translate in RULES:
-            if isvalid(key):
-                return translate(key)
-
-        raise ValueError(f"unknown key: {key}")
