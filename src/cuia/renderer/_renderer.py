@@ -1,7 +1,7 @@
 """A renderer base class."""
 from __future__ import annotations
 
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from dataclasses import dataclass
 from types import TracebackType
@@ -11,13 +11,15 @@ from ..message import Message
 
 
 @dataclass
-class Renderer(ContextManager["Renderer"]):
+class Renderer(ContextManager["Renderer"], ABC):
     """Renderer base class."""
 
+    @abstractmethod
     def __enter__(self) -> Renderer:
         """Enter context."""
-        raise NotImplementedError()
+        raise NotImplementedError("You must implement this method")
 
+    @abstractmethod
     def __exit__(
         self,
         exctype: Optional[Type[BaseException]],
