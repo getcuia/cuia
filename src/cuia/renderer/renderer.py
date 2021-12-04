@@ -26,7 +26,11 @@ class Renderer(ContextManager["Renderer"], ABC):
 
     @abstractmethod
     def __enter__(self) -> Renderer:
-        """Enter context."""
+        """
+        Enter context.
+
+        This should perform any setup required by the renderer.
+        """
         raise NotImplementedError("You must implement this method")
 
     @abstractmethod
@@ -36,7 +40,11 @@ class Renderer(ContextManager["Renderer"], ABC):
         excinst: Optional[BaseException],
         exctb: Optional[TracebackType],
     ) -> Optional[bool]:
-        """Exit context."""
+        """
+        Exit context.
+
+        This should perform any teardown required by the renderer.
+        """
         raise NotImplementedError("You must implement this method")
 
     @abstractmethod
