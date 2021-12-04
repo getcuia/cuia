@@ -21,7 +21,7 @@ class Program:
     """
     The program runtime.
 
-    This object is responsible for properly running the program.
+    This object is responsible for managing your application's state and rendering it.
 
     Examples
     --------
@@ -36,15 +36,18 @@ class Program:
 
     store: Store
     """The current state of the program."""
+
+    renderer: Type[Renderer] = curses.CursesRenderer
+    """The renderer to use."""
+
     messages: Optional[Queue[Message]] = None
     """The queue of messages to be handled."""
+
     should_render: bool = True
     """An indicator that the program should redraw the screen."""
+
     should_quit: bool = False
     """An indicator that the program should quit."""
-    renderer: Type[Renderer] = curses.CursesRenderer
-    # output: TextIO = sys.stdout
-    # input: TextIO = sys.stdin
 
     async def start(self) -> None:
         """Begin the program."""
@@ -89,6 +92,18 @@ class Program:
         # Spawn the task to run the command
         asyncio.create_task(handler())
 
+    async def handle_message(self, message: Message) -> None:
+        """Handle a message and update the store state."""
+        if isinstance(message, Quit):
+            self.should_quit = True
+
+        # Update the store state and maybe obey a command
+        if command := self.store.update(message):
+            await self.obey(command)
+
+        # Remember to render the next time
+        self.should_render = True
+
     async def enqueue_message(self, message: Message) -> None:
         """Enqueue a message to be handled later."""
         assert self.messages is not None, "Messages queue not initialized"
@@ -101,15 +116,3 @@ class Program:
             return self.messages.get_nowait()
         except asyncio.QueueEmpty:
             return None
-
-    async def handle_message(self, message: Message) -> None:
-        """Handle a message and update the store state."""
-        if isinstance(message, Quit):
-            self.should_quit = True
-
-        # Update the store state and maybe obey a command
-        if command := self.store.update(message):
-            await self.obey(command)
-
-        # Remember to render the next time
-        self.should_render = True
