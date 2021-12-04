@@ -15,6 +15,16 @@ class Renderer(ContextManager["Renderer"], ABC):
     """Renderer base class."""
 
     @abstractmethod
+    def render(self, screen: Text) -> None:
+        """Render a screen."""
+        raise NotImplementedError("You must implement this method")
+
+    @abstractmethod
+    def next_message(self) -> Optional[Message]:
+        """Get next message."""
+        raise NotImplementedError("You must implement this method")
+
+    @abstractmethod
     def __enter__(self) -> Renderer:
         """Enter context."""
         raise NotImplementedError("You must implement this method")
@@ -39,14 +49,4 @@ class Renderer(ContextManager["Renderer"], ABC):
     @contextmanager
     def hide_cursor(self) -> Iterator[Renderer]:
         """Hide the cursor."""
-        raise NotImplementedError("You must implement this method")
-
-    @abstractmethod
-    def render(self, screen: Text) -> None:
-        """Render a screen."""
-        raise NotImplementedError("You must implement this method")
-
-    @abstractmethod
-    def next_message(self) -> Optional[Message]:
-        """Get next message."""
         raise NotImplementedError("You must implement this method")

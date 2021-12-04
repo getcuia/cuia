@@ -31,6 +31,14 @@ class LogRenderer(Renderer):
         """Delegate all unknown attributes to the wrapped renderer."""
         return getattr(self.renderer, name)
 
+    def render(self, screen: Text) -> None:
+        """Render a screen."""
+        return self.renderer.render(screen)
+
+    def next_message(self) -> Optional[Message]:
+        """Get next message."""
+        return self.renderer.next_message()
+
     def __enter__(self) -> LogRenderer:
         """Enter context."""
         return self.renderer.__enter__()
@@ -55,11 +63,3 @@ class LogRenderer(Renderer):
         """Hide the cursor."""
         with self.renderer.hide_cursor():
             yield self
-
-    def render(self, screen: Text) -> None:
-        """Render a screen."""
-        return self.renderer.render(screen)
-
-    def next_message(self) -> Optional[Message]:
-        """Get next message."""
-        return self.renderer.next_message()
