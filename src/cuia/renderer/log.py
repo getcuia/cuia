@@ -6,25 +6,27 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
 from types import TracebackType
-from typing import Iterator, Optional, Text, Type
+from typing import Generic, Iterator, Optional, Text, Type, TypeVar
 
 from ..message import Message
 from .renderer import Renderer
 
+R = TypeVar("R", bound=Renderer)
 
-# TODO: make it generic
+
 @dataclass
-class LogRenderer(Renderer):
+class LogRenderer(Renderer, Generic[R]):
     """
     A renderer wrapper that logs a program session to a file.
 
     Examples
     --------
-    >>> with LogRenderer() as renderer:
+    >>> from cuia.renderer import CursesRenderer, LogRenderer
+    >>> with LogRenderer(CursesRenderer()) as renderer:
     ...     renderer.render("Hello, world!")  # doctest: +SKIP
     """
 
-    renderer: Renderer
+    renderer: R
     path: Path = Path("log.txt")
 
     def __getattr__(self, name: Text):
@@ -39,9 +41,10 @@ class LogRenderer(Renderer):
         """Get next message."""
         return self.renderer.next_message()
 
-    def __enter__(self) -> LogRenderer:
+    def __enter__(self) -> LogRenderer[R]:
         """Enter context."""
-        return self.renderer.__enter__()
+        self.renderer = self.renderer.__enter__()
+        return self
 
     def __exit__(
         self,
@@ -53,13 +56,13 @@ class LogRenderer(Renderer):
         return self.renderer.__exit__(exctype, excinst, exctb)
 
     @contextmanager
-    def into_raw_mode(self) -> Iterator[LogRenderer]:
+    def into_raw_mode(self) -> Iterator[LogRenderer[R]]:
         """Enter raw mode."""
         with self.renderer.into_raw_mode():
             yield self
 
     @contextmanager
-    def hide_cursor(self) -> Iterator[LogRenderer]:
+    def hide_cursor(self) -> Iterator[LogRenderer[R]]:
         """Hide the cursor."""
         with self.renderer.hide_cursor():
             yield self

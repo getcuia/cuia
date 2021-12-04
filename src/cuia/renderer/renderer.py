@@ -5,9 +5,11 @@ from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from dataclasses import dataclass
 from types import TracebackType
-from typing import ContextManager, Iterator, Optional, Text, Type
+from typing import ContextManager, Iterator, Optional, Text, Type, TypeVar
 
 from ..message import Message
+
+R = TypeVar("R", bound="Renderer")
 
 
 @dataclass
@@ -25,7 +27,7 @@ class Renderer(ContextManager["Renderer"], ABC):
         raise NotImplementedError("You must implement this method")
 
     @abstractmethod
-    def __enter__(self) -> Renderer:
+    def __enter__(self: R) -> R:
         """
         Enter context.
 
@@ -49,12 +51,12 @@ class Renderer(ContextManager["Renderer"], ABC):
 
     @abstractmethod
     @contextmanager
-    def into_raw_mode(self) -> Iterator[Renderer]:
+    def into_raw_mode(self: R) -> Iterator[R]:
         """Enter raw mode."""
         raise NotImplementedError("You must implement this method")
 
     @abstractmethod
     @contextmanager
-    def hide_cursor(self) -> Iterator[Renderer]:
+    def hide_cursor(self: R) -> Iterator[R]:
         """Hide the cursor."""
         raise NotImplementedError("You must implement this method")
