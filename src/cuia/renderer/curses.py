@@ -11,7 +11,7 @@ from typing import Callable, Iterator, Optional, Text, Type
 from cusser import Cusser
 
 from ..message import Key, Message
-from ._renderer import Renderer
+from .renderer import Renderer
 
 
 def just(key: Key) -> Callable[[int], Key]:

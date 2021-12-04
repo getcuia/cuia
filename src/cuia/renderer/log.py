@@ -9,7 +9,7 @@ from types import TracebackType
 from typing import Iterator, Optional, Text, Type
 
 from ..message import Message
-from ._renderer import Renderer
+from .renderer import Renderer
 
 
 # TODO: make it generic
