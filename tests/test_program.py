@@ -17,5 +17,5 @@ def test_program_creation() -> None:
     """Test the program start method."""
     program = cuia.Program(Hello())
 
-    assert program.renderer == cuia.renderer.CursesRenderer
+    assert isinstance(program.renderer, cuia.renderer.CursesRenderer)
     assert Text(program.store) == "Hello, world!"

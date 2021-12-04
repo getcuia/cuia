@@ -5,8 +5,8 @@ from __future__ import annotations
 
 import asyncio
 from asyncio import Queue
-from dataclasses import dataclass
-from typing import Optional, Type
+from dataclasses import dataclass, field
+from typing import Optional
 
 from stransi import Ansi
 
@@ -37,7 +37,7 @@ class Program:
     store: Store
     """The current state of the program."""
 
-    renderer: Type[Renderer] = curses.CursesRenderer
+    renderer: Renderer = field(default_factory=curses.CursesRenderer)
     """The renderer to use."""
 
     messages: Optional[Queue[Message]] = None
@@ -51,7 +51,7 @@ class Program:
 
     async def start(self) -> None:
         """Begin the program."""
-        with self.renderer() as renderer:
+        with self.renderer as renderer:
             with renderer.into_raw_mode() as renderer:
                 with renderer.hide_cursor() as renderer:
                     # Queues have to be created inside the coroutine's event loop
