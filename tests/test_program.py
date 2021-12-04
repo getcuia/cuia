@@ -6,10 +6,14 @@ import cuia
 
 
 class Hello(cuia.Store):
+    """A program that produces 'Hello, world!' and exits."""
+
     def start(self) -> Optional[cuia.Command]:
+        """Exit immediately."""
         return quit
 
     def __str__(self) -> Text:
+        """Return 'Hello, world!'."""
         return "Hello, world!"
 
 

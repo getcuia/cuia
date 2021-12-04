@@ -37,7 +37,6 @@ async def check_server() -> Optional[cuia.Message]:
     """
     try:
         res = requests.get(URL)
-        # raise ValueError("This should not happen")
     except Exception as error:
         # It is a good idea to narrow down the error type in production code.
         return ErrorMessage(error=error)
