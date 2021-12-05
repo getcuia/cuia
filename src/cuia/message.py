@@ -5,7 +5,8 @@ from __future__ import annotations
 
 from abc import ABC
 from dataclasses import dataclass
-from typing import Text
+from enum import Enum
+from typing import Optional, Text
 
 
 @dataclass(frozen=True)
@@ -35,9 +36,73 @@ class Event(Message):
     value: Text
 
 
+class KeyModifier(Enum):
+    """
+    Enumeration of key modifiers.
+
+    This is used to specify which modifier keys are pressed when a key is
+    pressed.
+    """
+
+    ALT = "alt"
+    CTRL = "ctrl"
+    META = "meta"
+    SHIFT = "shift"
+
+
 @dataclass(frozen=True)
 class Key(Event):
     """A keyboard press event reported by the terminal."""
+
+    modifier: Optional[KeyModifier] = None
+
+    @classmethod
+    def ALT(cls, key: Key | Text) -> Key:
+        """
+        Return a key event for an alt modified character.
+
+        Note that certain keys may not be modifiable with `alt`, due to limitations of
+        terminals.
+        """
+        if isinstance(key, Key):
+            return cls(value=key.value, modifier=KeyModifier.ALT)
+        return cls(value=key, modifier=KeyModifier.ALT)
+
+    @classmethod
+    def CTRL(cls, key: Key | Text) -> Key:
+        """
+        Return a key event for a ctrl modified character.
+
+        Note that certain keys may not be modifiable with `ctrl`, due to limitations of
+        terminals.
+        """
+        if isinstance(key, Key):
+            return cls(value=key.value, modifier=KeyModifier.CTRL)
+        return cls(value=key, modifier=KeyModifier.CTRL)
+
+    @classmethod
+    def META(cls, key: Key | Text) -> Key:
+        """
+        Return a key event for a meta modified character.
+
+        Note that certain keys may not be modifiable with `meta`, due to limitations of
+        terminals.
+        """
+        if isinstance(key, Key):
+            return cls(value=key.value, modifier=KeyModifier.META)
+        return cls(value=key, modifier=KeyModifier.META)
+
+    @classmethod
+    def SHIFT(cls, key: Key | Text) -> Key:
+        """
+        Return a key event for a shift modified character.
+
+        Note that certain keys may not be modifiable with `shift`, due to limitations of
+        terminals.
+        """
+        if isinstance(key, Key):
+            return cls(value=key.value, modifier=KeyModifier.SHIFT)
+        return cls(value=key, modifier=KeyModifier.SHIFT)
 
     @classmethod
     @property
@@ -136,21 +201,6 @@ class Key(Event):
     def CHAR(cls, char: Text) -> Key:
         """Return a key event for a normal character key."""
         return cls(char)
-
-    @classmethod
-    def ALT(cls, char: Text) -> Key:
-        """Return a key event for an alt modified character."""
-        return cls(f"alt+{char}")
-
-    @classmethod
-    def CTRL(cls, char: Text) -> Key:
-        """
-        Return a key event for a control modified character.
-
-        Note that certain keys may not be modifiable with `ctrl`, due to limitations of
-        terminals.
-        """
-        return cls(f"ctrl+{char}")
 
     @classmethod
     @property

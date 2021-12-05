@@ -45,8 +45,8 @@ class CursesRenderer(Renderer):
             # Backspace (unreliable)
             return Key.BACKSPACE
         elif key in {ascii.CR, ascii.LF, curses.KEY_ENTER}:
-            # Enter or send (unreliable, so we also accept carriage returns and line feeds .
-            # See <https://stackoverflow.com/a/32255045/4039050>.
+            # Enter or send (unreliable, so we also accept carriage returns and
+            # line feeds. See <https://stackoverflow.com/a/32255045/4039050>.
             return Key.ENTER
         elif key == curses.KEY_LEFT:
             # Left-arrow
@@ -60,6 +60,18 @@ class CursesRenderer(Renderer):
         elif key == curses.KEY_DOWN:
             # Down-arrow
             return Key.DOWN
+        elif key == curses.KEY_SLEFT:
+            # Shift-left-arrow
+            return Key.SHIFT(Key.LEFT)
+        elif key == curses.KEY_SRIGHT:
+            # Shift-right-arrow
+            return Key.SHIFT(Key.RIGHT)
+        elif key == curses.KEY_SR:
+            # Shift-up-arrow (scroll one backward)
+            return Key.SHIFT(Key.UP)
+        elif key == curses.KEY_SF:
+            # Shift-down-arrow (scroll one forward)
+            return Key.SHIFT(Key.DOWN)
         elif key == curses.KEY_HOME:
             # Home key (upward+left arrow)
             return Key.HOME
@@ -104,12 +116,13 @@ class CursesRenderer(Renderer):
             # Any other alphanumeric key
             return Key.CHAR(chr(key))
 
-        raise ValueError(f"unknown key: {key!r} ({chr(key)})")
+        raise ValueError(f"unknown key: {curses.keyname(key)!r} ({chr(key) = })")
 
     def __enter__(self) -> CursesRenderer:
         """Enter context."""
         self.stdscr.keypad(True)
         self.stdscr.nodelay(True)
+        curses.meta(True)
         return self
 
     def __exit__(
@@ -119,6 +132,7 @@ class CursesRenderer(Renderer):
         exctb: Optional[TracebackType],
     ) -> Optional[bool]:
         """Exit context."""
+        curses.meta(False)
         self.stdscr.nodelay(False)
         self.stdscr.keypad(False)
         curses.endwin()
