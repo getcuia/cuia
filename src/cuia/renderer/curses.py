@@ -7,7 +7,7 @@ from contextlib import contextmanager
 from curses import ascii
 from dataclasses import dataclass, field
 from types import TracebackType
-from typing import Callable, Iterator, Optional, Text, Type
+from typing import Callable, Iterable, Iterator, Optional, Text, Type
 
 from cusser import Cusser
 
@@ -45,7 +45,7 @@ class CursesRenderer(Renderer):
             if isvalid(key):
                 return translate(key)
 
-        raise ValueError(f"unknown key: {key}")
+        raise ValueError(f"unknown key: {key!r} ({chr(key)})")
 
     def __enter__(self) -> CursesRenderer:
         """Enter context."""
@@ -86,14 +86,25 @@ class CursesRenderer(Renderer):
             curses.curs_set(1)
 
 
-def just(key: Key) -> Callable[[int], Key]:
-    """Return a function that returns the given key when called."""
-    return lambda _: key
+def always(key: int) -> bool:
+    """Return True for any key."""
+    return True
 
 
 def equal(key: int) -> Callable[[int], bool]:
     """Return a function that returns True when called with the given key."""
     return lambda k: k == key
+
+
+def either(fs: Iterable[Callable[[int], bool]]) -> Callable[[int], bool]:
+    """Return a function that returns True when any of the given ones returns True."""
+    fs = set(fs)
+    return lambda k: any(f(k) for f in fs)
+
+
+def just(key: Key) -> Callable[[int], Key]:
+    """Return a function that returns the given key when called."""
+    return lambda _: key
 
 
 RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
@@ -107,14 +118,14 @@ RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
     (equal(curses.KEY_RIGHT), just(Key("right"))),
     # Function keys. Up to 64 function keys are supported.
     (
-        lambda key: curses.KEY_F0 <= key <= curses.KEY_F63,
+        either(equal(key) for key in range(curses.KEY_F0, curses.KEY_F63 + 1)),
         lambda key: Key(f"f{key - curses.KEY_F0}"),
     ),
     #
     # Insert char or enter insert mode
     (equal(curses.KEY_IC), just(Key("insert"))),
     # Delete character
-    (equal(curses.KEY_DC), just(Key("delete"))),
+    (either(equal(key) for key in {ascii.DEL, curses.KEY_DC}), just(Key("delete"))),
     # Home key (upward+left arrow)
     (equal(curses.KEY_HOME), just(Key("home"))),
     # End
@@ -124,8 +135,6 @@ RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
     # Next page
     (equal(curses.KEY_NPAGE), just(Key("pagedown"))),
     #
-    # Minimum key value
-    (equal(curses.KEY_MIN), just(Key("min"))),
     # Delete line
     (equal(curses.KEY_DL), just(Key("dl"))),
     # Insert line
@@ -276,12 +285,17 @@ RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
     (equal(curses.KEY_MOUSE), just(Key("mouse"))),
     # Terminal resize event
     (equal(curses.KEY_RESIZE), just(Key("resize"))),
+    # Minimum key value
+    (equal(curses.KEY_MIN), just(Key("min"))),
     # Maximum key value
     (equal(curses.KEY_MAX), just(Key("max"))),
     #
     # Enter or send (unreliable, so we also accept carriage returns and line feeds .
     # See <https://stackoverflow.com/a/32255045/4039050>.
-    (lambda key: key in {ascii.CR, ascii.LF, curses.KEY_ENTER}, just(Key("enter"))),
+    (
+        either(equal(key) for key in {ascii.CR, ascii.LF, curses.KEY_ENTER}),
+        just(Key("enter")),
+    ),
     #
     # Space bar
     (equal(ascii.SP), just(Key("space"))),
@@ -289,34 +303,23 @@ RULES: list[tuple[Callable[[int], bool], Callable[[int], Message]]] = [
     # Break key (unreliable)
     (equal(curses.KEY_BREAK), just(Key("break"))),
     # Backspace (unreliable)
-    (equal(curses.KEY_BACKSPACE), just(Key("backspace"))),
+    (
+        either(equal(key) for key in {ascii.BS, curses.KEY_BACKSPACE}),
+        just(Key("backspace")),
+    ),
     # Soft (partial) reset (unreliable)
     (equal(curses.KEY_SRESET), just(Key("sreset"))),
     # Reset or hard reset (unreliable)
     (equal(curses.KEY_RESET), just(Key("reset"))),
     #
+    # Escape key
+    (equal(ascii.ESC), just(Key("escape"))),
+    # Tab key
+    (equal(ascii.TAB), just(Key("tab"))),
+    #
     (ascii.isctrl, lambda key: Key(f"ctrl+{chr(ord('a') - 1 + key)}")),
-    (lambda key: ascii.isalnum(key) or ascii.isspace(key), lambda key: Key(chr(key))),
+    # Fallback
+    (always, lambda key: Key(chr(key))),
 ]
 
 
-# (lambda key: key == ascii.BEL, lambda _: KeyMessage("bell")),
-# (lambda key: key == ascii.BS, lambda _: KeyMessage("backspace")),
-# (lambda key: key == ascii.CAN, lambda _: KeyMessage("can")),
-# (lambda key: key == ascii.DEL, lambda _: KeyMessage("delete")),
-# (lambda key: key == ascii.EM, lambda _: KeyMessage("em")),
-# (lambda key: key == ascii.ESC, lambda _: KeyMessage("escape")),
-# (lambda key: key == ascii.ETB, lambda _: KeyMessage("etb")),
-# (lambda key: key == ascii.FF, lambda _: KeyMessage("formfeed")),
-# (lambda key: key == ascii.FS, lambda _: KeyMessage("fs")),
-# (lambda key: key == ascii.GS, lambda _: KeyMessage("gs")),
-# (lambda key: key == ascii.NAK, lambda _: KeyMessage("nak")),
-# (lambda key: key == ascii.NL, lambda _: KeyMessage("newline")),
-# (lambda key: key == ascii.RS, lambda _: KeyMessage("rs")),
-# (lambda key: key == ascii.SI, lambda _: KeyMessage("shiftin")),
-# (lambda key: key == ascii.SO, lambda _: KeyMessage("shiftout")),
-# (lambda key: key == ascii.SUB, lambda _: KeyMessage("sub")),
-# (lambda key: key == ascii.SYN, lambda _: KeyMessage("syn")),
-# (lambda key: key == ascii.TAB, lambda _: KeyMessage("tab")),
-# (lambda key: key == ascii.US, lambda _: KeyMessage("us")),
-# (lambda key: key == ascii.VT, lambda _: KeyMessage("verticaltab")),
