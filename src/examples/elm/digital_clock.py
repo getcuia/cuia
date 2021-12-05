@@ -47,10 +47,7 @@ class DigitalClock(cuia.Store):
         if isinstance(message, TickMessage):
             self.time = message.time
             return tick
-        if isinstance(message, cuia.Key):
-            if message.key == "ctrl+c":
-                return cuia.quit
-        return None
+        return super().update(message)
 
     def __str__(self) -> Text:
         """Render the digital clock as a string."""

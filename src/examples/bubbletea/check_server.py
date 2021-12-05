@@ -91,10 +91,7 @@ class ServerChecker(cuia.Store):
             self.reason = message.reason
         elif isinstance(message, ErrorMessage):
             self.error = message.error
-        elif isinstance(message, cuia.Key) and Text(message) in {"ctrl+c", "q"}:
-            # The user pressed Ctrl-C, so we quit the application.
-            return cuia.quit
-        return None
+        return super().update(message)
 
     def __str__(self) -> Text:
         """Render the store state as a string."""

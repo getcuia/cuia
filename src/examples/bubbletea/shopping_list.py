@@ -33,10 +33,6 @@ class ShoppingList(cuia.Store):
         """
         if isinstance(message, cuia.Key):
             # The user pressed a key.
-            if Text(message) in {"ctrl+c", "q"}:
-                # Quit the application.
-                return cuia.quit
-
             if Text(message) in {"up", "k"}:
                 # Move the cursor up.
                 self.cursor = max(0, self.cursor - 1)
@@ -49,7 +45,7 @@ class ShoppingList(cuia.Store):
                     self.selected.remove(choice)
                 else:
                     self.selected.add(choice)
-        return None
+        return super().update(message)
 
     def __str__(self) -> Text:
         """
