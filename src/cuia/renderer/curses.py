@@ -100,8 +100,8 @@ class CursesRenderer(Renderer):
             # Tab key
             return Key.TAB
         elif key == curses.KEY_BTAB:
-            # Back tab
-            return Key.BACK_TAB
+            # Shift-tab key (back tab)
+            return Key.SHIFT(Key.TAB)
         elif key in {ascii.DEL, curses.KEY_DC}:
             # Delete character
             return Key.DELETE

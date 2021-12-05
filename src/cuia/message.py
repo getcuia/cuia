@@ -172,12 +172,6 @@ class Key(Event):
 
     @classmethod
     @property
-    def BACK_TAB(cls) -> Key:
-        """Return a key event for the backward tab key."""
-        return cls("backtab")
-
-    @classmethod
-    @property
     def DELETE(cls) -> Key:
         """Return a key event for the delete key."""
         return cls("delete")
