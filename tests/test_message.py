@@ -1,8 +1,6 @@
 """Tests for messages."""
 
 
-from typing import Text
-
 import cuia
 
 
@@ -14,7 +12,10 @@ def test_quit_message():
 
 def test_key_message():
     """Test key message."""
-    a = cuia.Key("a")
+    a = cuia.Key.CHAR("a")
+
+    assert isinstance(a, cuia.Key)
+    assert a.data == "a"
+
     assert issubclass(cuia.Key, cuia.Message)
     assert isinstance(a, cuia.Message)
-    assert Text(a) == "a"

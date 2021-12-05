@@ -33,13 +33,13 @@ class ShoppingList(cuia.Store):
         """
         if isinstance(message, cuia.Key):
             # The user pressed a key.
-            if Text(message) in {"up", "k"}:
+            if message in {cuia.Key.UP, cuia.Key.CHAR("k")}:
                 # Move the cursor up.
                 self.cursor = max(0, self.cursor - 1)
-            elif Text(message) in {"down", "j"}:
+            elif message in {cuia.Key.DOWN, cuia.Key.CHAR("j")}:
                 # Move the cursor down.
                 self.cursor = min(len(self.choices) - 1, self.cursor + 1)
-            elif Text(message) in {"enter", "space"}:
+            elif message in {cuia.Key.ENTER, cuia.KEY.SPACE}:
                 # Toggle the selected state of the current choice.
                 if (choice := self.choices[self.cursor]) in self.selected:
                     self.selected.remove(choice)
