@@ -105,12 +105,27 @@ class CursesRenderer(Renderer):
         elif key in {ascii.DEL, curses.KEY_DC}:
             # Delete character
             return Key.DELETE
+        elif key == curses.KEY_SDC:
+            # Shift+delete character
+            return Key.SHIFT(Key.DELETE)
         elif key == curses.KEY_IC:
             # Insert char or enter insert mode
             return Key.INSERT
-        elif curses.KEY_F0 <= key <= curses.KEY_F63:
-            # Function keys. Up to 64 function keys are supported.
+        elif curses.KEY_F0 <= key <= curses.KEY_F12:
+            # Function keys.
             return Key.F(key - curses.KEY_F0)
+        elif curses.KEY_F13 <= key <= curses.KEY_F24:
+            # Shift+function keys.
+            return Key.SHIFT(Key.F(key - curses.KEY_F12))
+        elif curses.KEY_F25 <= key <= curses.KEY_F36:
+            # Control+function keys.
+            return Key.CTRL(Key.F(key - curses.KEY_F24))
+        elif curses.KEY_F37 <= key <= curses.KEY_F48:
+            # Control+shift+function keys.
+            return Key.CTRL(Key.SHIFT(Key.F(key - curses.KEY_F36)))
+        elif curses.KEY_F49 <= key <= curses.KEY_F60:
+            # Alt+function keys.
+            return Key.ALT(Key.F(key - curses.KEY_F48))
         elif key == ascii.ESC:
             # This assumes no delay is set to True.
             if (next_key := self.stdscr.getch()) == curses.ERR:
