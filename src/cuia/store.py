@@ -36,8 +36,8 @@ class Store(ABC):
         The default implementation terminates the program if the user presses Ctrl-C,
         but does nothing else other than that.
         """
-        if isinstance(message, Key) and Text(message) == "ctrl+c":
-            # The user pressed Ctrl-C, so we quit the application.
+        if isinstance(message, Key) and Text(message) in {"ctrl+c", "q"}:
+            # The user pressed either Ctrl-C or Q, so we quit the application.
             return command.quit
         return None
 
