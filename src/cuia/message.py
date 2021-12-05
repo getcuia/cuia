@@ -96,7 +96,7 @@ class Key(Event):
     @classmethod
     @property
     def BACK_TAB(cls) -> Key:
-        """Return a key event for the backtab key."""
+        """Return a key event for the backward tab key."""
         return cls("backtab")
 
     @classmethod
@@ -113,28 +113,37 @@ class Key(Event):
 
     @classmethod
     def F(cls, num: int) -> Key:
-        """Return a key event for a function key."""
+        """
+        Return a key event for a function key.
+
+        We make no guarantee that function keys above F12 are supported.
+        """
         return cls(f"f{num}")
 
     @classmethod
     def CHAR(cls, char: Text) -> Key:
-        """Return a key event for a character key."""
+        """Return a key event for a normal character key."""
         return cls(char)
 
     @classmethod
     def ALT(cls, char: Text) -> Key:
-        """Return a key event for a combination of alt and character keys."""
+        """Return a key event for an alt modified character."""
         return cls(f"alt+{char}")
 
     @classmethod
     def CTRL(cls, char: Text) -> Key:
-        """Return a key event for a combination of ctrl and character keys."""
+        """
+        Return a key event for a control modified character.
+
+        Note that certain keys may not be modifiable with `ctrl`, due to limitations of
+        terminals.
+        """
         return cls(f"ctrl+{char}")
 
     @classmethod
     @property
     def NULL(cls) -> Key:
-        """Return a key event for a null key."""
+        """Return a key event for a null byte."""
         return cls("null")
 
     @classmethod
