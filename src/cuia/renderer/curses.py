@@ -84,6 +84,18 @@ class CursesRenderer(Renderer):
         elif key == curses.KEY_NPAGE:
             # Next page
             return Key.PAGE_DOWN
+        elif key == curses.KEY_SHOME:
+            # Shift-home key
+            return Key.SHIFT(Key.HOME)
+        elif key == curses.KEY_SEND:
+            # Shift-end key
+            return Key.SHIFT(Key.END)
+        elif key == curses.KEY_SPREVIOUS:
+            # Shift-previous page
+            return Key.SHIFT(Key.PAGE_UP)
+        elif key == curses.KEY_SNEXT:
+            # Shift-next page
+            return Key.SHIFT(Key.PAGE_DOWN)
         elif key == ascii.TAB:
             # Tab key
             return Key.TAB
