@@ -32,7 +32,7 @@ class Quit(Message):
 class Event(Message):
     """A message informing the application of a terminal event."""
 
-    data: Text
+    value: Text
 
 
 @dataclass(frozen=True)
@@ -83,19 +83,19 @@ class Key(Event):
 
     @classmethod
     @property
-    def PAGEUP(cls) -> Key:
+    def PAGE_UP(cls) -> Key:
         """Return a key event for the page up key."""
         return cls("pageup")
 
     @classmethod
     @property
-    def PAGEDOWN(cls) -> Key:
+    def PAGE_DOWN(cls) -> Key:
         """Return a key event for the page down key."""
         return cls("pagedown")
 
     @classmethod
     @property
-    def BACKTAB(cls) -> Key:
+    def BACK_TAB(cls) -> Key:
         """Return a key event for the backtab key."""
         return cls("backtab")
 
@@ -139,6 +139,6 @@ class Key(Event):
 
     @classmethod
     @property
-    def ESC(cls) -> Key:
+    def ESCAPE(cls) -> Key:
         """Return a key event for the escape key."""
-        return cls("esc")
+        return cls("escape")

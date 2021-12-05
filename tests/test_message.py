@@ -15,7 +15,7 @@ def test_key_message():
     a = cuia.Key.CHAR("a")
 
     assert isinstance(a, cuia.Key)
-    assert a.data == "a"
+    assert a.value == "a"
 
     assert issubclass(cuia.Key, cuia.Message)
     assert isinstance(a, cuia.Message)

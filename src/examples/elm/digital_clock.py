@@ -15,7 +15,7 @@ import pyfiglet  # type: ignore
 import cuia
 
 
-@dataclass
+@dataclass(frozen=True)
 class TickMessage(cuia.Message):
     """A message informing the tick of the clock."""
 

@@ -43,7 +43,7 @@ async def check_server() -> Optional[cuia.Message]:
     return StatusMessage(status=res.status_code, reason=res.reason)
 
 
-@dataclass
+@dataclass(frozen=True)
 class StatusMessage(cuia.Message):
     """A message that indicates the status of the server."""
 
@@ -51,7 +51,7 @@ class StatusMessage(cuia.Message):
     reason: Text
 
 
-@dataclass
+@dataclass(frozen=True)
 class ErrorMessage(cuia.Message, Exception):
     """A message that indicates an error."""
 
