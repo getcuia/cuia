@@ -5,8 +5,8 @@ from __future__ import annotations
 
 from abc import ABC
 from dataclasses import dataclass
-from enum import Enum
-from typing import Optional, Text
+from enum import Flag, auto
+from typing import Text
 
 
 @dataclass(frozen=True)
@@ -36,7 +36,7 @@ class Event(Message):
     value: Text
 
 
-class KeyModifier(Enum):
+class KeyModifier(Flag):
     """
     Enumeration of key modifiers.
 
@@ -44,17 +44,18 @@ class KeyModifier(Enum):
     pressed.
     """
 
-    ALT = "alt"
-    CTRL = "ctrl"
-    META = "meta"
-    SHIFT = "shift"
+    NONE = 0
+    ALT = auto()
+    CTRL = auto()
+    META = auto()
+    SHIFT = auto()
 
 
 @dataclass(frozen=True)
 class Key(Event):
     """A keyboard press event reported by the terminal."""
 
-    modifier: Optional[KeyModifier] = None
+    modifier: KeyModifier = KeyModifier.NONE
 
     @classmethod
     def ALT(cls, key: Key | Text) -> Key:
@@ -65,7 +66,7 @@ class Key(Event):
         terminals.
         """
         if isinstance(key, Key):
-            return cls(value=key.value, modifier=KeyModifier.ALT)
+            return cls(value=key.value, modifier=key.modifier | KeyModifier.ALT)
         return cls(value=key, modifier=KeyModifier.ALT)
 
     @classmethod
@@ -77,7 +78,7 @@ class Key(Event):
         terminals.
         """
         if isinstance(key, Key):
-            return cls(value=key.value, modifier=KeyModifier.CTRL)
+            return cls(value=key.value, modifier=key.modifier | KeyModifier.CTRL)
         return cls(value=key, modifier=KeyModifier.CTRL)
 
     @classmethod
@@ -89,7 +90,7 @@ class Key(Event):
         terminals.
         """
         if isinstance(key, Key):
-            return cls(value=key.value, modifier=KeyModifier.META)
+            return cls(value=key.value, modifier=key.modifier | KeyModifier.META)
         return cls(value=key, modifier=KeyModifier.META)
 
     @classmethod
@@ -101,7 +102,7 @@ class Key(Event):
         terminals.
         """
         if isinstance(key, Key):
-            return cls(value=key.value, modifier=KeyModifier.SHIFT)
+            return cls(value=key.value, modifier=key.modifier | KeyModifier.SHIFT)
         return cls(value=key, modifier=KeyModifier.SHIFT)
 
     @classmethod
