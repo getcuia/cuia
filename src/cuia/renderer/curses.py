@@ -61,16 +61,16 @@ class CursesRenderer(Renderer):
             # Down-arrow
             return Key.DOWN
         elif key == curses.KEY_SLEFT:
-            # Shift-left-arrow
+            # Shift+left-arrow
             return Key.SHIFT(Key.LEFT)
         elif key == curses.KEY_SRIGHT:
-            # Shift-right-arrow
+            # Shift+right-arrow
             return Key.SHIFT(Key.RIGHT)
         elif key == curses.KEY_SR:
-            # Shift-up-arrow (scroll one backward)
+            # Shift+up-arrow (scroll one backward)
             return Key.SHIFT(Key.UP)
         elif key == curses.KEY_SF:
-            # Shift-down-arrow (scroll one forward)
+            # Shift+down-arrow (scroll one forward)
             return Key.SHIFT(Key.DOWN)
         elif key == curses.KEY_HOME:
             # Home key (upward+left arrow)
@@ -85,22 +85,22 @@ class CursesRenderer(Renderer):
             # Next page
             return Key.PAGE_DOWN
         elif key == curses.KEY_SHOME:
-            # Shift-home key
+            # Shift+home key
             return Key.SHIFT(Key.HOME)
         elif key == curses.KEY_SEND:
-            # Shift-end key
+            # Shift+end key
             return Key.SHIFT(Key.END)
         elif key == curses.KEY_SPREVIOUS:
-            # Shift-previous page
+            # Shift+previous page
             return Key.SHIFT(Key.PAGE_UP)
         elif key == curses.KEY_SNEXT:
-            # Shift-next page
+            # Shift+next page
             return Key.SHIFT(Key.PAGE_DOWN)
         elif key == ascii.TAB:
             # Tab key
             return Key.TAB
         elif key == curses.KEY_BTAB:
-            # Shift-tab key (back tab)
+            # Shift+tab key (back tab)
             return Key.SHIFT(Key.TAB)
         elif key in {ascii.DEL, curses.KEY_DC}:
             # Delete character
@@ -131,10 +131,10 @@ class CursesRenderer(Renderer):
             if (next_key := self.stdscr.getch()) == curses.ERR:
                 # Escape key
                 return Key.ESCAPE
-            # Alt plus key
+            # Alt+key
             return Key.ALT(chr(next_key))
         elif ascii.isctrl(key):
-            # Control plus key
+            # Control+key
             return Key.CTRL(chr(ord("a") - 1 + key))
         elif key == ascii.NUL:
             # Null key
