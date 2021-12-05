@@ -47,6 +47,12 @@ class Key(Event):
 
     @classmethod
     @property
+    def ENTER(cls) -> Key:
+        """Return a key event for the enter key."""
+        return cls("enter")
+
+    @classmethod
+    @property
     def LEFT(cls) -> Key:
         """Return a key event for the left arrow key."""
         return cls("left")
@@ -92,6 +98,12 @@ class Key(Event):
     def PAGE_DOWN(cls) -> Key:
         """Return a key event for the page down key."""
         return cls("pagedown")
+
+    @classmethod
+    @property
+    def TAB(cls) -> Key:
+        """Return a key event for the tab key."""
+        return cls("tab")
 
     @classmethod
     @property

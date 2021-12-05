@@ -44,6 +44,10 @@ class CursesRenderer(Renderer):
         if key in {ascii.BS, curses.KEY_BACKSPACE}:
             # Backspace (unreliable)
             return Key.BACKSPACE
+        elif key in {ascii.CR, ascii.LF, curses.KEY_ENTER}:
+            # Enter or send (unreliable, so we also accept carriage returns and line feeds .
+            # See <https://stackoverflow.com/a/32255045/4039050>.
+            return Key.ENTER
         elif key == curses.KEY_LEFT:
             # Left-arrow
             return Key.LEFT
@@ -68,6 +72,9 @@ class CursesRenderer(Renderer):
         elif key == curses.KEY_NPAGE:
             # Next page
             return Key.PAGE_DOWN
+        elif key == ascii.TAB:
+            # Tab key
+            return Key.TAB
         elif key == curses.KEY_BTAB:
             # Back tab
             return Key.BACK_TAB
