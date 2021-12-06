@@ -155,7 +155,7 @@ class CursesRenderer(Renderer):
 
         # Enter or send key (unreliable, so we also accept carriage returns and
         # line feeds. See <https://stackoverflow.com/a/32255045/4039050>.
-        if ikey in {ascii.CR, ascii.LF, curses.KEY_ENTER}:
+        if ikey in {ascii.CR, ascii.NL, curses.KEY_ENTER}:
             return Key.ENTER  # type: ignore
 
         # Tab key

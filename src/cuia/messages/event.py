@@ -182,7 +182,7 @@ class Key(Event[Union[int, Text]]):
     @property
     def ENTER(cls) -> Key:
         """Return a key event for the enter key."""
-        return cls(ascii.LF)
+        return cls(ascii.NL)
 
     @classmethod
     @property
