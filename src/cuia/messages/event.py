@@ -38,7 +38,14 @@ class Event(Message, ABC):
 
 @dataclass(frozen=True)
 class Key(Event):
-    """A keyboard press event reported by the terminal."""
+    """
+    A keyboard press event reported by the terminal.
+
+    Examples
+    --------
+    >>> Key.CTRL(Key.CHAR("c"))
+    Key(value='c', modifier=<KeyModifier.CTRL: 2>)
+    """
 
     value: Text
     modifier: KeyModifier = KeyModifier.NONE
