@@ -5,7 +5,7 @@
 # [cuia](https://github.com/getcuia/cuia#readme) 🧉
 
 <div align="center">
-    <img class="hero" src="https://github.com/getcuia/getcuia.github.io/raw/main/static/cuia.svg" alt="cuia" width="33%" />
+    <img class="hero" src="https://github.com/getcuia/cuia/raw/main/banner.svg" alt="cuia" width="33%" />
 </div>
 
 > A delightful tiny framework for building reliable text-based applications.
