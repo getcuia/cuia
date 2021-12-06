@@ -46,8 +46,10 @@ class CursesRenderer(Renderer):
         if isinstance(key, int):
             ikey = key
             key = chr(key)
-        else:
+        elif isinstance(key, (bytes, Text)):
             ikey = ord(key)
+        else:
+            raise TypeError(f"unexpected type: {type(key)} ({key!r})")
 
         if ikey in {ascii.BS, curses.KEY_BACKSPACE}:
             # Backspace (unreliable, so we also accept the ASCII BS charater).
