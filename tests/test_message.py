@@ -2,6 +2,7 @@
 
 
 import cuia
+from cuia.message import Event, Key, KeyModifier
 
 
 def test_quit_message():
@@ -10,12 +11,29 @@ def test_quit_message():
     assert isinstance(cuia.Quit(), cuia.Message)
 
 
-def test_key_message():
-    """Test key message."""
-    a = cuia.Key.CHAR("a")
+def test_key_event_hierarchy():
+    """Test key event hierarchy."""
+    assert issubclass(Key, cuia.Message)
+    assert issubclass(Key, Event)
 
-    assert isinstance(a, cuia.Key)
-    assert a.value == "a"
 
-    assert issubclass(cuia.Key, cuia.Message)
+def test_simple_key_event_message():
+    """Test a simple key event message."""
+    a = Key.CHAR("a")
+
     assert isinstance(a, cuia.Message)
+    assert isinstance(a, Event)
+    assert isinstance(a, Key)
+    assert a.value == "a"
+    assert a.modifier == KeyModifier.NONE
+
+
+def test_key_event_with_modifier_message():
+    """Test a key event with modifier message."""
+    a = Key.ALT(Key.CTRL(Key.CHAR("a")))
+
+    assert isinstance(a, cuia.Message)
+    assert isinstance(a, Event)
+    assert isinstance(a, Key)
+    assert a.value == "a"
+    assert a.modifier == KeyModifier.ALT | KeyModifier.CTRL
