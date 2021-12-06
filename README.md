@@ -13,6 +13,8 @@
 **cuia** is a tiny Python library for building interactive terminal user
 interfaces that are easy to use, fast and have a small memory footprint.
 
+cuia is inspired by [Bubble Tea](https://github.com/charmbracelet/bubbletea) (written in [Go](https://golang.org/)) and, in particular, employs [the Elm architecture](https://guide.elm-lang.org/architecture/) (TEA, named after the [Elm programming language](https://elm-lang.org/)). This means that **cuia applications are as dynamic and easy to write (and use) as they could be**.
+
 ## Features
 
 -   🧵 Simple: your user interface is a string of characters
