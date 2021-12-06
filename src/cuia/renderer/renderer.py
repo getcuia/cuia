@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from types import TracebackType
 from typing import ContextManager, Iterator, Optional, Text, Type, TypeVar
 
-from ..messages import Message
+from ..messages import Event
 
 R = TypeVar("R", bound="Renderer")
 
@@ -22,8 +22,8 @@ class Renderer(ContextManager["Renderer"], ABC):
         raise NotImplementedError("You must implement this method")
 
     @abstractmethod
-    def next_message(self) -> Optional[Message]:
-        """Get next message."""
+    def next_event(self) -> Optional[Event]:
+        """Attempt to get the next terminal event."""
         raise NotImplementedError("You must implement this method")
 
     @abstractmethod

@@ -8,7 +8,7 @@ from pathlib import Path
 from types import TracebackType
 from typing import Generic, Iterator, Optional, Text, Type, TypeVar
 
-from ..messages import Message
+from ..messages import Event
 from .renderer import Renderer
 
 R = TypeVar("R", bound=Renderer)
@@ -37,9 +37,9 @@ class LogRenderer(Renderer, Generic[R]):
         """Render a screen."""
         return self.renderer.render(screen)
 
-    def next_message(self) -> Optional[Message]:
-        """Get next message."""
-        return self.renderer.next_message()
+    def next_event(self) -> Optional[Event]:
+        """Attempt to get the next terminal event."""
+        return self.renderer.next_event()
 
     def __enter__(self) -> LogRenderer[R]:
         """Enter context."""

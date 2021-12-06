@@ -67,9 +67,10 @@ class Program:
                             renderer.render(Ansi(self.store))
                             self.should_render = False
 
-                        # Expect the user to interact
-                        if new_message := renderer.next_message():
-                            await self.enqueue_message(new_message)
+                        # Expect the user to interact, so attempt to get the next
+                        # terminal event
+                        if new_event := renderer.next_event():
+                            await self.enqueue_message(new_event)
 
                         # Handle a next message if available
                         if message := self.dequeue_message():

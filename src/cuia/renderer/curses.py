@@ -11,7 +11,7 @@ from typing import Iterator, Optional, Text, Type
 
 from cusser import Cusser
 
-from ..messages import Key, Message, Unsupported
+from ..messages import Event, Key, Unsupported
 from .renderer import Renderer
 
 ORD_A = ord("a")
@@ -38,8 +38,8 @@ class CursesRenderer(Renderer):
         self.stdscr.noutrefresh()
         curses.doupdate()
 
-    def next_message(self) -> Optional[Message]:  # noqa: C901
-        """Get next message."""
+    def next_event(self) -> Optional[Event]:  # noqa: C901
+        """Attempt to get the next terminal event."""
         try:
             key = self.stdscr.get_wch()
         except curses.error:
@@ -131,7 +131,7 @@ class CursesRenderer(Renderer):
 
         if key == ascii.ESC:
             # This assumes no delay is set to True
-            if (next_key := self.next_message()) is None:
+            if (next_key := self.next_event()) is None:
                 # Escape key
                 return Key.ESCAPE  # type: ignore
 
