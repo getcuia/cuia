@@ -6,7 +6,7 @@ from __future__ import annotations
 from abc import ABC
 from dataclasses import dataclass
 from enum import Flag, auto
-from typing import Text
+from typing import Generic, Text, TypeVar
 
 
 @dataclass(frozen=True)
@@ -27,13 +27,14 @@ class Quit(Message):
     """A message informing the application to quit."""
 
 
+T = TypeVar("T")
 
 
 @dataclass(frozen=True)
-class Event(Message):
+class Event(Message, Generic[T]):
     """A message informing the application of a terminal event."""
 
-    value: Text
+    value: T
 
 
 class KeyModifier(Flag):
@@ -52,7 +53,7 @@ class KeyModifier(Flag):
 
 
 @dataclass(frozen=True)
-class Key(Event):
+class Key(Event[Text]):
     """A keyboard press event reported by the terminal."""
 
     modifier: KeyModifier = KeyModifier.NONE
@@ -208,3 +209,8 @@ class Key(Event):
     def ESCAPE(cls) -> Key:
         """Return a key event for the escape key."""
         return cls("escape")
+
+
+@dataclass(frozen=True)
+class Unsupported(Event[bytes]):
+    """A message informing the application of a currently unsupported terminal event."""
