@@ -39,7 +39,7 @@ class ShoppingList(cuia.Store):
             elif message in {cuia.Key.DOWN, cuia.Key.CHAR("j")}:
                 # Move the cursor down.
                 self.cursor = min(len(self.choices) - 1, self.cursor + 1)
-            elif message in {cuia.Key.ENTER, cuia.KEY.SPACE}:
+            elif message in {cuia.Key.ENTER, cuia.Key.SPACE}:
                 # Toggle the selected state of the current choice.
                 if (choice := self.choices[self.cursor]) in self.selected:
                     self.selected.remove(choice)

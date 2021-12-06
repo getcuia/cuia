@@ -10,7 +10,7 @@ from .command import Command
 from .messages import Key, Message
 
 
-@dataclass
+@dataclass  # type: ignore
 class Store(ABC):
     """
     A base class for storing application state.

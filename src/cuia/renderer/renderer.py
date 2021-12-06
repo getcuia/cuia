@@ -12,7 +12,7 @@ from ..messages import Message
 R = TypeVar("R", bound="Renderer")
 
 
-@dataclass
+@dataclass  # type: ignore
 class Renderer(ContextManager["Renderer"], ABC):
     """Renderer base class."""
 
