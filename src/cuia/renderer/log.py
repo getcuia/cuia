@@ -1,5 +1,6 @@
 """A renderer wrapper that logs a program session to a file."""
 
+
 from __future__ import annotations
 
 from contextlib import contextmanager
