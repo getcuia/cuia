@@ -215,6 +215,10 @@ class Key(Event[Text]):
         return cls(ascii.ESC)  # type: ignore
 
 
+@dataclass(frozen=True)
+class Resize(Event[tuple[int, int]]):
+    """A terminal resize event."""
+
 
 @dataclass(frozen=True)
 class Unsupported(Event[bytes]):

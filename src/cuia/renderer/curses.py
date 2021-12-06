@@ -12,7 +12,7 @@ from typing import Iterator, Optional, Text, Type
 
 from cusser import Cusser
 
-from ..messages import Event, Key, Unsupported
+from ..messages import Event, Key, Resize, Unsupported
 from .renderer import Renderer
 
 ORD_A = ord("a")
@@ -51,6 +51,10 @@ class CursesRenderer(Renderer):
 
         if not isinstance(key, int):
             key = ord(key)
+
+        # Window resize event
+        if key == curses.KEY_RESIZE:
+            return Resize(self.stdscr.getmaxyx())
 
         # Left-arrow key
         if key == curses.KEY_LEFT:
