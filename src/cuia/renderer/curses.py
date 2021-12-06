@@ -1,5 +1,6 @@
 """A renderer that uses Python's standard curses library."""
 
+
 from __future__ import annotations
 
 import curses
@@ -20,7 +21,7 @@ ORD_A = ord("a")
 @dataclass
 class CursesRenderer(Renderer):
     """
-    Curses renderer.
+    A renderer that uses Python's standard curses library.
 
     Examples
     --------
@@ -40,6 +41,9 @@ class CursesRenderer(Renderer):
 
     def next_event(self) -> Optional[Event]:  # noqa: C901
         """Attempt to get the next terminal event."""
+        # The strategy used is inspired
+        # from <https://stackoverflow.com/a/32794353/4039050>.
+
         try:
             key = self.stdscr.get_wch()
         except curses.error:
@@ -143,10 +147,6 @@ class CursesRenderer(Renderer):
         if ascii.isctrl(key):
             return Key.CTRL(ORD_A + key - 1)
 
-        # Meta+other key (might also be some special key)
-        if ascii.ismeta(key):
-            return Key.META(key)
-
         # Shift+left-arrow key
         if key == curses.KEY_SLEFT:
             return Key.SHIFT(Key.LEFT)  # type: ignore
@@ -187,11 +187,14 @@ class CursesRenderer(Renderer):
         if key == curses.KEY_SDC:
             return Key.SHIFT(Key.DELETE)  # type: ignore
 
+        # Meta+other key (might also be some special key)
+        if ascii.ismeta(key):
+            return Key.META(key)
+
         # Any other printable character key
         if ascii.isprint(key):
             return Key.CHAR(key)
 
-        # https://stackoverflow.com/a/32794353/4039050
 
         return Unsupported(curses.keyname(key))
 
@@ -199,7 +202,6 @@ class CursesRenderer(Renderer):
         """Enter context."""
         self.stdscr.keypad(True)
         self.stdscr.nodelay(True)
-        curses.meta(True)
         return self
 
     def __exit__(
@@ -209,7 +211,6 @@ class CursesRenderer(Renderer):
         exctb: Optional[TracebackType],
     ) -> Optional[bool]:
         """Exit context."""
-        curses.meta(False)
         self.stdscr.nodelay(False)
         self.stdscr.keypad(False)
         curses.endwin()
