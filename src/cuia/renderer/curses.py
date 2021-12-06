@@ -143,6 +143,7 @@ class CursesRenderer(Renderer):
                 # Escape key
                 return Key.ESCAPE
             # Alt+key
+            assert isinstance(next_key, Key)
             return Key.ALT(next_key)
         elif ascii.isctrl(ikey):
             # Control+key
