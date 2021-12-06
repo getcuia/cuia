@@ -128,11 +128,11 @@ class CursesRenderer(Renderer):
             return Key.ALT(Key.F(key - curses.KEY_F48))
         elif key == ascii.ESC:
             # This assumes no delay is set to True.
-            if (next_key := self.stdscr.getch()) == curses.ERR:
+            if (next_key := self.next_message()) is None:
                 # Escape key
                 return Key.ESCAPE
             # Alt+key
-            return Key.ALT(chr(next_key))
+            return Key.ALT(next_key)
         elif ascii.isctrl(key):
             # Control+key
             return Key.CTRL(chr(ord("a") - 1 + key))
