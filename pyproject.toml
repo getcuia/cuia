@@ -1,28 +1,47 @@
 [tool.poetry]
 name = "cuia"
 version = "0.1.0"
-description = "🧓🏾🖥️ An old lady made a text-based app."
+description = "🧉🌿 A delightful tiny framework for building reliable text-based applications"
 authors = ["Felipe S. S. Schneider <schneider.felipe@posgrad.ufsc.br>"]
 license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/getcuia/cuia"
+repository = "https://github.com/getcuia/cuia"
+keywords = [
+    "ansi",
+    "cli",
+    "command-line",
+    "console",
+    "cuia",
+    "terminal",
+    "tui",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: User Interfaces",
+    "Topic :: Terminals :: Terminal Emulators/X Terminals",
+]
 
 [tool.poetry.dependencies]
 python = "^3.8"
 cusser = "^0.1.0"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2"
-black = {version = "^21.10b0", allow-prereleases = true}
-pydocstyle = "^6.1.1"
-mypy = "^0.910"
-isort = "^5.9.3"
-flake8 = "^4.0.1"
 bandit = "^1.7.0"
-requests = "^2.26.0"
-types-requests = "^2.25.11"
-pylint = "^2.11.1"
-snakeviz = "^2.1.1"
+black = {version = "^21.10b0", allow-prereleases = true}
+flake8 = "^4.0.1"
+isort = "^5.9.3"
+mypy = "^0.910"
 pdoc = "^8.0.1"
+pydocstyle = "^6.1.1"
 pyfiglet = "^0.8.post1"
+pylint = "^2.11.1"
+pytest = "^5.2"
+requests = "^2.26.0"
+snakeviz = "^2.1.1"
+types-requests = "^2.25.11"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
