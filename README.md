@@ -15,11 +15,13 @@ interfaces that is easy to use, fast and has a small memory footprint.
 
 ## Features
 
--   Simple & interaction-focused
--   [curses](https://docs.python.org/3/library/curses.html) under the hood
--   🖥️ Support for Unix variants out of the box (probably works on Windows and
-    DOS if a compatible curses library is available)
--   🗑️ Single dependency
+-   🧵 Simple: your user interface is a string of characters
+-   💬 Interaction-focused
+-   🖥️ Support for Unix variants out of the box:
+    [curses](https://docs.python.org/3/library/curses.html) under the hood by
+    default (and probably works on Windows and DOS if a compatible curses
+    library is available)
+-   🤬 Only one dependency: [cusser](https://github.com/getcuia/cusser)
 -   🐍 Python 3.8+
 
 ## Installation
