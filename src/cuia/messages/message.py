@@ -1,4 +1,4 @@
-"""Generic messages."""
+"""Simple message passing."""
 
 
 from __future__ import annotations

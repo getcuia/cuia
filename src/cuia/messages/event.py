@@ -3,21 +3,21 @@
 
 from __future__ import annotations
 
+from abc import ABC
 from curses import ascii
 from dataclasses import dataclass
 from enum import Flag, auto
-from typing import Generic, Text, TypeVar
+from typing import Text
 
 from .message import Message
 
-T = TypeVar("T")
-
-
 @dataclass(frozen=True)
-class Event(Message, Generic[T]):
-    """A message informing the application of a terminal event."""
+class Event(Message, ABC):
+    """
+    A message informing the application of a terminal event.
 
-    value: T
+    This is a base class for all terminal events.
+    """
 
 
 class KeyModifier(Flag):
@@ -36,9 +36,10 @@ class KeyModifier(Flag):
 
 
 @dataclass(frozen=True)
-class Key(Event[Text]):
+class Key(Event):
     """A keyboard press event reported by the terminal."""
 
+    value: Text
     modifier: KeyModifier = KeyModifier.NONE
 
     def __post_init__(self):
@@ -216,10 +217,15 @@ class Key(Event[Text]):
 
 
 @dataclass(frozen=True)
-class Resize(Event[tuple[int, int]]):
+class Resize(Event):
     """A terminal resize event."""
+
+    height: int
+    width: int
 
 
 @dataclass(frozen=True)
-class Unsupported(Event[bytes]):
+class Unsupported(Event):
     """A message informing the application of a currently unsupported terminal event."""
+
+    value: bytes

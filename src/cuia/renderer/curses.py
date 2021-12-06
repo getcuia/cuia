@@ -54,7 +54,7 @@ class CursesRenderer(Renderer):
 
         # Window resize event
         if key == curses.KEY_RESIZE:
-            return Resize(self.stdscr.getmaxyx())
+            return Resize(*self.stdscr.getmaxyx())
 
         # Left-arrow key
         if key == curses.KEY_LEFT:
