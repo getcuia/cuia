@@ -2,7 +2,7 @@
 
 
 import cuia
-from cuia.message import Event, Key, KeyModifier
+from cuia.messages import Event, Key, KeyModifier
 
 
 def test_quit_message():
