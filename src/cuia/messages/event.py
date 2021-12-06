@@ -11,14 +11,6 @@ from typing import Text
 
 from .message import Message
 
-@dataclass(frozen=True)
-class Event(Message, ABC):
-    """
-    A message informing the application of a terminal event.
-
-    This is a base class for all terminal events.
-    """
-
 
 class KeyModifier(Flag):
     """
@@ -33,6 +25,15 @@ class KeyModifier(Flag):
     CTRL = auto()
     META = auto()
     SHIFT = auto()
+
+
+@dataclass(frozen=True)
+class Event(Message, ABC):
+    """
+    A message informing the application of a terminal event.
+
+    This is a base class for all terminal events.
+    """
 
 
 @dataclass(frozen=True)
