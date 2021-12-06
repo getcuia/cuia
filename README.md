@@ -17,11 +17,15 @@ interfaces that is easy to use, fast and has a small memory footprint.
 
 -   🧵 Simple: your user interface is a string of characters
 -   💬 Interaction-focused
+-   ♻️ Easily integrate with other libraries
+-   🕹️ Use the same escape code sequences
+    [as you would with Colorama](https://github.com/tartley/colorama#recognised-ansi-sequences)
 -   🖥️ Support for Unix variants out of the box:
     [curses](https://docs.python.org/3/library/curses.html) under the hood by
     default (and probably works on Windows and DOS if a compatible curses
     library is available)
--   🤬 Only one dependency: [cusser](https://github.com/getcuia/cusser)
+-   🤬 Only one dependency: [cusser](https://github.com/getcuia/cusser) (for
+    wrapping the curses library)
 -   🐍 Python 3.8+
 
 ## Installation
@@ -35,15 +39,24 @@ $ pip install cuia
 ```python
 In [1]: import asyncio
 
-In [2]: from cuia import Program, Store
+In [2]: from dataclasses import dataclass
 
-In [3]: class Hello(Store):
+In [3]: from cuia import Program, Store
+
+In [4]: @dataclass
+   ...: class Hello(Store):
+   ...:
+   ...:     x: int = 0
+   ...:     y: int = 0
+   ...:
    ...:     def __str__(self):
-   ...:         return "Hello, 🌍!"
+   ...:         return f"\033[{self.x};{self.y}H\033[1mHello, 🌍!"
    ...:
 
-In [4]: program = Program(Hello())
+In [5]: program = Program(Hello(34, 12))
 
-In [5]: asyncio.run(program.start())
+In [6]: asyncio.run(program.start())
 
 ```
+
+![Screenshot](https://github.com/getcuia/cuia/raw/main/screenshot.png)
