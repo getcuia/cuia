@@ -181,7 +181,7 @@ class CursesRenderer(Renderer):
                 return Key.ESCAPE  # type: ignore
 
             # Alt+other key
-            assert isinstance(next_key, Key)
+            assert isinstance(next_key, Key), f"unexpected type: {type(next_key)}"
             return Key.ALT(next_key)
 
         # Control+other key

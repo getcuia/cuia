@@ -54,7 +54,7 @@ class Key(Event[Union[int, Text]]):
             else:
                 raise TypeError(f"{self.value} is not a valid key value.")
 
-        assert self.value
+        assert self.value, "Key value cannot be empty."
 
     @classmethod
     def CHAR(cls, char: Text) -> Key:
