@@ -45,136 +45,91 @@ class CursesRenderer(Renderer):
         except curses.error:
             return None
 
-        if isinstance(key, int):
-            ikey = key
-            key = chr(key)
-        elif isinstance(key, (bytes, Text)):
-            ikey = ord(key)
-        else:
-            raise TypeError(f"unexpected type: {type(key)} ({key!r})")
+        if not isinstance(key, int):
+            key = ord(key)
 
         # Left-arrow key
-        if ikey == curses.KEY_LEFT:
+        if key == curses.KEY_LEFT:
             return Key.LEFT  # type: ignore
 
         # Right-arrow key
-        if ikey == curses.KEY_RIGHT:
+        if key == curses.KEY_RIGHT:
             return Key.RIGHT  # type: ignore
 
         # Up-arrow key
-        if ikey == curses.KEY_UP:
+        if key == curses.KEY_UP:
             return Key.UP  # type: ignore
 
         # Down-arrow key
-        if ikey == curses.KEY_DOWN:
+        if key == curses.KEY_DOWN:
             return Key.DOWN  # type: ignore
 
-        # Shift+left-arrow key
-        if ikey == curses.KEY_SLEFT:
-            return Key.SHIFT(Key.LEFT)  # type: ignore
-
-        # Shift+right-arrow key
-        if ikey == curses.KEY_SRIGHT:
-            return Key.SHIFT(Key.RIGHT)  # type: ignore
-
-        # Shift+up-arrow key (scroll one backward)
-        if ikey == curses.KEY_SR:
-            return Key.SHIFT(Key.UP)  # type: ignore
-
-        # Shift+down-arrow key (scroll one forward)
-        if ikey == curses.KEY_SF:
-            return Key.SHIFT(Key.DOWN)  # type: ignore
-
         # Home key (upward+left arrow)
-        if ikey == curses.KEY_HOME:
+        if key == curses.KEY_HOME:
             return Key.HOME  # type: ignore
 
         # End key
-        if ikey == curses.KEY_END:
+        if key == curses.KEY_END:
             return Key.END  # type: ignore
 
         # Previous page key
-        if ikey == curses.KEY_PPAGE:
+        if key == curses.KEY_PPAGE:
             return Key.PAGE_UP  # type: ignore
 
         # Next page key
-        if ikey == curses.KEY_NPAGE:
+        if key == curses.KEY_NPAGE:
             return Key.PAGE_DOWN  # type: ignore
 
-        # Shift+home key
-        if ikey == curses.KEY_SHOME:
-            return Key.SHIFT(Key.HOME)  # type: ignore
-
-        # Shift+end key
-        if ikey == curses.KEY_SEND:
-            return Key.SHIFT(Key.END)  # type: ignore
-
-        # Shift+previous page key
-        if ikey == curses.KEY_SPREVIOUS:
-            return Key.SHIFT(Key.PAGE_UP)  # type: ignore
-
-        # Shift+next page key
-        if ikey == curses.KEY_SNEXT:
-            return Key.SHIFT(Key.PAGE_DOWN)  # type: ignore
-
-        # Shift+tab key (back tab)
-        if ikey == curses.KEY_BTAB:
-            return Key.SHIFT(Key.TAB)  # type: ignore
-
-        # Shift+delete character key
-        if ikey == curses.KEY_SDC:
-            return Key.SHIFT(Key.DELETE)  # type: ignore
-
         # Insert char or enter insert mode key
-        if ikey == curses.KEY_IC:
+        if key == curses.KEY_IC:
             return Key.INSERT  # type: ignore
 
         # Function keys
-        if curses.KEY_F0 <= ikey <= curses.KEY_F12:
-            return Key.F(ikey - curses.KEY_F0)
+        if curses.KEY_F0 <= key <= curses.KEY_F12:
+            return Key.F(key - curses.KEY_F0)
 
         # Shift+function key
-        if curses.KEY_F13 <= ikey <= curses.KEY_F24:
-            return Key.SHIFT(Key.F(ikey - curses.KEY_F12))
+        if curses.KEY_F13 <= key <= curses.KEY_F24:
+            return Key.SHIFT(Key.F(key - curses.KEY_F12))
 
         # Control+function key
-        if curses.KEY_F25 <= ikey <= curses.KEY_F36:
-            return Key.CTRL(Key.F(ikey - curses.KEY_F24))
+        if curses.KEY_F25 <= key <= curses.KEY_F36:
+            return Key.CTRL(Key.F(key - curses.KEY_F24))
 
         # Control+shift+function key
-        if curses.KEY_F37 <= ikey <= curses.KEY_F48:
-            return Key.CTRL(Key.SHIFT(Key.F(ikey - curses.KEY_F36)))
+        if curses.KEY_F37 <= key <= curses.KEY_F48:
+            return Key.CTRL(Key.SHIFT(Key.F(key - curses.KEY_F36)))
 
         # Alt+function key
-        if curses.KEY_F49 <= ikey <= curses.KEY_F60:
-            return Key.ALT(Key.F(ikey - curses.KEY_F48))
+        if curses.KEY_F49 <= key <= curses.KEY_F60:
+            return Key.ALT(Key.F(key - curses.KEY_F48))
 
         # Backspace key (unreliable, so we also accept the ASCII BS charater).
-        if ikey in {ascii.BS, curses.KEY_BACKSPACE}:
+        if key in {ascii.BS, curses.KEY_BACKSPACE}:
             return Key.BACKSPACE  # type: ignore
 
         # Enter or send key (unreliable, so we also accept carriage returns and
         # line feeds. See <https://stackoverflow.com/a/32255045/4039050>.
-        if ikey in {ascii.CR, ascii.NL, curses.KEY_ENTER}:
+        if key in {ascii.CR, ascii.NL, curses.KEY_ENTER}:
             return Key.ENTER  # type: ignore
 
         # Tab key
-        if ikey == ascii.TAB:
+        if key == ascii.TAB:
             return Key.TAB  # type: ignore
 
         # Delete character key
-        if ikey in {ascii.DEL, curses.KEY_DC}:
+        if key in {ascii.DEL, curses.KEY_DC}:
             return Key.DELETE  # type: ignore
 
         # Space key
-        if ikey == ascii.SP:
+        if key == ascii.SP:
             return Key.SPACE  # type: ignore
 
         # Null key
         if key == ascii.NUL:
             return Key.NULL  # type: ignore
 
-        if ikey == ascii.ESC:
+        if key == ascii.ESC:
             # This assumes no delay is set to True
             if (next_key := self.next_message()) is None:
                 # Escape key
@@ -185,20 +140,60 @@ class CursesRenderer(Renderer):
             return Key.ALT(next_key)
 
         # Control+other key
-        if ascii.isctrl(ikey):
-            return Key.CTRL(chr(ORD_A + ikey - 1))
+        if ascii.isctrl(key):
+            return Key.CTRL(ORD_A + key - 1)
 
         # Meta+other key (might also be some special key)
-        if ascii.ismeta(ikey):
+        if ascii.ismeta(key):
             return Key.META(key)
 
+        # Shift+left-arrow key
+        if key == curses.KEY_SLEFT:
+            return Key.SHIFT(Key.LEFT)  # type: ignore
+
+        # Shift+right-arrow key
+        if key == curses.KEY_SRIGHT:
+            return Key.SHIFT(Key.RIGHT)  # type: ignore
+
+        # Shift+up-arrow key (scroll one backward)
+        if key == curses.KEY_SR:
+            return Key.SHIFT(Key.UP)  # type: ignore
+
+        # Shift+down-arrow key (scroll one forward)
+        if key == curses.KEY_SF:
+            return Key.SHIFT(Key.DOWN)  # type: ignore
+
+        # Shift+home key
+        if key == curses.KEY_SHOME:
+            return Key.SHIFT(Key.HOME)  # type: ignore
+
+        # Shift+end key
+        if key == curses.KEY_SEND:
+            return Key.SHIFT(Key.END)  # type: ignore
+
+        # Shift+previous page key
+        if key == curses.KEY_SPREVIOUS:
+            return Key.SHIFT(Key.PAGE_UP)  # type: ignore
+
+        # Shift+next page key
+        if key == curses.KEY_SNEXT:
+            return Key.SHIFT(Key.PAGE_DOWN)  # type: ignore
+
+        # Shift+tab key (back tab)
+        if key == curses.KEY_BTAB:
+            return Key.SHIFT(Key.TAB)  # type: ignore
+
+        # Shift+delete character key
+        if key == curses.KEY_SDC:
+            return Key.SHIFT(Key.DELETE)  # type: ignore
+
         # Any other printable character key
-        if ascii.isprint(ikey):
+        if ascii.isprint(key):
             return Key.CHAR(key)
 
         # https://stackoverflow.com/a/32794353/4039050
 
-        return Unsupported(curses.keyname(ikey))
+        return Unsupported(curses.keyname(key))
 
     def __enter__(self) -> CursesRenderer:
         """Enter context."""

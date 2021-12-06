@@ -6,7 +6,7 @@ from __future__ import annotations
 from curses import ascii
 from dataclasses import dataclass
 from enum import Flag, auto
-from typing import Generic, Text, TypeVar, Union
+from typing import Generic, Text, TypeVar
 
 from .message import Message
 
@@ -36,7 +36,7 @@ class KeyModifier(Flag):
 
 
 @dataclass(frozen=True)
-class Key(Event[Union[int, Text]]):
+class Key(Event[Text]):
     """A keyboard press event reported by the terminal."""
 
     modifier: KeyModifier = KeyModifier.NONE
@@ -57,12 +57,12 @@ class Key(Event[Union[int, Text]]):
         assert self.value, "Key value cannot be empty."
 
     @classmethod
-    def CHAR(cls, char: Text) -> Key:
+    def CHAR(cls, char: Text | int) -> Key:
         """Return a key event for a normal character key."""
-        return cls(char)
+        return cls(char)  # type: ignore
 
     @classmethod
-    def ALT(cls, key: Key | Text) -> Key:
+    def ALT(cls, key: Key | Text | int) -> Key:
         """
         Return a key event for an alt modified character.
 
@@ -71,10 +71,10 @@ class Key(Event[Union[int, Text]]):
         """
         if isinstance(key, Key):
             return cls(value=key.value, modifier=key.modifier | KeyModifier.ALT)
-        return cls(value=key, modifier=KeyModifier.ALT)
+        return cls(value=key, modifier=KeyModifier.ALT)  # type: ignore
 
     @classmethod
-    def CTRL(cls, key: Key | Text) -> Key:
+    def CTRL(cls, key: Key | Text | int) -> Key:
         """
         Return a key event for a ctrl modified character.
 
@@ -83,10 +83,10 @@ class Key(Event[Union[int, Text]]):
         """
         if isinstance(key, Key):
             return cls(value=key.value, modifier=key.modifier | KeyModifier.CTRL)
-        return cls(value=key, modifier=KeyModifier.CTRL)
+        return cls(value=key, modifier=KeyModifier.CTRL)  # type: ignore
 
     @classmethod
-    def META(cls, key: Key | Text) -> Key:
+    def META(cls, key: Key | Text | int) -> Key:
         """
         Return a key event for a meta modified character.
 
@@ -95,10 +95,10 @@ class Key(Event[Union[int, Text]]):
         """
         if isinstance(key, Key):
             return cls(value=key.value, modifier=key.modifier | KeyModifier.META)
-        return cls(value=key, modifier=KeyModifier.META)
+        return cls(value=key, modifier=KeyModifier.META)  # type: ignore
 
     @classmethod
-    def SHIFT(cls, key: Key | Text) -> Key:
+    def SHIFT(cls, key: Key | Text | int) -> Key:
         """
         Return a key event for a shift modified character.
 
@@ -107,7 +107,7 @@ class Key(Event[Union[int, Text]]):
         """
         if isinstance(key, Key):
             return cls(value=key.value, modifier=key.modifier | KeyModifier.SHIFT)
-        return cls(value=key, modifier=KeyModifier.SHIFT)
+        return cls(value=key, modifier=KeyModifier.SHIFT)  # type: ignore
 
     @classmethod
     def F(cls, num: int) -> Key:
@@ -176,43 +176,43 @@ class Key(Event[Union[int, Text]]):
     @property
     def BACKSPACE(cls) -> Key:
         """Return a key event for the backspace key."""
-        return cls(ascii.BS)
+        return cls(ascii.BS)  # type: ignore
 
     @classmethod
     @property
     def ENTER(cls) -> Key:
         """Return a key event for the enter key."""
-        return cls(ascii.NL)
+        return cls(ascii.NL)  # type: ignore
 
     @classmethod
     @property
     def TAB(cls) -> Key:
         """Return a key event for the tab key."""
-        return cls(ascii.TAB)
+        return cls(ascii.TAB)  # type: ignore
 
     @classmethod
     @property
     def DELETE(cls) -> Key:
         """Return a key event for the delete key."""
-        return cls(ascii.DEL)
+        return cls(ascii.DEL)  # type: ignore
 
     @classmethod
     @property
     def SPACE(cls) -> Key:
         """Return a key event for the space key."""
-        return cls(ascii.SP)
+        return cls(ascii.SP)  # type: ignore
 
     @classmethod
     @property
     def NULL(cls) -> Key:
         """Return a key event for a null byte."""
-        return cls(ascii.NUL)
+        return cls(ascii.NUL)  # type: ignore
 
     @classmethod
     @property
     def ESCAPE(cls) -> Key:
         """Return a key event for the escape key."""
-        return cls(ascii.ESC)
+        return cls(ascii.ESC)  # type: ignore
 
 
 
