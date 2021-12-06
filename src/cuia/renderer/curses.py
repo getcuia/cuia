@@ -14,6 +14,8 @@ from cusser import Cusser
 from ..messages import Key, Message, Unsupported
 from .renderer import Renderer
 
+ORD_A = ord("a")
+
 
 @dataclass
 class CursesRenderer(Renderer):
@@ -50,15 +52,6 @@ class CursesRenderer(Renderer):
             ikey = ord(key)
         else:
             raise TypeError(f"unexpected type: {type(key)} ({key!r})")
-
-        # Backspace key (unreliable, so we also accept the ASCII BS charater).
-        if ikey in {ascii.BS, curses.KEY_BACKSPACE}:
-            return Key.BACKSPACE  # type: ignore
-
-        # Enter or send key (unreliable, so we also accept carriage returns and
-        # line feeds. See <https://stackoverflow.com/a/32255045/4039050>.
-        if ikey in {ascii.CR, ascii.LF, curses.KEY_ENTER}:
-            return Key.ENTER  # type: ignore
 
         # Left-arrow key
         if ikey == curses.KEY_LEFT:
@@ -124,17 +117,9 @@ class CursesRenderer(Renderer):
         if ikey == curses.KEY_SNEXT:
             return Key.SHIFT(Key.PAGE_DOWN)  # type: ignore
 
-        # Tab key
-        if ikey == ascii.TAB:
-            return Key.TAB  # type: ignore
-
         # Shift+tab key (back tab)
         if ikey == curses.KEY_BTAB:
             return Key.SHIFT(Key.TAB)  # type: ignore
-
-        # Delete character key
-        if ikey in {ascii.DEL, curses.KEY_DC}:
-            return Key.DELETE  # type: ignore
 
         # Shift+delete character key
         if ikey == curses.KEY_SDC:
@@ -164,6 +149,23 @@ class CursesRenderer(Renderer):
         if curses.KEY_F49 <= ikey <= curses.KEY_F60:
             return Key.ALT(Key.F(ikey - curses.KEY_F48))
 
+        # Backspace key (unreliable, so we also accept the ASCII BS charater).
+        if ikey in {ascii.BS, curses.KEY_BACKSPACE}:
+            return Key.BACKSPACE  # type: ignore
+
+        # Enter or send key (unreliable, so we also accept carriage returns and
+        # line feeds. See <https://stackoverflow.com/a/32255045/4039050>.
+        if ikey in {ascii.CR, ascii.LF, curses.KEY_ENTER}:
+            return Key.ENTER  # type: ignore
+
+        # Tab key
+        if ikey == ascii.TAB:
+            return Key.TAB  # type: ignore
+
+        # Delete character key
+        if ikey in {ascii.DEL, curses.KEY_DC}:
+            return Key.DELETE  # type: ignore
+
         # Null key
         if key == ascii.NUL:
             return Key.NULL  # type: ignore
@@ -180,7 +182,7 @@ class CursesRenderer(Renderer):
 
         # Control+other key
         if ascii.isctrl(ikey):
-            return Key.CTRL(chr(ord("a") + ikey - 1))
+            return Key.CTRL(chr(ORD_A + ikey - 1))
 
         # Meta+other key (might also be some special key)
         if ascii.ismeta(ikey):

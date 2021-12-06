@@ -3,9 +3,10 @@
 
 from __future__ import annotations
 
+from curses import ascii
 from dataclasses import dataclass
 from enum import Flag, auto
-from typing import Generic, Text, TypeVar
+from typing import Generic, Text, TypeVar, Union
 
 from .message import Message
 
@@ -35,10 +36,30 @@ class KeyModifier(Flag):
 
 
 @dataclass(frozen=True)
-class Key(Event[Text]):
+class Key(Event[Union[int, Text]]):
     """A keyboard press event reported by the terminal."""
 
     modifier: KeyModifier = KeyModifier.NONE
+
+    def __post_init__(self):
+        """
+        Initialize the key.
+
+        This method is called after the key is constructed. It is used to
+        validate the key.
+        """
+        if not isinstance(self.value, Text):
+            if isinstance(self.value, int):
+                object.__setattr__(self, "value", chr(self.value))
+            else:
+                raise TypeError(f"{self.value} is not a valid key value.")
+
+        assert self.value
+
+    @classmethod
+    def CHAR(cls, char: Text) -> Key:
+        """Return a key event for a normal character key."""
+        return cls(char)
 
     @classmethod
     def ALT(cls, key: Key | Text) -> Key:
@@ -89,16 +110,13 @@ class Key(Event[Text]):
         return cls(value=key, modifier=KeyModifier.SHIFT)
 
     @classmethod
-    @property
-    def BACKSPACE(cls) -> Key:
-        """Return a key event for the backspace key."""
-        return cls("backspace")
+    def F(cls, num: int) -> Key:
+        """
+        Return a key event for a function key.
 
-    @classmethod
-    @property
-    def ENTER(cls) -> Key:
-        """Return a key event for the enter key."""
-        return cls("enter")
+        We make no guarantee that function keys above F12 are supported.
+        """
+        return cls(f"f{num}")
 
     @classmethod
     @property
@@ -150,47 +168,46 @@ class Key(Event[Text]):
 
     @classmethod
     @property
-    def TAB(cls) -> Key:
-        """Return a key event for the tab key."""
-        return cls("tab")
-
-    @classmethod
-    @property
-    def DELETE(cls) -> Key:
-        """Return a key event for the delete key."""
-        return cls("delete")
-
-    @classmethod
-    @property
     def INSERT(cls) -> Key:
         """Return a key event for the insert key."""
         return cls("insert")
 
     @classmethod
-    def F(cls, num: int) -> Key:
-        """
-        Return a key event for a function key.
-
-        We make no guarantee that function keys above F12 are supported.
-        """
-        return cls(f"f{num}")
+    @property
+    def BACKSPACE(cls) -> Key:
+        """Return a key event for the backspace key."""
+        return cls(ascii.BS)
 
     @classmethod
-    def CHAR(cls, char: Text) -> Key:
-        """Return a key event for a normal character key."""
-        return cls(char)
+    @property
+    def ENTER(cls) -> Key:
+        """Return a key event for the enter key."""
+        return cls(ascii.LF)
+
+    @classmethod
+    @property
+    def TAB(cls) -> Key:
+        """Return a key event for the tab key."""
+        return cls(ascii.TAB)
+
+    @classmethod
+    @property
+    def DELETE(cls) -> Key:
+        """Return a key event for the delete key."""
+        return cls(ascii.DEL)
 
     @classmethod
     @property
     def NULL(cls) -> Key:
         """Return a key event for a null byte."""
-        return cls("null")
+        return cls(ascii.NUL)
 
     @classmethod
     @property
     def ESCAPE(cls) -> Key:
         """Return a key event for the escape key."""
-        return cls("escape")
+        return cls(ascii.ESC)
+
 
 
 @dataclass(frozen=True)
