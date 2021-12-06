@@ -11,7 +11,7 @@ from typing import Iterator, Optional, Text, Type
 
 from cusser import Cusser
 
-from ..message import Key, Message
+from ..message import Key, Message, Unsupported
 from .renderer import Renderer
 
 
@@ -50,7 +50,7 @@ class CursesRenderer(Renderer):
             ikey = ord(key)
 
         if ikey in {ascii.BS, curses.KEY_BACKSPACE}:
-            # Backspace (unreliable, so we also accept the ASCII BS key)
+            # Backspace (unreliable, so we also accept the ASCII BS charater).
             return Key.BACKSPACE
         elif ikey in {ascii.CR, ascii.LF, curses.KEY_ENTER}:
             # Enter or send (unreliable, so we also accept carriage returns and
@@ -134,6 +134,9 @@ class CursesRenderer(Renderer):
         elif curses.KEY_F49 <= ikey <= curses.KEY_F60:
             # Alt+function keys.
             return Key.ALT(Key.F(ikey - curses.KEY_F48))
+        elif key == ascii.NUL:
+            # Null key
+            return Key.NULL
         elif ikey == ascii.ESC:
             # This assumes no delay is set to True.
             if (next_key := self.next_message()) is None:
@@ -150,13 +153,10 @@ class CursesRenderer(Renderer):
         elif ascii.isprint(ikey):
             # Any other alphanumeric key
             return Key.CHAR(key)
-        elif key == ascii.NUL:
-            # Null key
-            return Key.NULL
 
         # https://stackoverflow.com/a/32794353/4039050
 
-        raise ValueError(f"unknown key: {curses.keyname(key)!r} ({key = })")
+        return Unsupported(curses.keyname(ikey))
 
     def __enter__(self) -> CursesRenderer:
         """Enter context."""
