@@ -7,7 +7,7 @@ from typing import Optional, Text
 
 from . import command
 from .command import Command
-from .message import Key, Message
+from .messages import Key, Message
 
 
 @dataclass

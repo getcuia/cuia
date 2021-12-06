@@ -11,7 +11,7 @@ from typing import Optional
 from stransi import Ansi
 
 from .command import Command
-from .message import Message, Quit
+from .messages import Message, Quit
 from .renderer import Renderer, curses
 from .store import Store
 

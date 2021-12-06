@@ -46,7 +46,7 @@ __version__ = "0.1.0"
 
 
 from .command import Command, quit
-from .message import Key, Message, Quit
+from .messages import Key, Message, Quit
 from .program import Program
 from .store import Store
 

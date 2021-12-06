@@ -11,7 +11,7 @@ from typing import Iterator, Optional, Text, Type
 
 from cusser import Cusser
 
-from ..message import Key, Message, Unsupported
+from ..messages import Key, Message, Unsupported
 from .renderer import Renderer
 
 

@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from types import TracebackType
 from typing import ContextManager, Iterator, Optional, Text, Type, TypeVar
 
-from ..message import Message
+from ..messages import Message
 
 R = TypeVar("R", bound="Renderer")
 

@@ -4,7 +4,7 @@
 from abc import abstractmethod
 from typing import Optional, Protocol, runtime_checkable
 
-from .message import Message, Quit
+from .messages import Message, Quit
 
 
 @runtime_checkable

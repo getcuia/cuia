@@ -8,7 +8,7 @@ from pathlib import Path
 from types import TracebackType
 from typing import Generic, Iterator, Optional, Text, Type, TypeVar
 
-from ..message import Message
+from ..messages import Message
 from .renderer import Renderer
 
 R = TypeVar("R", bound=Renderer)
