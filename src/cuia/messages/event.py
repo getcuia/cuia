@@ -198,6 +198,12 @@ class Key(Event[Union[int, Text]]):
 
     @classmethod
     @property
+    def SPACE(cls) -> Key:
+        """Return a key event for the space key."""
+        return cls(ascii.SP)
+
+    @classmethod
+    @property
     def NULL(cls) -> Key:
         """Return a key event for a null byte."""
         return cls(ascii.NUL)

@@ -166,6 +166,10 @@ class CursesRenderer(Renderer):
         if ikey in {ascii.DEL, curses.KEY_DC}:
             return Key.DELETE  # type: ignore
 
+        # Space key
+        if ikey == ascii.SP:
+            return Key.SPACE  # type: ignore
+
         # Null key
         if key == ascii.NUL:
             return Key.NULL  # type: ignore
