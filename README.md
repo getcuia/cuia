@@ -29,3 +29,21 @@ interfaces that is easy to use, fast and has a small memory footprint.
 ```console
 $ pip install cuia
 ```
+
+## Usage
+
+```python
+In [1]: import asyncio
+
+In [2]: from cuia import Program, Store
+
+In [3]: class Hello(Store):
+   ...:     def __str__(self):
+   ...:         return "Hello, 🌍!"
+   ...:
+
+In [4]: program = Program(Hello())
+
+In [5]: asyncio.run(program.start())
+
+```
