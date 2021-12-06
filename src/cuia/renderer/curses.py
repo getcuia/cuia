@@ -38,112 +38,125 @@ class CursesRenderer(Renderer):
 
     def next_message(self) -> Optional[Message]:
         """Get next message."""
-        if (key := self.stdscr.getch()) == curses.ERR:
+        try:
+            key = self.stdscr.get_wch()
+        except curses.error:
             return None
 
-        if key in {ascii.BS, curses.KEY_BACKSPACE}:
-            # Backspace (unreliable)
+        if isinstance(key, int):
+            ikey = key
+            key = chr(key)
+        else:
+            ikey = ord(key)
+
+        if ikey in {ascii.BS, curses.KEY_BACKSPACE}:
+            # Backspace (unreliable, so we also accept the ASCII BS key)
             return Key.BACKSPACE
-        elif key in {ascii.CR, ascii.LF, curses.KEY_ENTER}:
+        elif ikey in {ascii.CR, ascii.LF, curses.KEY_ENTER}:
             # Enter or send (unreliable, so we also accept carriage returns and
             # line feeds. See <https://stackoverflow.com/a/32255045/4039050>.
             return Key.ENTER
-        elif key == curses.KEY_LEFT:
+        elif ikey == curses.KEY_LEFT:
             # Left-arrow
             return Key.LEFT
-        elif key == curses.KEY_RIGHT:
+        elif ikey == curses.KEY_RIGHT:
             # Right-arrow
             return Key.RIGHT
-        elif key == curses.KEY_UP:
+        elif ikey == curses.KEY_UP:
             # Up-arrow
             return Key.UP
-        elif key == curses.KEY_DOWN:
+        elif ikey == curses.KEY_DOWN:
             # Down-arrow
             return Key.DOWN
-        elif key == curses.KEY_SLEFT:
+        elif ikey == curses.KEY_SLEFT:
             # Shift+left-arrow
             return Key.SHIFT(Key.LEFT)
-        elif key == curses.KEY_SRIGHT:
+        elif ikey == curses.KEY_SRIGHT:
             # Shift+right-arrow
             return Key.SHIFT(Key.RIGHT)
-        elif key == curses.KEY_SR:
+        elif ikey == curses.KEY_SR:
             # Shift+up-arrow (scroll one backward)
             return Key.SHIFT(Key.UP)
-        elif key == curses.KEY_SF:
+        elif ikey == curses.KEY_SF:
             # Shift+down-arrow (scroll one forward)
             return Key.SHIFT(Key.DOWN)
-        elif key == curses.KEY_HOME:
+        elif ikey == curses.KEY_HOME:
             # Home key (upward+left arrow)
             return Key.HOME
-        elif key == curses.KEY_END:
+        elif ikey == curses.KEY_END:
             # End
             return Key.END
-        elif key == curses.KEY_PPAGE:
+        elif ikey == curses.KEY_PPAGE:
             # Previous page
             return Key.PAGE_UP
-        elif key == curses.KEY_NPAGE:
+        elif ikey == curses.KEY_NPAGE:
             # Next page
             return Key.PAGE_DOWN
-        elif key == curses.KEY_SHOME:
+        elif ikey == curses.KEY_SHOME:
             # Shift+home key
             return Key.SHIFT(Key.HOME)
-        elif key == curses.KEY_SEND:
+        elif ikey == curses.KEY_SEND:
             # Shift+end key
             return Key.SHIFT(Key.END)
-        elif key == curses.KEY_SPREVIOUS:
+        elif ikey == curses.KEY_SPREVIOUS:
             # Shift+previous page
             return Key.SHIFT(Key.PAGE_UP)
-        elif key == curses.KEY_SNEXT:
+        elif ikey == curses.KEY_SNEXT:
             # Shift+next page
             return Key.SHIFT(Key.PAGE_DOWN)
-        elif key == ascii.TAB:
+        elif ikey == ascii.TAB:
             # Tab key
             return Key.TAB
-        elif key == curses.KEY_BTAB:
+        elif ikey == curses.KEY_BTAB:
             # Shift+tab key (back tab)
             return Key.SHIFT(Key.TAB)
-        elif key in {ascii.DEL, curses.KEY_DC}:
+        elif ikey in {ascii.DEL, curses.KEY_DC}:
             # Delete character
             return Key.DELETE
-        elif key == curses.KEY_SDC:
+        elif ikey == curses.KEY_SDC:
             # Shift+delete character
             return Key.SHIFT(Key.DELETE)
-        elif key == curses.KEY_IC:
+        elif ikey == curses.KEY_IC:
             # Insert char or enter insert mode
             return Key.INSERT
-        elif curses.KEY_F0 <= key <= curses.KEY_F12:
+        elif curses.KEY_F0 <= ikey <= curses.KEY_F12:
             # Function keys.
-            return Key.F(key - curses.KEY_F0)
-        elif curses.KEY_F13 <= key <= curses.KEY_F24:
+            return Key.F(ikey - curses.KEY_F0)
+        elif curses.KEY_F13 <= ikey <= curses.KEY_F24:
             # Shift+function keys.
-            return Key.SHIFT(Key.F(key - curses.KEY_F12))
-        elif curses.KEY_F25 <= key <= curses.KEY_F36:
+            return Key.SHIFT(Key.F(ikey - curses.KEY_F12))
+        elif curses.KEY_F25 <= ikey <= curses.KEY_F36:
             # Control+function keys.
-            return Key.CTRL(Key.F(key - curses.KEY_F24))
-        elif curses.KEY_F37 <= key <= curses.KEY_F48:
+            return Key.CTRL(Key.F(ikey - curses.KEY_F24))
+        elif curses.KEY_F37 <= ikey <= curses.KEY_F48:
             # Control+shift+function keys.
-            return Key.CTRL(Key.SHIFT(Key.F(key - curses.KEY_F36)))
-        elif curses.KEY_F49 <= key <= curses.KEY_F60:
+            return Key.CTRL(Key.SHIFT(Key.F(ikey - curses.KEY_F36)))
+        elif curses.KEY_F49 <= ikey <= curses.KEY_F60:
             # Alt+function keys.
-            return Key.ALT(Key.F(key - curses.KEY_F48))
-        elif key == ascii.ESC:
+            return Key.ALT(Key.F(ikey - curses.KEY_F48))
+        elif ikey == ascii.ESC:
             # This assumes no delay is set to True.
             if (next_key := self.next_message()) is None:
                 # Escape key
                 return Key.ESCAPE
             # Alt+key
             return Key.ALT(next_key)
-        elif ascii.isctrl(key):
+        elif ascii.isctrl(ikey):
             # Control+key
-            return Key.CTRL(chr(ord("a") - 1 + key))
+            return Key.CTRL(chr(ord("a") + ikey - 1))
+        elif ascii.ismeta(ikey):
+            # Meta+key
+            return Key.META(key)
+        elif ascii.isprint(ikey):
+            # Any other alphanumeric key
+            return Key.CHAR(key)
         elif key == ascii.NUL:
             # Null key
             return Key.NULL
-        elif ascii.isprint(key):
-            # Any other alphanumeric key
-            return Key.CHAR(chr(key))
 
-        raise ValueError(f"unknown key: {curses.keyname(key)!r} ({chr(key) = })")
+        # https://stackoverflow.com/a/32794353/4039050
+
+        raise ValueError(f"unknown key: {curses.keyname(key)!r} ({key = })")
 
     def __enter__(self) -> CursesRenderer:
         """Enter context."""
