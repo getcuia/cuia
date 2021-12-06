@@ -199,7 +199,6 @@ class CursesRenderer(Renderer):
         if ascii.isprint(key):
             return Key.CHAR(key)
 
-
         return Unsupported(curses.keyname(key))
 
     def __enter__(self) -> CursesRenderer:
