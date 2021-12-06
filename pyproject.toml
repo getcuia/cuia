@@ -13,8 +13,17 @@ keywords = [
     "command-line",
     "console",
     "cuia",
+    "elm-architecture",
+    "framework",
+    "functional",
+    "gui",
+    "simple",
+    "terminal-based",
     "terminal",
+    "toolkit",
     "tui",
+    "ui",
+    "user-interface",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
