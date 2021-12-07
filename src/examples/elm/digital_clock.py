@@ -52,7 +52,7 @@ class DigitalClock(cuia.Store):
     def __str__(self) -> Text:
         """Render the digital clock as a string."""
         clock = pyfiglet.figlet_format(self.time.strftime("%H:%M:%S"))
-        return f"\033[1m{clock}\033[0m"
+        return f"\033[1m{clock}"
 
 
 async def main() -> None:

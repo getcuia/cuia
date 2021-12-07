@@ -20,7 +20,7 @@ class ColorfulExample(cuia.Store):
         res += "\033[45mMagenta!\n"
         res += "\033[46mCyan!\n"
         res += "\033[47mWhite!\n"
-        res += "\033[0m\n"
+        res += "\033[m\n"
         res += "Colors (foregrounds):\n\n"
         res += "\033[38;5;240mBlack!\n"  # some medium shade of gray
         res += "\033[91mRed!\n"

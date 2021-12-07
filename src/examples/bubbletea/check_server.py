@@ -96,10 +96,11 @@ class ServerChecker(cuia.Store):
     def __str__(self) -> Text:
         """Render the store state as a string."""
         if self.error:
-            return f"\033[1mWe had some trouble: {self.error}!\033[0m"
-        res = f"\033[2mChecking {URL} … \033[0m"
+            return f"\033[1mWe had some trouble: {self.error}!"
+
+        res = f"\033[2mChecking {URL} … "
         if self.status is not None:
-            res += f"\033[22;1m{self.status}: {self.reason}\033[0m"
+            res += f"\033[;1m{self.status}: {self.reason}"
         return res
 
 
