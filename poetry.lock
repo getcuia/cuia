@@ -124,7 +124,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "cusser"
-version = "0.1.0"
+version = "0.1.1"
 description = "A curses wrapper that understands ANSI escape code sequences"
 category = "main"
 optional = false
@@ -640,8 +640,8 @@ colorama = [
     {file = "colorama-0.4.4.tar.gz", hash = "sha256:5941b2b48a20143d2267e95b1c2a7603ce057ee39fd88e7329b0c292aa16869b"},
 ]
 cusser = [
-    {file = "cusser-0.1.0-py3-none-any.whl", hash = "sha256:67fe225aa10d9064009fedc79865076e4df174abf5d869cd23b32b8be3aea486"},
-    {file = "cusser-0.1.0.tar.gz", hash = "sha256:9046b234bbaa235ec2a110c27088043360cc87876158cd02479ff4aef6a5dc6d"},
+    {file = "cusser-0.1.1-py3-none-any.whl", hash = "sha256:9cdd2b94a4b1e01a62df89470a34d04226fd8a9b4b7f14dabe4f9450aeddf950"},
+    {file = "cusser-0.1.1.tar.gz", hash = "sha256:8347ab009eaf6125a7d0622715bb9e19f32087cedd526c03502cf5a6cf1d6bde"},
 ]
 flake8 = [
     {file = "flake8-4.0.1-py2.py3-none-any.whl", hash = "sha256:479b1304f72536a55948cb40a32dce8bb0ffe3501e26eaf292c7e60eb5e0428d"},
