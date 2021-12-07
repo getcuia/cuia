@@ -54,15 +54,15 @@ class ShoppingList(cuia.Store):
         It is called when it is time to render our UI. It basically just returns a
         string that will be printed to the screen.
         """
-        res = "\033[1;7mWhat should we buy at the market?\033[0;27m\n\n"
+        res = "\033[1;7mWhat should we buy at the market?\033[m\n\n"
         for i, choice in enumerate(self.choices):
             cursor = "〉" if i == self.cursor else "  "
             checked = "×" if choice in self.selected else " "
             res += f"{cursor}[{checked}] "
             res += (
-                f"\033[1m{choice}\033[0;22m"
+                f"\033[1m{choice}\033[m"
                 if i == self.cursor
-                else f"\033[2m{choice}\033[0;22m"
+                else f"\033[2m{choice}\033[m"
             )
             res += "\n"
         res += "\nPress q to quit.\n"
