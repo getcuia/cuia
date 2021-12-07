@@ -6,7 +6,7 @@ interfaces that are easy to use, fast and have a small memory footprint.
 """
 
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 
 from .command import Command, quit

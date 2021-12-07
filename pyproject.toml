@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cuia"
-version = "0.1.0"
+version = "0.1.1"
 description = "🧉🌿 A delightful tiny framework for building reliable text-based applications"
 authors = ["Felipe S. S. Schneider <schneider.felipe@posgrad.ufsc.br>"]
 license = "MIT"
