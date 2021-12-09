@@ -1,1 +1,1 @@
-"""Tests for the CursesRenderer class."""
+"""Tests for the curses renderer."""
