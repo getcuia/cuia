@@ -30,6 +30,16 @@ class LogRenderer(Renderer, Generic[R]):
     renderer: R
     path: Path = Path("log.txt")
 
+    @property  # type: ignore
+    def fullscreen(self) -> bool:  # type: ignore
+        """Whether the renderer is in fullscreen mode."""
+        return self.renderer.fullscreen
+
+    @fullscreen.setter
+    def fullscreen(self, fullscreen: bool) -> None:
+        """Set fullscreen mode."""
+        self.renderer.fullscreen = fullscreen
+
     def __getattr__(self, name: Text):
         """Delegate all unknown attributes to the wrapped renderer."""
         return getattr(self.renderer, name)

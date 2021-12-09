@@ -31,6 +31,11 @@ class CursesRenderer(Renderer):
 
     stdscr: Cusser = field(default_factory=lambda: Cusser(curses.initscr()))
 
+    def __post_init__(self) -> None:
+        """Post-initialization."""
+        if not self.fullscreen:
+            raise ValueError("CursesRenderer only supports fullscreen mode.")
+
     def render(self, screen: Text) -> None:
         """Render a screen."""
         self.stdscr.erase()

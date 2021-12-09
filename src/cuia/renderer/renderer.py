@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from types import TracebackType
 from typing import ContextManager, Iterator, Optional, Text, Type, TypeVar
 
@@ -17,6 +17,9 @@ R = TypeVar("R", bound="Renderer")
 @dataclass  # type: ignore
 class Renderer(ContextManager["Renderer"], ABC):
     """Renderer base class."""
+
+    fullscreen: bool = field(default=True, init=False)
+    """Whether to use fullscreen mode."""
 
     @abstractmethod
     def render(self, screen: Text) -> None:
