@@ -549,7 +549,7 @@ python-versions = ">= 3.5"
 
 [[package]]
 name = "types-requests"
-version = "2.27.5"
+version = "2.27.6"
 description = "Typing stubs for requests"
 category = "dev"
 optional = false
@@ -598,7 +598,7 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "408aa1a07f1074f18306939b3aaf927d321831545ea6a561aa69507f62a49dbd"
+content-hash = "88f91331817ac22a91813705c8149cce64894725b583c9898d0489fd06c177d6"
 
 [metadata.files]
 astroid = [
@@ -976,8 +976,8 @@ tornado = [
     {file = "tornado-6.1.tar.gz", hash = "sha256:33c6e81d7bd55b468d2e793517c909b139960b6c790a60b7991b9b6b76fb9791"},
 ]
 types-requests = [
-    {file = "types-requests-2.27.5.tar.gz", hash = "sha256:a67dc1a8512312b8cb89f3ba95f9a0e69ef3436ae77c9bd4f328cd88f17adda2"},
-    {file = "types_requests-2.27.5-py3-none-any.whl", hash = "sha256:9c9390b18b222956155af6678570f452edafa3bb94bd5a4efe67da1105aa128c"},
+    {file = "types-requests-2.27.6.tar.gz", hash = "sha256:5e0dc681e9bfadb5c1d17f63d29f6d13d29ef2897d30cb9c79285b34a1655fd7"},
+    {file = "types_requests-2.27.6-py3-none-any.whl", hash = "sha256:8f8a3cf66c525247750b0a0e6ffef4a210d7c8637065a1e7a3cb5769b1eb82a4"},
 ]
 types-urllib3 = [
     {file = "types-urllib3-1.26.2.tar.gz", hash = "sha256:fab03aa961be4d43290b13362a9f9801e2025ada33cbfbfaa9146efea6ab9496"},
