@@ -312,7 +312,7 @@ python-versions = ">=2.6"
 
 [[package]]
 name = "pdoc"
-version = "11.0.0"
+version = "11.1.0"
 description = "API Documentation for Python Projects"
 category = "dev"
 optional = false
@@ -322,7 +322,7 @@ python-versions = ">=3.7"
 astunparse = {version = "*", markers = "python_version < \"3.9\""}
 Jinja2 = ">=2.11.0"
 MarkupSafe = "*"
-pygments = "*"
+pygments = ">=2.12.0"
 
 [package.extras]
 dev = ["flake8", "hypothesis", "mypy", "pytest", "pytest-cov", "pytest-timeout", "tox"]
@@ -398,11 +398,11 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [[package]]
 name = "pygments"
-version = "2.10.0"
+version = "2.12.0"
 description = "Pygments is a syntax highlighting package written in Python."
 category = "dev"
 optional = false
-python-versions = ">=3.5"
+python-versions = ">=3.6"
 
 [[package]]
 name = "pylint"
@@ -607,7 +607,7 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "ab91ebd5fa8c7f50d2eba3f197f1e45c70a25741789332ec4f94a57ccb47294e"
+content-hash = "3610ea26a42db56e2872ce8bd73a6a35e2e4d5f111778b2104c26f443f0ce3f2"
 
 [metadata.files]
 astroid = [
@@ -852,8 +852,8 @@ pbr = [
     {file = "pbr-5.8.0.tar.gz", hash = "sha256:672d8ebee84921862110f23fcec2acea191ef58543d34dfe9ef3d9f13c31cddf"},
 ]
 pdoc = [
-    {file = "pdoc-11.0.0-py3-none-any.whl", hash = "sha256:36922f9eebf90a5e546ab4e7d92d4dbf9f2cdae7679fbc9b1a0906ef8ef03214"},
-    {file = "pdoc-11.0.0.tar.gz", hash = "sha256:722b4ff662574033de50b3061e55a81e5b0b54ff460f52f0c8a4abc25f08ce5b"},
+    {file = "pdoc-11.1.0-py3-none-any.whl", hash = "sha256:4be26a13e34a2903ffe1a0b80835a34eb1927f6d3f660e1416f7f8b09510cdcd"},
+    {file = "pdoc-11.1.0.tar.gz", hash = "sha256:b9fb7c125fad73476b0667a31320584111d36e91a4e525c1f45b263641c1bdac"},
 ]
 platformdirs = [
     {file = "platformdirs-2.4.0-py3-none-any.whl", hash = "sha256:8868bbe3c3c80d42f20156f22e7131d2fb321f5bc86a2a345375c6481a67021d"},
@@ -884,8 +884,8 @@ pyflakes = [
     {file = "pyflakes-2.4.0.tar.gz", hash = "sha256:05a85c2872edf37a4ed30b0cce2f6093e1d0581f8c19d7393122da7e25b2b24c"},
 ]
 pygments = [
-    {file = "Pygments-2.10.0-py3-none-any.whl", hash = "sha256:b8e67fe6af78f492b3c4b3e2970c0624cbf08beb1e493b2c99b9fa1b67a20380"},
-    {file = "Pygments-2.10.0.tar.gz", hash = "sha256:f398865f7eb6874156579fdf36bc840a03cab64d1cde9e93d68f46a425ec52c6"},
+    {file = "Pygments-2.12.0-py3-none-any.whl", hash = "sha256:dc9c10fb40944260f6ed4c688ece0cd2048414940f1cea51b8b226318411c519"},
+    {file = "Pygments-2.12.0.tar.gz", hash = "sha256:5eb116118f9612ff1ee89ac96437bb6b49e8f04d8a13b514ba26f620208e26eb"},
 ]
 pylint = [
     {file = "pylint-2.13.7-py3-none-any.whl", hash = "sha256:13ddbbd8872c804574149e81197c28877eba75224ba6b76cd8652fc31df55c1c"},
