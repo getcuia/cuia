@@ -312,7 +312,7 @@ python-versions = ">=2.6"
 
 [[package]]
 name = "pdoc"
-version = "12.0.1"
+version = "12.0.2"
 description = "API Documentation for Python Projects"
 category = "dev"
 optional = false
@@ -617,7 +617,7 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "6c8a71997de879cb60ab3da8c12ae3cb9043b11746224c5f5b56375e5529c61f"
+content-hash = "0e627fc014b3bedc159b077cc650f104f07e244657b809a33cad2a8f7ed7e2f6"
 
 [metadata.files]
 astroid = [
@@ -862,8 +862,8 @@ pbr = [
     {file = "pbr-5.8.0.tar.gz", hash = "sha256:672d8ebee84921862110f23fcec2acea191ef58543d34dfe9ef3d9f13c31cddf"},
 ]
 pdoc = [
-    {file = "pdoc-12.0.1-py3-none-any.whl", hash = "sha256:b27467651e5d8afa3cfc67ced2d978fb97e04ce91506579bba4d05b902fad096"},
-    {file = "pdoc-12.0.1.tar.gz", hash = "sha256:39f58c187f668e46485a51e7d4a3410484d054567e21937a5c28471dc03fc6de"},
+    {file = "pdoc-12.0.2-py3-none-any.whl", hash = "sha256:761a096b4dbc586c80d6b37baebf21ef467f22d6ea0532c3d5834abdb27c9862"},
+    {file = "pdoc-12.0.2.tar.gz", hash = "sha256:c63dc9050ec24b6baed6864a7d460814c620d3adbaee51c04b74eaa174b97dc6"},
 ]
 platformdirs = [
     {file = "platformdirs-2.4.0-py3-none-any.whl", hash = "sha256:8868bbe3c3c80d42f20156f22e7131d2fb321f5bc86a2a345375c6481a67021d"},
