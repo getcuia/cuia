@@ -51,7 +51,7 @@ pydocstyle = "^6.1.1"
 pyfiglet = "^0.8.post1"
 pylint = "^2.14.0"
 pytest = "^7.1"
-requests = "^2.27.1"
+requests = "^2.28.0"
 snakeviz = "^2.1.1"
 types-requests = "^2.27.30"
 
